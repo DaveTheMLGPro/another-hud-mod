@@ -1,0 +1,22 @@
+# exclude all
+/*
+
+!gradle/
+!bintray/
+!gradlew
+!gradlew.bat
+!build.gradle
+!build.properties
+!gradle.properties
+!settings.gradle
+!.github/
+
+!README.md
+!LICENSE
+
+!src/
+src/generated/resources/.cache
+
+!.gitmodules
+!.gitignore
+!.editorconfig

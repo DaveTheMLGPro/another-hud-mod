@@ -1,0 +1,34 @@
+{
+	"schemaVersion": 1,
+	"id": "another-hud-mod",
+	"version": "${version}",
+	"name": "Another HUD Mod",
+	"description": "A Mod that implements various HUD overlays.",
+	"authors": [
+		"DaveTheMLGPro"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/another-hud-mod/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.davethemlgpro.AnotherHUDMod"
+		],
+		"client": [
+			"net.davethemlgpro.client.AnotherHUDModClient"
+		],
+		"fabric-datagen": [
+			"net.davethemlgpro.client.AnotherHUDModDataGenerator"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~26.2",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}
