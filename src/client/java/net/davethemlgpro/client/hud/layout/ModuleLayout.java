@@ -20,7 +20,7 @@ public class ModuleLayout {
 		this.offsetY = source.offsetY;
 	}
 
-	public void checkAndRepair() {
+	public void validate() {
 		if (anchor == null) {
 			anchor = HudAnchor.TOP_LEFT;
 		}

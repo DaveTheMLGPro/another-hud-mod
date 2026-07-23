@@ -9,7 +9,7 @@ public class HudLayoutEngine {
 	}
 
 	public HudBounds resolve(ModuleLayout layout, HudSize size, int screenWidth, int screenHeight) {
-		layout.checkAndRepair();
+		layout.validate();
 
 		int baseX = layout.getAnchor().baseX(screenWidth, size.width()) + layout.getOffsetX();
 		int baseY = layout.getAnchor().baseY(screenHeight, size.height()) + layout.getOffsetY();
@@ -21,7 +21,7 @@ public class HudLayoutEngine {
 	}
 
 	public HudBounds applyDrag(ModuleLayout layout, HudSize size, int desiredX, int desiredY, int screenWidth, int screenHeight) {
-		layout.checkAndRepair();
+		layout.validate();
 		int x = clampAxis(desiredX, screenWidth, size.width());
 		int y = clampAxis(desiredY, screenHeight, size.height());
 
