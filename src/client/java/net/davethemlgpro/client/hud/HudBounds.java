@@ -16,6 +16,18 @@ public record HudBounds(int x, int y, int width, int height) {
 		return y + height;
 	}
 	public boolean contains(int pointX, int boundY) {
-		return pointX >= x && pointX <= right() && boundY >= y && boundY <= bottom();
+		return pointX >= x && pointX < right() && boundY >= y && boundY < bottom();
 	}
+	public boolean intersects(HudBounds other) {
+		return x < other.right() && other.x < right() && y < other.bottom() && other.y < bottom();
+	}
+
+	public HudBounds translate(int dx, int dy) {
+		return new HudBounds(x + dx, y + dy, width, height);
+	}
+
+	public HudBounds withPosition(int newX, int newY) {
+		return new HudBounds(newX, newY, width, height);
+	}
+
 }
