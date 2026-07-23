@@ -1,0 +1,27 @@
+package net.davethemlgpro.client.module;
+
+import net.minecraft.resources.Identifier;
+import java.util.*;
+import java.util.function.Supplier;
+
+public class HudModuleRegistry {
+	private final Map<Identifier, HudModuleEntry<?>> modules = new LinkedHashMap<>();
+
+	public <C extends HudModuleConfig<C>> HudModuleEntry<C> register(HudModule<C> module, Class<C> configType, Supplier<C> defaults) {
+		Identifier id = module.id();
+		if (modules.containsKey(id)) {
+			throw new IllegalArgumentException("Duplicate HUD module: " + id.toString());
+		}
+		HudModuleEntry<C> entry = new HudModuleEntry<>(module, configType, defaults);
+		modules.put(id, entry);
+		return entry;
+	}
+
+	public HudModuleEntry<?> getModule(Identifier id) {
+		return modules.get(id);
+	}
+
+	public List<HudModuleEntry<?>> getModules() {
+		return List.copyOf(modules.values());
+	}
+}
