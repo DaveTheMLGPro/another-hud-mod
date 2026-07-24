@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 public final class HudConfigSnapshot {
-	private final EditorConfig editorConfig;
+	private EditorConfig editorConfig;
 	private final Map<Identifier, HudModuleConfig<?>> modules;
 
 	private HudConfigSnapshot(EditorConfig editorConfig, Map<Identifier, HudModuleConfig<?>> modules) {
@@ -54,6 +54,10 @@ public final class HudConfigSnapshot {
 		return internalConfig(id).copy();
 	}
 
+	public void setConfig(Identifier id, HudModuleConfig<?> config) {
+		modules.put(id, config.copy());
+	}
+
 	public <C extends HudModuleConfig<C>> C getModule(Identifier id, Class<C> type) {
 		return type.cast(getConfig(id));
 	}
@@ -63,4 +67,14 @@ public final class HudConfigSnapshot {
 	}
 
 	public EditorConfig getEditor() { return editorConfig.copy(); }
+
+	public void setEditor(EditorConfig editor) {
+		this.editorConfig = editor.copy();
+	}
+
+	public void copyFrom(HudConfigSnapshot other) {
+		this.editorConfig = other.editorConfig.copy();
+		this.modules.clear();
+		other.modules.forEach((id, config) -> this.modules.put(id, config.copy()));
+	}
 }
