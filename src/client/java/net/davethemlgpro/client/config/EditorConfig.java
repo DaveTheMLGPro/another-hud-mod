@@ -25,6 +25,8 @@ public class EditorConfig {
 
 	public void validate() {
 		// Every int bit-pattern is a valid ARGB color.
+
+		// Add other checks if needed
 	}
 
 	public int getSelectionColor() {

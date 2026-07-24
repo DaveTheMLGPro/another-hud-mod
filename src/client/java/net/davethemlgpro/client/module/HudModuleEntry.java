@@ -64,6 +64,10 @@ public class HudModuleEntry<C extends HudModuleConfig<C>> {
 		return serialize(gson, configType.cast(value));
 	}
 
+	public JsonElement serializeUntyped(Gson gson) {
+		return gson.toJsonTree(config, configType);
+	}
+
 	public C deserialize(Gson gson, JsonElement json) {
 		C value = gson.fromJson(json, configType);
 		if (value == null) {
