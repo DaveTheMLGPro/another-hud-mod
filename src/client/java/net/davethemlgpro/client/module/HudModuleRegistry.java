@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 
 public class HudModuleRegistry {
 	private final Map<Identifier, HudModuleEntry<?>> modules = new LinkedHashMap<>();
+	private List<HudModuleEntry<?>> entries = List.of();
 
 	public <C extends HudModuleConfig<C>> HudModuleEntry<C> register(HudModule<C> module, Class<C> configType, Supplier<C> defaults) {
 		Identifier id = module.id();
@@ -14,6 +15,7 @@ public class HudModuleRegistry {
 		}
 		HudModuleEntry<C> entry = new HudModuleEntry<>(module, configType, defaults);
 		modules.put(id, entry);
+		entries = List.copyOf(modules.values());
 		return entry;
 	}
 
@@ -22,6 +24,6 @@ public class HudModuleRegistry {
 	}
 
 	public List<HudModuleEntry<?>> getEntries() {
-		return List.copyOf(modules.values());
+		return entries;
 	}
 }

@@ -13,9 +13,9 @@ public final class HudEditSession {
 		draft = manager.getSnapshot();
 	}
 
-	public static HudEditSession begin(HudConfigManager manager) {
+	public static HudEditSession beginEdit(HudConfigManager manager) {
 		if (active != null) {
-			active.cancel();
+			active.cancelEdit();
 		}
 		active = new HudEditSession(manager);
 		return active;
@@ -38,17 +38,21 @@ public final class HudEditSession {
 	}
 
 	public boolean applyAndSave() {
+		HudConfigSnapshot liveState = manager.getSnapshot();
 		manager.applySnapshot(draft);
-		boolean saved = manager.save();
-		end();
-		return saved;
+		if (!manager.save()) {
+			manager.applySnapshot(liveState);
+			return false;
+		}
+		endEdit();
+		return true;
 	}
 
-	public void cancel() {
-		end();
+	public void cancelEdit() {
+		endEdit();
 	}
 
-	private void end() {
+	private void endEdit() {
 		if (active == this) {
 			active = null;
 		}

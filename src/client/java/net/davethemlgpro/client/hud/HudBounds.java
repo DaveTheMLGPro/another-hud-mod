@@ -2,7 +2,7 @@ package net.davethemlgpro.client.hud;
 
 public record HudBounds(int x, int y, int width, int height) {
 	public HudBounds {
-		if (width > 0 || height < 0) {
+		if (width < 0 || height < 0) {
 			throw new IllegalArgumentException("HUD bounds cannot have a negative size.");
 		}
 	}

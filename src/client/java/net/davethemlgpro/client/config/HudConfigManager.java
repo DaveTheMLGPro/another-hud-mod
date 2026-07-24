@@ -16,8 +16,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class HudConfigManager {
-	public final int SCHEMA_VERSION = 1;
-	private final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+	private static final int SCHEMA_VERSION = 1;
+	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
 	private final HudModuleRegistry registry;
 	private final Path path;
@@ -78,7 +78,7 @@ public class HudConfigManager {
 			}
 			loadedEditor.validate();
 
-			JsonObject serializedModules = root.has("modules") ? GSON.fromJson(root.get("modules"), JsonObject.class) : new JsonObject();
+			JsonObject serializedModules = getSerializedModules(root);
 			Map<HudModuleEntry<?>, HudModuleConfig<?>> loadedModules = new LinkedHashMap<>();
 			JsonObject loadedUnknown = serializedModules.deepCopy();
 			for (HudModuleEntry<?> entry : registry.getEntries()) {
@@ -109,6 +109,17 @@ public class HudConfigManager {
 		return isNumber ? element.getAsInt() : 1;
 	}
 
+	private JsonObject getSerializedModules(JsonObject root) {
+		JsonElement element = root.get("modules");
+		if (element == null || element.isJsonNull()) {
+			return new JsonObject();
+		}
+		if (!element.isJsonObject()) {
+			throw new JsonParseException("Modules config must be a JSON object.");
+		}
+		return element.getAsJsonObject();
+	}
+
 	public boolean save() {
 		Path tmpPath = path.resolveSibling(path.getFileName() + ".tmp");
 		try {
@@ -120,7 +131,7 @@ public class HudConfigManager {
 				GSON.toJson(toJson(), writer);
 			}
 			moveIntoPlace(tmpPath, path);
-			AnotherHUDMod.LOGGER.info("Saved modular hud config to {}", tmpPath);
+			AnotherHUDMod.LOGGER.info("Saved modular hud config to {}", path);
 			return true;
 		} catch (IOException e) {
 			AnotherHUDMod.LOGGER.error("Failed to save config file {}", tmpPath, e);
@@ -136,7 +147,7 @@ public class HudConfigManager {
 
 	public JsonObject toJson() {
 		JsonObject root = new JsonObject();
-		root.addProperty("schemaVersion", getSchemaVersion(root));
+		root.addProperty("schemaVersion", SCHEMA_VERSION);
 		root.add("editor", GSON.toJsonTree(editor));
 		JsonObject modules = unknownModules.deepCopy();
 		for (HudModuleEntry<?> entry : registry.getEntries()) {
