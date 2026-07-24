@@ -21,7 +21,7 @@ public class HudModuleRegistry {
 		return modules.get(id);
 	}
 
-	public List<HudModuleEntry<?>> getModules() {
+	public List<HudModuleEntry<?>> getEntries() {
 		return List.copyOf(modules.values());
 	}
 }

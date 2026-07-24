@@ -20,7 +20,7 @@ public final class HudConfigSnapshot {
 
 	public static HudConfigSnapshot capture(EditorConfig editor, HudModuleRegistry registry) {
 		Map<Identifier, HudModuleConfig<?>> modules = new LinkedHashMap<>();
-		for (HudModuleEntry<?> entry : registry.getModules()) {
+		for (HudModuleEntry<?> entry : registry.getEntries()) {
 			modules.put(entry.getModule().id(), entry.copyConfig());
 		}
 		return new HudConfigSnapshot(editor.copy(), modules);
@@ -28,7 +28,7 @@ public final class HudConfigSnapshot {
 
 	public static HudConfigSnapshot defaults(HudModuleRegistry registry) {
 		Map<Identifier, HudModuleConfig<?>> modules = new LinkedHashMap<>();
-		for (HudModuleEntry<?> entry : registry.getModules()) {
+		for (HudModuleEntry<?> entry : registry.getEntries()) {
 			modules.put(entry.getModule().id(), entry.newDefaultConfig());
 		}
 		return new HudConfigSnapshot(new EditorConfig(), modules);
@@ -52,6 +52,14 @@ public final class HudConfigSnapshot {
 
 	public HudModuleConfig<?> getConfig(Identifier id) {
 		return internalConfig(id).copy();
+	}
+
+	public HudModuleConfig<?> getRawConfig(Identifier id) {
+		return internalConfig(id);
+	}
+
+	public boolean hasConfig(Identifier id) {
+		return modules.containsKey(id);
 	}
 
 	public void setConfig(Identifier id, HudModuleConfig<?> config) {

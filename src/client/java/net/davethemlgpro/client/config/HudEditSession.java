@@ -21,7 +21,7 @@ public final class HudEditSession {
 		return active;
 	}
 
-	public HudEditSession getActive() {
+	public static HudEditSession getActive() {
 		return active;
 	}
 

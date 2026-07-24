@@ -8,7 +8,7 @@ public class HudLayoutEngine {
 	public HudLayoutEngine() {
 	}
 
-	public HudBounds resolve(ModuleLayout layout, HudSize size, int screenWidth, int screenHeight) {
+	public static HudBounds resolve(ModuleLayout layout, HudSize size, int screenWidth, int screenHeight) {
 		layout.validate();
 
 		int baseX = layout.getAnchor().baseX(screenWidth, size.width()) + layout.getOffsetX();
@@ -32,7 +32,7 @@ public class HudLayoutEngine {
 		return new HudBounds(x, y, size.width(),  size.height());
 	}
 
-	private int clampAxis(int desired, int screenSize, int contentSize) {
+	private static int clampAxis(int desired, int screenSize, int contentSize) {
 		return Math.clamp(desired, 0, Math.max(0, screenSize - contentSize));
 	}
 }

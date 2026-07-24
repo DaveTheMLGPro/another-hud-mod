@@ -49,7 +49,7 @@ public class HudConfigManager {
 	public void applySnapshot(HudConfigSnapshot snapshot) {
 		EditorConfig replacementConfig = snapshot.getEditor();
 		replacementConfig.validate();
-		for (HudModuleEntry<?> entry : registry.getModules()) {
+		for (HudModuleEntry<?> entry : registry.getEntries()) {
 			HudModuleConfig<?> config = snapshot.getConfig(entry.getModule().id());
 			entry.applyUntyped(config);
 		}
@@ -81,7 +81,7 @@ public class HudConfigManager {
 			JsonObject serializedModules = root.has("modules") ? GSON.fromJson(root.get("modules"), JsonObject.class) : new JsonObject();
 			Map<HudModuleEntry<?>, HudModuleConfig<?>> loadedModules = new LinkedHashMap<>();
 			JsonObject loadedUnknown = serializedModules.deepCopy();
-			for (HudModuleEntry<?> entry : registry.getModules()) {
+			for (HudModuleEntry<?> entry : registry.getEntries()) {
 				String id = entry.getModule().id().toString();
 				HudModuleConfig<?> config = serializedModules.has(id) ? entry.deserialize(GSON, serializedModules.get(id)) : entry.newDefaultConfig();
 				loadedModules.put(entry, config);
@@ -139,7 +139,7 @@ public class HudConfigManager {
 		root.addProperty("schemaVersion", getSchemaVersion(root));
 		root.add("editor", GSON.toJsonTree(editor));
 		JsonObject modules = unknownModules.deepCopy();
-		for (HudModuleEntry<?> entry : registry.getModules()) {
+		for (HudModuleEntry<?> entry : registry.getEntries()) {
 			entry.getConfig().validate();
 			modules.add(entry.getModule().id().toString(), entry.serializeUntyped(GSON));
 		}
