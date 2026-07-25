@@ -24,6 +24,8 @@ final class ArmorHudLayout {
 			new ArmorHudSlotLayout(),
 			new ArmorHudSlotLayout()
 	};
+	private final boolean[] includedSlots = new boolean[ARMOR_SLOTS.length];
+	private final boolean[] renderedSlots = new boolean[ARMOR_SLOTS.length];
 	private final int[] entryWidths = new int[ARMOR_SLOTS.length];
 	private final int[] entryHeights = new int[ARMOR_SLOTS.length];
 	private final int[] itemOffsetsX = new int[ARMOR_SLOTS.length];
@@ -40,7 +42,7 @@ final class ArmorHudLayout {
 		int itemSize = scaledItemSize(config);
 		int spacing = scaledSpacing(config);
 		int textGap = Math.max(1, Math.round(config.getScale()));
-		int visibleCount = 0;
+		int includedCount = 0;
 		int groupWidth = 0;
 		int groupHeight = 0;
 
@@ -48,13 +50,16 @@ final class ArmorHudLayout {
 			ItemStack stack = minecraft.player == null
 					? ItemStack.EMPTY
 					: minecraft.player.getItemBySlot(ARMOR_SLOTS[i]);
-			boolean visible = config.isShowEmptySlots() || !stack.isEmpty();
-			if (!visible) {
+			boolean rendered = config.isShowEmptySlots() || !stack.isEmpty();
+			boolean included = rendered || !config.isCenterVisibleSlots();
+			renderedSlots[i] = rendered;
+			includedSlots[i] = included;
+			if (!included) {
 				slots[i].hide();
 				continue;
 			}
 
-			String text = durabilityText(stack, config);
+			String text = rendered ? durabilityText(stack, config) : "";
 			float renderScale = durabilityTextRenderScale(config, text);
 			int textWidth = text.isEmpty() ? 0 : (int) Math.ceil(minecraft.font.width(text) * renderScale);
 			int textHeight = text.isEmpty() ? 0 : (int) Math.ceil(minecraft.font.lineHeight * renderScale);
@@ -71,15 +76,15 @@ final class ArmorHudLayout {
 				groupWidth = Math.max(groupWidth, entryWidths[i]);
 				groupHeight += entryHeights[i];
 			}
-			visibleCount++;
+			includedCount++;
 		}
 
-		if (visibleCount == 0) {
+		if (includedCount == 0) {
 			size = new HudSize(0, 0);
 			return size;
 		}
 
-		int totalSpacing = (visibleCount - 1) * spacing;
+		int totalSpacing = (includedCount - 1) * spacing;
 		if (config.getOrientation() == ArmorHudOrientation.HORIZONTAL) {
 			groupWidth += totalSpacing;
 		} else {
@@ -89,11 +94,7 @@ final class ArmorHudLayout {
 		int visualOutset = slotVisualOutset(config);
 		int cursor = 0;
 		for (int i = 0; i < ARMOR_SLOTS.length; i++) {
-			if (!config.isShowEmptySlots() && minecraft.player != null
-					&& minecraft.player.getItemBySlot(ARMOR_SLOTS[i]).isEmpty()) {
-				continue;
-			}
-			if (minecraft.player == null && !config.isShowEmptySlots()) {
+			if (!includedSlots[i]) {
 				continue;
 			}
 
@@ -108,8 +109,12 @@ final class ArmorHudLayout {
 				cursor += entryHeights[i] + spacing;
 			}
 
-			slots[i].setEntry(visualOutset + entryX + itemOffsetsX[i], visualOutset + entryY + itemOffsetsY[i], itemSize,
-				visualOutset + entryX + textOffsetsX[i], visualOutset + entryY + textOffsetsY[i], textWidths[i], textHeights[i], durabilityTexts[i]);
+			if (renderedSlots[i]) {
+				slots[i].setEntry(visualOutset + entryX + itemOffsetsX[i], visualOutset + entryY + itemOffsetsY[i], itemSize,
+					visualOutset + entryX + textOffsetsX[i], visualOutset + entryY + textOffsetsY[i], textWidths[i], textHeights[i], durabilityTexts[i]);
+			} else {
+				slots[i].hide();
+			}
 		}
 
 		size = new HudSize(groupWidth + visualOutset * 2, groupHeight + visualOutset * 2);

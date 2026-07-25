@@ -23,6 +23,7 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 	private int spacing = 2;
 	private float scale = 1.0F;
 	private boolean showEmptySlots;
+	private boolean centerVisibleSlots;
 	private ArmorHudSlotStyle slotStyle = ArmorHudSlotStyle.CLEAR;
 
 	private boolean durabilityBarVisible = true;
@@ -82,6 +83,7 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 		spacing = source.spacing;
 		scale = source.scale;
 		showEmptySlots = source.showEmptySlots;
+		centerVisibleSlots = source.centerVisibleSlots;
 		slotStyle = source.slotStyle;
 		durabilityBarVisible = source.durabilityBarVisible;
 		durabilityBarHeight = source.durabilityBarHeight;
@@ -168,6 +170,14 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 
 	public void setShowEmptySlots(boolean showEmptySlots) {
 		this.showEmptySlots = showEmptySlots;
+	}
+
+	public boolean isCenterVisibleSlots() {
+		return centerVisibleSlots;
+	}
+
+	public void setCenterVisibleSlots(boolean centerVisibleSlots) {
+		this.centerVisibleSlots = centerVisibleSlots;
 	}
 
 	public ArmorHudSlotStyle getSlotStyle() {

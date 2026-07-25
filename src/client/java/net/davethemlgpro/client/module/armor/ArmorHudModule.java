@@ -42,6 +42,7 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 	private float cachedScale;
 	private float cachedDurabilityTextScale;
 	private boolean cachedShowEmptySlots;
+	private boolean cachedCenterVisibleSlots;
 	private boolean cachedDurabilityBarVisible;
 	private boolean cachedLowDurabilityWarningEnabled;
 	private ArmorHudSlotStyle cachedSlotStyle;
@@ -112,6 +113,7 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 				|| Float.compare(cachedScale, config.getScale()) != 0
 				|| Float.compare(cachedDurabilityTextScale, config.getDurabilityTextScale()) != 0
 				|| cachedShowEmptySlots != config.isShowEmptySlots()
+				|| cachedCenterVisibleSlots != config.isCenterVisibleSlots()
 				|| cachedDurabilityBarVisible != config.isDurabilityBarVisible()
 				|| cachedLowDurabilityWarningEnabled != config.isLowDurabilityWarningEnabled()
 				|| cachedSlotStyle != config.getSlotStyle()) {
@@ -138,6 +140,7 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 		cachedScale = config.getScale();
 		cachedDurabilityTextScale = config.getDurabilityTextScale();
 		cachedShowEmptySlots = config.isShowEmptySlots();
+		cachedCenterVisibleSlots = config.isCenterVisibleSlots();
 		cachedDurabilityBarVisible = config.isDurabilityBarVisible();
 		cachedLowDurabilityWarningEnabled = config.isLowDurabilityWarningEnabled();
 		cachedSlotStyle = config.getSlotStyle();
