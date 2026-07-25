@@ -7,6 +7,7 @@ import net.davethemlgpro.client.module.HudModule;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
@@ -16,6 +17,16 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 	public static final Identifier ID = AnotherHUDMod.id("armor");
 
 	private static final Component DISPLAY_NAME = Component.translatable("module.another-hud-mod.armor");
+	private static final Identifier INVENTORY_SLOT_SPRITE = Identifier.withDefaultNamespace("container/slot");
+	private static final Identifier HOTBAR_SLOT_TEXTURE = AnotherHUDMod.id("textures/hotbar_icon.png");
+	private static final Identifier[] EMPTY_ARMOR_ICONS = {
+		AnotherHUDMod.id("textures/empty_helmet_icon.png"),
+		AnotherHUDMod.id("textures/empty_chestplate_icon.png"),
+		AnotherHUDMod.id("textures/empty_leggings_icon.png"),
+		AnotherHUDMod.id("textures/empty_boots_icon.png")
+	};
+	private static final int EMPTY_ARMOR_ICON_SIZE = 16;
+	private static final int HOTBAR_SLOT_TEXTURE_SIZE = 22;
 
 	private final ArmorHudLayout layout = new ArmorHudLayout();
 	private final boolean[] cachedEmptySlots = new boolean[ArmorHudLayout.getSlotCount()];
@@ -32,6 +43,7 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 	private float cachedDurabilityTextScale;
 	private boolean cachedShowEmptySlots;
 	private boolean cachedDurabilityBarVisible;
+	private ArmorHudSlotStyle cachedSlotStyle;
 
 	@Override
 	public Identifier id() {
@@ -68,9 +80,9 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 			ItemStack stack = minecraft.player.getItemBySlot(ArmorHudLayout.getEquipmentSlot(i));
 			int itemX = bounds.x() + slot.getItemX();
 			int itemY = bounds.y() + slot.getItemY();
+			drawSlotBackground(graphics, itemX, itemY, slot.getItemSize(), config);
 			if (stack.isEmpty()) {
-				graphics.fill(itemX,itemY,itemX + slot.getItemSize(),itemY + slot.getItemSize(),
-					config.getEmptySlotBackgroundColor());
+				drawScaledEmptyArmorIcon(graphics, i, itemX, itemY, config.getScale());
 				continue;
 			}
 
@@ -91,7 +103,8 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 				|| Float.compare(cachedScale, config.getScale()) != 0
 				|| Float.compare(cachedDurabilityTextScale, config.getDurabilityTextScale()) != 0
 				|| cachedShowEmptySlots != config.isShowEmptySlots()
-				|| cachedDurabilityBarVisible != config.isDurabilityBarVisible()) {
+				|| cachedDurabilityBarVisible != config.isDurabilityBarVisible()
+				|| cachedSlotStyle != config.getSlotStyle()) {
 			return false;
 		}
 
@@ -116,6 +129,7 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 		cachedDurabilityTextScale = config.getDurabilityTextScale();
 		cachedShowEmptySlots = config.isShowEmptySlots();
 		cachedDurabilityBarVisible = config.isDurabilityBarVisible();
+		cachedSlotStyle = config.getSlotStyle();
 
 		for (int i = 0; i < ArmorHudLayout.getSlotCount(); i++) {
 			ItemStack stack = minecraft.player == null ? ItemStack.EMPTY
@@ -126,6 +140,44 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 			cachedUnbreakableSlots[i] = ArmorHudLayout.isUnbreakableItem(stack);
 		}
 		layoutCacheInitialized = true;
+	}
+
+	private void drawSlotBackground(GuiGraphicsExtractor graphics, int x, int y, int slotSize,
+	                                ArmorHudConfig config) {
+		switch (config.getSlotStyle()) {
+			case CLEAR -> {
+			}
+			case INVENTORY -> graphics.blitSprite(RenderPipelines.GUI_TEXTURED, INVENTORY_SLOT_SPRITE,
+				x - 1, y - 1, slotSize + 2, slotSize + 2);
+			case HOTBAR -> drawHotbarSlotBackground(graphics, x, y, config.getScale());
+		}
+	}
+
+	private void drawHotbarSlotBackground(GuiGraphicsExtractor graphics, int x, int y, float scale) {
+		Matrix3x2fStack matrices = graphics.pose();
+		matrices.pushMatrix();
+		try {
+			matrices.translate(x - 3.0F * scale, y - 3.0F * scale);
+			matrices.scale(scale, scale);
+			graphics.blit(RenderPipelines.GUI_TEXTURED, HOTBAR_SLOT_TEXTURE, 0, 0, 0.0F, 0.0F,
+				HOTBAR_SLOT_TEXTURE_SIZE, HOTBAR_SLOT_TEXTURE_SIZE,
+				HOTBAR_SLOT_TEXTURE_SIZE, HOTBAR_SLOT_TEXTURE_SIZE);
+		} finally {
+			matrices.popMatrix();
+		}
+	}
+
+	private void drawScaledEmptyArmorIcon(GuiGraphicsExtractor graphics, int slotIndex, int x, int y, float scale) {
+		Matrix3x2fStack matrices = graphics.pose();
+		matrices.pushMatrix();
+		try {
+			matrices.translate(x, y);
+			matrices.scale(scale, scale);
+			graphics.blit(RenderPipelines.GUI_TEXTURED, EMPTY_ARMOR_ICONS[slotIndex], 0, 0, 0.0F, 0.0F,
+				EMPTY_ARMOR_ICON_SIZE, EMPTY_ARMOR_ICON_SIZE, EMPTY_ARMOR_ICON_SIZE, EMPTY_ARMOR_ICON_SIZE);
+		} finally {
+			matrices.popMatrix();
+		}
 	}
 
 	private void drawScaledItem(GuiGraphicsExtractor graphics, ItemStack stack, int x, int y, float scale) {

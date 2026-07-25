@@ -85,6 +85,7 @@ final class ArmorHudLayout {
 			groupHeight += totalSpacing;
 		}
 
+		int visualOutset = slotVisualOutset(config);
 		int cursor = 0;
 		for (int i = 0; i < ARMOR_SLOTS.length; i++) {
 			if (!config.isShowEmptySlots() && minecraft.player != null
@@ -106,19 +107,11 @@ final class ArmorHudLayout {
 				cursor += entryHeights[i] + spacing;
 			}
 
-			slots[i].setEntry(
-					entryX + itemOffsetsX[i],
-					entryY + itemOffsetsY[i],
-					itemSize,
-					entryX + textOffsetsX[i],
-					entryY + textOffsetsY[i],
-					textWidths[i],
-					textHeights[i],
-					durabilityTexts[i]
-			);
+			slots[i].setEntry(visualOutset + entryX + itemOffsetsX[i], visualOutset + entryY + itemOffsetsY[i], itemSize,
+				visualOutset + entryX + textOffsetsX[i], visualOutset + entryY + textOffsetsY[i], textWidths[i], textHeights[i], durabilityTexts[i]);
 		}
 
-		size = new HudSize(groupWidth, groupHeight);
+		size = new HudSize(groupWidth + visualOutset * 2, groupHeight + visualOutset * 2);
 		return size;
 	}
 
@@ -232,5 +225,13 @@ final class ArmorHudLayout {
 
 	private int scaledSpacing(ArmorHudConfig config) {
 		return Math.max(0, Math.round(config.getSpacing() * config.getScale()));
+	}
+
+	private int slotVisualOutset(ArmorHudConfig config) {
+		return switch (config.getSlotStyle()) {
+			case CLEAR -> 0;
+			case INVENTORY -> 1;
+			case HOTBAR -> Math.max(1, Math.round(3.0F * config.getScale()));
+		};
 	}
 }

@@ -21,7 +21,7 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 	private int spacing = 2;
 	private float scale = 1.0F;
 	private boolean showEmptySlots;
-	private int emptySlotBackgroundColor = 0x33000000;
+	private ArmorHudSlotStyle slotStyle = ArmorHudSlotStyle.CLEAR;
 
 	private boolean durabilityBarVisible = true;
 	private int durabilityBarHeight = 2;
@@ -75,7 +75,7 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 		spacing = source.spacing;
 		scale = source.scale;
 		showEmptySlots = source.showEmptySlots;
-		emptySlotBackgroundColor = source.emptySlotBackgroundColor;
+		slotStyle = source.slotStyle;
 		durabilityBarVisible = source.durabilityBarVisible;
 		durabilityBarHeight = source.durabilityBarHeight;
 		durabilityBarHorizontalPadding = source.durabilityBarHorizontalPadding;
@@ -109,6 +109,9 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 		}
 		if (textPosition == null) {
 			textPosition = ArmorHudTextPosition.BOTTOM;
+		}
+		if (slotStyle == null) {
+			slotStyle = ArmorHudSlotStyle.CLEAR;
 		}
 		spacing = Math.clamp(spacing, MIN_SPACING, MAX_SPACING);
 		scale = Float.isFinite(scale) ? Math.clamp(scale, MIN_SCALE, MAX_SCALE) : 1.0F;
@@ -151,12 +154,12 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 		this.showEmptySlots = showEmptySlots;
 	}
 
-	public int getEmptySlotBackgroundColor() {
-		return emptySlotBackgroundColor;
+	public ArmorHudSlotStyle getSlotStyle() {
+		return slotStyle;
 	}
 
-	public void setEmptySlotBackgroundColor(int emptySlotBackgroundColor) {
-		this.emptySlotBackgroundColor = emptySlotBackgroundColor;
+	public void setSlotStyle(ArmorHudSlotStyle slotStyle) {
+		this.slotStyle = slotStyle == null ? ArmorHudSlotStyle.CLEAR : slotStyle;
 	}
 
 	public boolean isDurabilityBarVisible() {
