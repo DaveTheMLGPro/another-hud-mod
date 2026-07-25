@@ -14,6 +14,8 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 	public static final float MAX_DURABILITY_BAR_HORIZONTAL_PADDING = 8.0F;
 	public static final float MIN_DURABILITY_TEXT_SCALE = 0.25F;
 	public static final float MAX_DURABILITY_TEXT_SCALE = 0.75F;
+	public static final int MIN_LOW_DURABILITY_THRESHOLD_PERCENT = 1;
+	public static final int MAX_LOW_DURABILITY_THRESHOLD_PERCENT = 100;
 
 	private boolean enabled = true;
 	private ModuleLayout layout = new ModuleLayout(HudAnchor.CENTER_RIGHT, -8, 0);
@@ -40,6 +42,11 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 	private int textHealthyColor = 0xFF00FF00;
 	private int textWarningColor = 0xFFFFFF00;
 	private int textCriticalColor = 0xFFFF0000;
+
+	private boolean lowDurabilityWarningEnabled = true;
+	private int lowDurabilityThresholdPercent = 20;
+	private ArmorHudWarningStyle warningStyle = ArmorHudWarningStyle.PULSE;
+	private int lowDurabilityWarningColor = 0xFFFF3333;
 
 	public ArmorHudConfig() {
 	}
@@ -92,6 +99,10 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 		textHealthyColor = source.textHealthyColor;
 		textWarningColor = source.textWarningColor;
 		textCriticalColor = source.textCriticalColor;
+		lowDurabilityWarningEnabled = source.lowDurabilityWarningEnabled;
+		lowDurabilityThresholdPercent = source.lowDurabilityThresholdPercent;
+		warningStyle = source.warningStyle;
+		lowDurabilityWarningColor = source.lowDurabilityWarningColor;
 		validate();
 	}
 
@@ -113,6 +124,9 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 		if (slotStyle == null) {
 			slotStyle = ArmorHudSlotStyle.CLEAR;
 		}
+		if (warningStyle == null) {
+			warningStyle = ArmorHudWarningStyle.PULSE;
+		}
 		spacing = Math.clamp(spacing, MIN_SPACING, MAX_SPACING);
 		scale = Float.isFinite(scale) ? Math.clamp(scale, MIN_SCALE, MAX_SCALE) : 1.0F;
 		durabilityBarHeight = Math.clamp(durabilityBarHeight, MIN_DURABILITY_BAR_HEIGHT, MAX_DURABILITY_BAR_HEIGHT);
@@ -120,6 +134,8 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 			? Math.clamp(durabilityBarHorizontalPadding, 0.0F, MAX_DURABILITY_BAR_HORIZONTAL_PADDING) : 2.0F;
 		durabilityTextScale = Float.isFinite(durabilityTextScale)
 			? Math.clamp(durabilityTextScale, MIN_DURABILITY_TEXT_SCALE, MAX_DURABILITY_TEXT_SCALE) : 0.5F;
+		lowDurabilityThresholdPercent = Math.clamp(lowDurabilityThresholdPercent,
+			MIN_LOW_DURABILITY_THRESHOLD_PERCENT, MAX_LOW_DURABILITY_THRESHOLD_PERCENT);
 	}
 
 	public ArmorHudOrientation getOrientation() {
@@ -290,5 +306,38 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 
 	public void setTextCriticalColor(int textCriticalColor) {
 		this.textCriticalColor = textCriticalColor;
+	}
+
+	public boolean isLowDurabilityWarningEnabled() {
+		return lowDurabilityWarningEnabled;
+	}
+
+	public void setLowDurabilityWarningEnabled(boolean lowDurabilityWarningEnabled) {
+		this.lowDurabilityWarningEnabled = lowDurabilityWarningEnabled;
+	}
+
+	public int getLowDurabilityThresholdPercent() {
+		return lowDurabilityThresholdPercent;
+	}
+
+	public void setLowDurabilityThresholdPercent(int lowDurabilityThresholdPercent) {
+		this.lowDurabilityThresholdPercent = Math.clamp(lowDurabilityThresholdPercent,
+			MIN_LOW_DURABILITY_THRESHOLD_PERCENT, MAX_LOW_DURABILITY_THRESHOLD_PERCENT);
+	}
+
+	public ArmorHudWarningStyle getWarningStyle() {
+		return warningStyle;
+	}
+
+	public void setWarningStyle(ArmorHudWarningStyle warningStyle) {
+		this.warningStyle = warningStyle == null ? ArmorHudWarningStyle.PULSE : warningStyle;
+	}
+
+	public int getLowDurabilityWarningColor() {
+		return lowDurabilityWarningColor;
+	}
+
+	public void setLowDurabilityWarningColor(int lowDurabilityWarningColor) {
+		this.lowDurabilityWarningColor = lowDurabilityWarningColor;
 	}
 }

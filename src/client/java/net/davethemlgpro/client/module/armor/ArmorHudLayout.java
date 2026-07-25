@@ -14,6 +14,7 @@ final class ArmorHudLayout {
 			EquipmentSlot.FEET
 	};
 	private static final int ITEM_SIZE = 16;
+	private static final int WARNING_OUTSET = 2;
 	private static final String INFINITE_DURABILITY = "∞";
 	private static final float INFINITE_DURABILITY_TEXT_SCALE = 1.25F;
 
@@ -228,10 +229,11 @@ final class ArmorHudLayout {
 	}
 
 	private int slotVisualOutset(ArmorHudConfig config) {
-		return switch (config.getSlotStyle()) {
+		int slotOutset = switch (config.getSlotStyle()) {
 			case CLEAR -> 0;
 			case INVENTORY -> 1;
 			case HOTBAR -> Math.max(1, Math.round(3.0F * config.getScale()));
 		};
+		return config.isLowDurabilityWarningEnabled() ? Math.max(slotOutset, WARNING_OUTSET) : slotOutset;
 	}
 }

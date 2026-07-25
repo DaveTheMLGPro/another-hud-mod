@@ -43,6 +43,7 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 	private float cachedDurabilityTextScale;
 	private boolean cachedShowEmptySlots;
 	private boolean cachedDurabilityBarVisible;
+	private boolean cachedLowDurabilityWarningEnabled;
 	private ArmorHudSlotStyle cachedSlotStyle;
 
 	@Override
@@ -71,6 +72,7 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 			return;
 		}
 
+		float warningOpacity = -1.0F;
 		for (int i = 0; i < ArmorHudLayout.getSlotCount(); i++) {
 			ArmorHudSlotLayout slot = layout.getSlot(i);
 			if (!slot.isVisible()) {
@@ -90,6 +92,13 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 			if (config.isDurabilityBarVisible()) {
 				drawDurabilityBar(graphics, stack, itemX, itemY, slot.getItemSize(), config);
 			}
+			if (isLowDurability(stack, config)) {
+				if (warningOpacity < 0.0F) {
+					warningOpacity = warningOpacity(config.getWarningStyle());
+				}
+				drawLowDurabilityWarning(graphics, itemX, itemY, slot.getItemSize(),
+					config.getLowDurabilityWarningColor(), warningOpacity);
+			}
 			drawDurabilityText(graphics, minecraft, stack, slot, bounds, config);
 		}
 	}
@@ -104,6 +113,7 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 				|| Float.compare(cachedDurabilityTextScale, config.getDurabilityTextScale()) != 0
 				|| cachedShowEmptySlots != config.isShowEmptySlots()
 				|| cachedDurabilityBarVisible != config.isDurabilityBarVisible()
+				|| cachedLowDurabilityWarningEnabled != config.isLowDurabilityWarningEnabled()
 				|| cachedSlotStyle != config.getSlotStyle()) {
 			return false;
 		}
@@ -129,6 +139,7 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 		cachedDurabilityTextScale = config.getDurabilityTextScale();
 		cachedShowEmptySlots = config.isShowEmptySlots();
 		cachedDurabilityBarVisible = config.isDurabilityBarVisible();
+		cachedLowDurabilityWarningEnabled = config.isLowDurabilityWarningEnabled();
 		cachedSlotStyle = config.getSlotStyle();
 
 		for (int i = 0; i < ArmorHudLayout.getSlotCount(); i++) {
@@ -178,6 +189,37 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 		} finally {
 			matrices.popMatrix();
 		}
+	}
+
+	private boolean isLowDurability(ItemStack stack, ArmorHudConfig config) {
+		return config.isLowDurabilityWarningEnabled() && stack.isDamageableItem()
+			&& !ArmorHudLayout.isUnbreakableItem(stack)
+			&& ArmorHudLayout.durabilityPercent(stack) * 100.0F <= config.getLowDurabilityThresholdPercent();
+	}
+
+	private float warningOpacity(ArmorHudWarningStyle style) {
+		double time = System.nanoTime() / 1_000_000_000.0D;
+		return switch (style) {
+			case COLOR -> 1.0F;
+			case PULSE -> 0.35F + 0.65F * ((float) Math.sin(time * 4.0D) + 1.0F) / 2.0F;
+			case FLASH -> Math.sin(time * 6.0D) >= 0.0D ? 1.0F : 0.0F;
+		};
+	}
+
+	private void drawLowDurabilityWarning(GuiGraphicsExtractor graphics, int x, int y, int slotSize,
+	                                      int warningColor, float opacity) {
+		if (opacity <= 0.0F) {
+			return;
+		}
+
+		int color = withAlpha(warningColor, opacity);
+		graphics.outline(x - 1, y - 1, slotSize + 2, slotSize + 2, color);
+		graphics.outline(x - 2, y - 2, slotSize + 4, slotSize + 4, color);
+	}
+
+	private int withAlpha(int color, float multiplier) {
+		int alpha = Math.round((color >>> 24) * Math.clamp(multiplier, 0.0F, 1.0F));
+		return color & 0x00FFFFFF | alpha << 24;
 	}
 
 	private void drawScaledItem(GuiGraphicsExtractor graphics, ItemStack stack, int x, int y, float scale) {
