@@ -9,7 +9,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix3x2fStack;
 
@@ -17,18 +16,22 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 	public static final Identifier ID = AnotherHUDMod.id("armor");
 
 	private static final Component DISPLAY_NAME = Component.translatable("module.another-hud-mod.armor");
-	private static final EquipmentSlot[] ARMOR_SLOTS = {
-			EquipmentSlot.HEAD,
-			EquipmentSlot.CHEST,
-			EquipmentSlot.LEGS,
-			EquipmentSlot.FEET
-	};
-	private static final int ALL_SLOTS_MASK = (1 << ARMOR_SLOTS.length) - 1;
-	private static final int ITEM_SIZE = 16;
 
-	private int cachedMeasurementSignature = Integer.MIN_VALUE;
-	private int cachedVisibleSlotsMask = -1;
-	private HudSize cachedSize = new HudSize(0, 0);
+	private final ArmorHudLayout layout = new ArmorHudLayout();
+	private final boolean[] cachedEmptySlots = new boolean[ArmorHudLayout.getSlotCount()];
+	private final boolean[] cachedUnbreakableSlots = new boolean[ArmorHudLayout.getSlotCount()];
+	private final int[] cachedMaxDamage = new int[ArmorHudLayout.getSlotCount()];
+	private final int[] cachedDamage = new int[ArmorHudLayout.getSlotCount()];
+
+	private boolean layoutCacheInitialized;
+	private ArmorHudOrientation cachedOrientation;
+	private ArmorHudDurabilityMode cachedDurabilityMode;
+	private ArmorHudTextPosition cachedTextPosition;
+	private int cachedSpacing;
+	private float cachedScale;
+	private float cachedDurabilityTextScale;
+	private boolean cachedShowEmptySlots;
+	private boolean cachedDurabilityBarVisible;
 
 	@Override
 	public Identifier id() {
@@ -42,99 +45,90 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 
 	@Override
 	public HudSize measure(Minecraft minecraft, ArmorHudConfig config) {
-		int visibleSlotsMask = visibleSlotsMask(minecraft, config);
-		int signature = measurementSignature(config);
-		if (signature == cachedMeasurementSignature && visibleSlotsMask == cachedVisibleSlotsMask) {
-			return cachedSize;
+		if (!isLayoutCacheValid(minecraft, config)) {
+			HudSize size = layout.recalculate(minecraft, config);
+			captureLayoutState(minecraft, config);
+			return size;
 		}
-
-		int visibleSlotCount = Integer.bitCount(visibleSlotsMask);
-		if (visibleSlotCount == 0) {
-			cachedSize = new HudSize(0, 0);
-		} else {
-			int slotSize = scaledItemSize(config);
-			int spacing = scaledSpacing(config);
-			int length = visibleSlotCount * slotSize + (visibleSlotCount - 1) * spacing;
-			cachedSize = config.getOrientation() == ArmorHudOrientation.HORIZONTAL
-					? new HudSize(length, slotSize)
-					: new HudSize(slotSize, length);
-		}
-
-		cachedMeasurementSignature = signature;
-		cachedVisibleSlotsMask = visibleSlotsMask;
-		return cachedSize;
+		return layout.getSize();
 	}
 
 	@Override
-	public void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, Minecraft minecraft,
-					   ArmorHudConfig config, HudBounds bounds) {
+	public void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, Minecraft minecraft, ArmorHudConfig config, HudBounds bounds) {
 		if (minecraft.player == null || bounds.width() == 0 || bounds.height() == 0) {
 			return;
 		}
 
-		int slotSize = scaledItemSize(config);
-		int step = slotSize + scaledSpacing(config);
-		int visibleIndex = 0;
-		for (EquipmentSlot armorSlot : ARMOR_SLOTS) {
-			ItemStack stack = minecraft.player.getItemBySlot(armorSlot);
-			if (stack.isEmpty() && !config.isShowEmptySlots()) {
+		for (int i = 0; i < ArmorHudLayout.getSlotCount(); i++) {
+			ArmorHudSlotLayout slot = layout.getSlot(i);
+			if (!slot.isVisible()) {
 				continue;
 			}
 
-			int x = bounds.x();
-			int y = bounds.y();
-			if (config.getOrientation() == ArmorHudOrientation.HORIZONTAL) {
-				x += visibleIndex * step;
-			} else {
-				y += visibleIndex * step;
-			}
-
+			ItemStack stack = minecraft.player.getItemBySlot(ArmorHudLayout.getEquipmentSlot(i));
+			int itemX = bounds.x() + slot.getItemX();
+			int itemY = bounds.y() + slot.getItemY();
 			if (stack.isEmpty()) {
-				graphics.fill(x, y, x + slotSize, y + slotSize, config.getEmptySlotBackgroundColor());
-			} else {
-				drawScaledItem(graphics, stack, x, y, config.getScale());
-				if (config.isDurabilityBarVisible()) {
-					drawDurabilityBar(graphics, stack, x, y, slotSize, config);
-				}
+				graphics.fill(itemX,itemY,itemX + slot.getItemSize(),itemY + slot.getItemSize(),
+					config.getEmptySlotBackgroundColor());
+				continue;
 			}
-			visibleIndex++;
+
+			drawScaledItem(graphics, stack, itemX, itemY, config.getScale());
+			if (config.isDurabilityBarVisible()) {
+				drawDurabilityBar(graphics, stack, itemX, itemY, slot.getItemSize(), config);
+			}
+			drawDurabilityText(graphics, minecraft, stack, slot, bounds, config);
 		}
 	}
 
-	private int visibleSlotsMask(Minecraft minecraft, ArmorHudConfig config) {
-		if (config.isShowEmptySlots()) {
-			return ALL_SLOTS_MASK;
-		}
-		if (minecraft.player == null) {
-			return 0;
+	private boolean isLayoutCacheValid(Minecraft minecraft, ArmorHudConfig config) {
+		if (!layoutCacheInitialized
+				|| cachedOrientation != config.getOrientation()
+				|| cachedDurabilityMode != config.getDurabilityMode()
+				|| cachedTextPosition != config.getTextPosition()
+				|| cachedSpacing != config.getSpacing()
+				|| Float.compare(cachedScale, config.getScale()) != 0
+				|| Float.compare(cachedDurabilityTextScale, config.getDurabilityTextScale()) != 0
+				|| cachedShowEmptySlots != config.isShowEmptySlots()
+				|| cachedDurabilityBarVisible != config.isDurabilityBarVisible()) {
+			return false;
 		}
 
-		int mask = 0;
-		for (int i = 0; i < ARMOR_SLOTS.length; i++) {
-			if (!minecraft.player.getItemBySlot(ARMOR_SLOTS[i]).isEmpty()) {
-				mask |= 1 << i;
+		for (int i = 0; i < ArmorHudLayout.getSlotCount(); i++) {
+			ItemStack stack = minecraft.player == null ? ItemStack.EMPTY
+					: minecraft.player.getItemBySlot(ArmorHudLayout.getEquipmentSlot(i));
+			if (cachedEmptySlots[i] != stack.isEmpty() || cachedMaxDamage[i] != stack.getMaxDamage()
+				|| cachedDamage[i] != stack.getDamageValue()
+				|| cachedUnbreakableSlots[i] != ArmorHudLayout.isUnbreakableItem(stack)) {
+				return false;
 			}
 		}
-		return mask;
+		return true;
 	}
 
-	private int measurementSignature(ArmorHudConfig config) {
-		int result = config.getOrientation().ordinal();
-		result = 31 * result + config.getSpacing();
-		result = 31 * result + Float.floatToIntBits(config.getScale());
-		return result;
+	private void captureLayoutState(Minecraft minecraft, ArmorHudConfig config) {
+		cachedOrientation = config.getOrientation();
+		cachedDurabilityMode = config.getDurabilityMode();
+		cachedTextPosition = config.getTextPosition();
+		cachedSpacing = config.getSpacing();
+		cachedScale = config.getScale();
+		cachedDurabilityTextScale = config.getDurabilityTextScale();
+		cachedShowEmptySlots = config.isShowEmptySlots();
+		cachedDurabilityBarVisible = config.isDurabilityBarVisible();
+
+		for (int i = 0; i < ArmorHudLayout.getSlotCount(); i++) {
+			ItemStack stack = minecraft.player == null ? ItemStack.EMPTY
+					: minecraft.player.getItemBySlot(ArmorHudLayout.getEquipmentSlot(i));
+			cachedEmptySlots[i] = stack.isEmpty();
+			cachedMaxDamage[i] = stack.getMaxDamage();
+			cachedDamage[i] = stack.getDamageValue();
+			cachedUnbreakableSlots[i] = ArmorHudLayout.isUnbreakableItem(stack);
+		}
+		layoutCacheInitialized = true;
 	}
 
-	private int scaledItemSize(ArmorHudConfig config) {
-		return Math.max(1, Math.round(ITEM_SIZE * config.getScale()));
-	}
-
-	private int scaledSpacing(ArmorHudConfig config) {
-		return Math.max(0, Math.round(config.getSpacing() * config.getScale()));
-	}
-
-	private void drawScaledItem(GuiGraphicsExtractor graphics, ItemStack stack, int x, int y, float scale
-	) {
+	private void drawScaledItem(GuiGraphicsExtractor graphics, ItemStack stack, int x, int y, float scale) {
 		Matrix3x2fStack matrices = graphics.pose();
 		matrices.pushMatrix();
 		try {
@@ -146,17 +140,13 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 		}
 	}
 
-	private void drawDurabilityBar(GuiGraphicsExtractor graphics, ItemStack stack, int x, int y, int slotSize,
-										  ArmorHudConfig config) {
+	private void drawDurabilityBar(GuiGraphicsExtractor graphics, ItemStack stack, int x, int y,
+										  int slotSize, ArmorHudConfig config) {
 		if (!stack.isDamageableItem()) {
 			return;
 		}
 
-		int maxDamage = stack.getMaxDamage();
-		if (maxDamage <= 0) {
-			return;
-		}
-		float percent = Math.clamp((float) (maxDamage - stack.getDamageValue()) / maxDamage, 0.0F, 1.0F);
+		float percent = ArmorHudLayout.durabilityPercent(stack);
 		int padding = Math.max(1, Math.round(config.getDurabilityBarHorizontalPadding() * config.getScale()));
 		int barWidth = Math.max(1, slotSize - padding * 2);
 		int barHeight = Math.max(1, Math.round(config.getDurabilityBarHeight() * config.getScale()));
@@ -164,20 +154,62 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 		int barY = y + slotSize - barHeight;
 		int fillWidth = Math.round(barWidth * percent);
 
-		graphics.fill(barX, barY,barX + barWidth,barY + barHeight,config.getDurabilityBackgroundColor());
+		graphics.fill(barX, barY, barX + barWidth, barY + barHeight, config.getDurabilityBackgroundColor());
 		if (fillWidth > 0) {
 			graphics.fill(barX, barY, barX + fillWidth, barY + Math.max(1, barHeight / 2),
-				durabilityColor(percent, config));
+				durabilityColor(percent, config, false));
 		}
 	}
 
-	private int durabilityColor(float percent, ArmorHudConfig config) {
-		if (percent >= 0.5F) {
-			return interpolateColor(config.getDurabilityWarningColor(), config.getDurabilityHealthyColor(),
-				(percent - 0.5F) * 2.0F);
+	private void drawDurabilityText(GuiGraphicsExtractor graphics, Minecraft minecraft, ItemStack stack,
+										   ArmorHudSlotLayout slot, HudBounds moduleBounds, ArmorHudConfig config) {
+		String text = slot.getDurabilityText();
+		if (text.isEmpty()) {
+			return;
 		}
-		return interpolateColor(config.getDurabilityCriticalColor(), config.getDurabilityWarningColor(),
-			percent * 2.0F);
+
+		float renderScale = ArmorHudLayout.durabilityTextRenderScale(config, text);
+		float renderedTextWidth = minecraft.font.width(text) * renderScale;
+		float renderedTextHeight = minecraft.font.lineHeight * renderScale;
+		float textX = moduleBounds.x() + slot.getTextX();
+		float textY = moduleBounds.y() + slot.getTextY();
+
+		switch (config.getTextPosition()) {
+			case TOP, BOTTOM, CENTER ->
+					textX = moduleBounds.x() + slot.getItemX()
+							+ (slot.getItemSize() - renderedTextWidth) / 2.0F;
+			case LEFT, RIGHT -> {
+			}
+		}
+		switch (config.getTextPosition()) {
+			case LEFT, RIGHT, CENTER ->
+					textY = moduleBounds.y() + slot.getItemY() + (slot.getItemSize() - renderedTextHeight) / 2.0F;
+			case TOP, BOTTOM -> {
+			}
+		}
+
+		Matrix3x2fStack matrices = graphics.pose();
+		matrices.pushMatrix();
+		try {
+			matrices.translate(textX, textY);
+			matrices.scale(renderScale, renderScale);
+			int color = config.isColorBasedDurabilityText()
+					? durabilityColor(ArmorHudLayout.durabilityPercent(stack), config, true)
+					: config.getDurabilityTextColor();
+			graphics.text(minecraft.font, text, 0, 0, color, config.isDurabilityTextShadow());
+		} finally {
+			matrices.popMatrix();
+		}
+	}
+
+	private int durabilityColor(float percent, ArmorHudConfig config, boolean text) {
+		int healthy = text ? config.getTextHealthyColor() : config.getDurabilityHealthyColor();
+		int warning = text ? config.getTextWarningColor() : config.getDurabilityWarningColor();
+		int critical = text ? config.getTextCriticalColor() : config.getDurabilityCriticalColor();
+		if (percent >= 0.5F) {
+			return interpolateColor(warning, healthy, (percent - 0.5F) * 2.0F);
+		}
+		return interpolateColor(critical, warning, percent * 2.0F);
 	}
 
 	private int interpolateColor(int start, int end, float progress) {

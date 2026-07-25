@@ -12,6 +12,8 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 	public static final int MIN_DURABILITY_BAR_HEIGHT = 1;
 	public static final int MAX_DURABILITY_BAR_HEIGHT = 6;
 	public static final float MAX_DURABILITY_BAR_HORIZONTAL_PADDING = 8.0F;
+	public static final float MIN_DURABILITY_TEXT_SCALE = 0.25F;
+	public static final float MAX_DURABILITY_TEXT_SCALE = 0.75F;
 
 	private boolean enabled = true;
 	private ModuleLayout layout = new ModuleLayout(HudAnchor.CENTER_RIGHT, -8, 0);
@@ -28,6 +30,16 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 	private int durabilityHealthyColor = 0xFF00FF00;
 	private int durabilityWarningColor = 0xFFFFFF00;
 	private int durabilityCriticalColor = 0xFFFF0000;
+
+	private ArmorHudDurabilityMode durabilityMode = ArmorHudDurabilityMode.PERCENT;
+	private ArmorHudTextPosition textPosition = ArmorHudTextPosition.BOTTOM;
+	private float durabilityTextScale = 0.5F;
+	private boolean durabilityTextShadow = true;
+	private int durabilityTextColor = 0xFFFFFFFF;
+	private boolean colorBasedDurabilityText = true;
+	private int textHealthyColor = 0xFF00FF00;
+	private int textWarningColor = 0xFFFFFF00;
+	private int textCriticalColor = 0xFFFF0000;
 
 	public ArmorHudConfig() {
 	}
@@ -71,6 +83,15 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 		durabilityHealthyColor = source.durabilityHealthyColor;
 		durabilityWarningColor = source.durabilityWarningColor;
 		durabilityCriticalColor = source.durabilityCriticalColor;
+		durabilityMode = source.durabilityMode;
+		textPosition = source.textPosition;
+		durabilityTextScale = source.durabilityTextScale;
+		durabilityTextShadow = source.durabilityTextShadow;
+		durabilityTextColor = source.durabilityTextColor;
+		colorBasedDurabilityText = source.colorBasedDurabilityText;
+		textHealthyColor = source.textHealthyColor;
+		textWarningColor = source.textWarningColor;
+		textCriticalColor = source.textCriticalColor;
 		validate();
 	}
 
@@ -83,11 +104,19 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 		if (orientation == null) {
 			orientation = ArmorHudOrientation.VERTICAL;
 		}
+		if (durabilityMode == null) {
+			durabilityMode = ArmorHudDurabilityMode.PERCENT;
+		}
+		if (textPosition == null) {
+			textPosition = ArmorHudTextPosition.BOTTOM;
+		}
 		spacing = Math.clamp(spacing, MIN_SPACING, MAX_SPACING);
 		scale = Float.isFinite(scale) ? Math.clamp(scale, MIN_SCALE, MAX_SCALE) : 1.0F;
 		durabilityBarHeight = Math.clamp(durabilityBarHeight, MIN_DURABILITY_BAR_HEIGHT, MAX_DURABILITY_BAR_HEIGHT);
 		durabilityBarHorizontalPadding = Float.isFinite(durabilityBarHorizontalPadding)
 			? Math.clamp(durabilityBarHorizontalPadding, 0.0F, MAX_DURABILITY_BAR_HORIZONTAL_PADDING) : 2.0F;
+		durabilityTextScale = Float.isFinite(durabilityTextScale)
+			? Math.clamp(durabilityTextScale, MIN_DURABILITY_TEXT_SCALE, MAX_DURABILITY_TEXT_SCALE) : 0.5F;
 	}
 
 	public ArmorHudOrientation getOrientation() {
@@ -185,5 +214,78 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 
 	public void setDurabilityCriticalColor(int durabilityCriticalColor) {
 		this.durabilityCriticalColor = durabilityCriticalColor;
+	}
+
+	public ArmorHudDurabilityMode getDurabilityMode() {
+		return durabilityMode;
+	}
+
+	public void setDurabilityMode(ArmorHudDurabilityMode durabilityMode) {
+		this.durabilityMode = durabilityMode == null ? ArmorHudDurabilityMode.PERCENT : durabilityMode;
+	}
+
+	public ArmorHudTextPosition getTextPosition() {
+		return textPosition;
+	}
+
+	public void setTextPosition(ArmorHudTextPosition textPosition) {
+		this.textPosition = textPosition == null ? ArmorHudTextPosition.BOTTOM : textPosition;
+	}
+
+	public float getDurabilityTextScale() {
+		return durabilityTextScale;
+	}
+
+	public void setDurabilityTextScale(float durabilityTextScale) {
+		this.durabilityTextScale = Float.isFinite(durabilityTextScale)
+				? Math.clamp(durabilityTextScale, MIN_DURABILITY_TEXT_SCALE, MAX_DURABILITY_TEXT_SCALE) : 0.5F;
+	}
+
+	public boolean isDurabilityTextShadow() {
+		return durabilityTextShadow;
+	}
+
+	public void setDurabilityTextShadow(boolean durabilityTextShadow) {
+		this.durabilityTextShadow = durabilityTextShadow;
+	}
+
+	public int getDurabilityTextColor() {
+		return durabilityTextColor;
+	}
+
+	public void setDurabilityTextColor(int durabilityTextColor) {
+		this.durabilityTextColor = durabilityTextColor;
+	}
+
+	public boolean isColorBasedDurabilityText() {
+		return colorBasedDurabilityText;
+	}
+
+	public void setColorBasedDurabilityText(boolean colorBasedDurabilityText) {
+		this.colorBasedDurabilityText = colorBasedDurabilityText;
+	}
+
+	public int getTextHealthyColor() {
+		return textHealthyColor;
+	}
+
+	public void setTextHealthyColor(int textHealthyColor) {
+		this.textHealthyColor = textHealthyColor;
+	}
+
+	public int getTextWarningColor() {
+		return textWarningColor;
+	}
+
+	public void setTextWarningColor(int textWarningColor) {
+		this.textWarningColor = textWarningColor;
+	}
+
+	public int getTextCriticalColor() {
+		return textCriticalColor;
+	}
+
+	public void setTextCriticalColor(int textCriticalColor) {
+		this.textCriticalColor = textCriticalColor;
 	}
 }
