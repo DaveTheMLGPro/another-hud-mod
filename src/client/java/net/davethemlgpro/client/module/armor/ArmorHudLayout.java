@@ -38,7 +38,7 @@ final class ArmorHudLayout {
 
 	private HudSize size = new HudSize(0, 0);
 
-	public HudSize recalculate(Minecraft minecraft, ArmorHudConfig config) {
+	public HudSize recalculate(Minecraft minecraft, ArmorHudConfig config, boolean editorPreview) {
 		int itemSize = scaledItemSize(config);
 		int spacing = scaledSpacing(config);
 		int textGap = Math.max(1, Math.round(config.getScale()));
@@ -50,7 +50,7 @@ final class ArmorHudLayout {
 			ItemStack stack = minecraft.player == null
 					? ItemStack.EMPTY
 					: minecraft.player.getItemBySlot(ARMOR_SLOTS[i]);
-			boolean rendered = config.isShowEmptySlots() || !stack.isEmpty();
+			boolean rendered = editorPreview || config.isShowEmptySlots() || !stack.isEmpty();
 			boolean included = rendered || !config.isCenterVisibleSlots();
 			renderedSlots[i] = rendered;
 			includedSlots[i] = included;

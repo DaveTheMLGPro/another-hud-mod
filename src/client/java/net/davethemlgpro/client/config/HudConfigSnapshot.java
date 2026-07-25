@@ -76,6 +76,10 @@ public final class HudConfigSnapshot {
 
 	public EditorConfig getEditor() { return editorConfig.copy(); }
 
+	public EditorConfig getRawEditor() {
+		return editorConfig;
+	}
+
 	public void setEditor(EditorConfig editor) {
 		this.editorConfig = editor.copy();
 	}

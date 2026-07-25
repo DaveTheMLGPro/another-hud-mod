@@ -32,6 +32,15 @@ public class HudLayoutEngine {
 		return new HudBounds(x, y, size.width(),  size.height());
 	}
 
+	public void applyDragOffset(ModuleLayout layout, int contentWidth, int contentHeight, int desiredX, int desiredY,
+								int screenWidth, int screenHeight) {
+		layout.validate();
+		int x = clampAxis(desiredX, screenWidth, contentWidth);
+		int y = clampAxis(desiredY, screenHeight, contentHeight);
+		layout.setOffset(x - layout.getAnchor().baseX(screenWidth, contentWidth),
+			y - layout.getAnchor().baseY(screenHeight, contentHeight));
+	}
+
 	private static int clampAxis(int desired, int screenSize, int contentSize) {
 		return Math.clamp(desired, 0, Math.max(0, screenSize - contentSize));
 	}

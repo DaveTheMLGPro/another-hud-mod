@@ -85,7 +85,16 @@ public class HudModuleEntry<C extends HudModuleConfig<C>> {
 		module.render(graphics, deltaTracker, minecraft, configType.cast(value), bounds);
 	}
 
+	public void renderEditorPreviewUntyped(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker,
+										   Minecraft minecraft, HudModuleConfig<?> value, HudBounds bounds) {
+		module.renderEditorPreview(graphics, deltaTracker, minecraft, configType.cast(value), bounds);
+	}
+
 	public HudSize measureUntyped(Minecraft minecraft, HudModuleConfig<?> value) {
 		return module.measure(minecraft, configType.cast(value));
+	}
+
+	public HudSize measureEditorPreviewUntyped(Minecraft minecraft, HudModuleConfig<?> value) {
+		return module.measureEditorPreview(minecraft, configType.cast(value));
 	}
 }

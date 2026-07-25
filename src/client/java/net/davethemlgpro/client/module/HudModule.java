@@ -13,4 +13,13 @@ public interface HudModule<C extends HudModuleConfig<C>> {
 	Component displayName();
 	HudSize measure(Minecraft minecraft, C config);
 	void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, Minecraft minecraft, C config, HudBounds bounds);
+
+	default HudSize measureEditorPreview(Minecraft minecraft, C config) {
+		return measure(minecraft, config);
+	}
+
+	default void renderEditorPreview(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, Minecraft minecraft,
+									 C config, HudBounds bounds) {
+		render(graphics, deltaTracker, minecraft, config, bounds);
+	}
 }

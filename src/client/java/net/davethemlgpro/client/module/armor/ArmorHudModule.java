@@ -46,6 +46,7 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 	private boolean cachedDurabilityBarVisible;
 	private boolean cachedLowDurabilityWarningEnabled;
 	private ArmorHudSlotStyle cachedSlotStyle;
+	private boolean cachedEditorPreview;
 
 	@Override
 	public Identifier id() {
@@ -59,9 +60,18 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 
 	@Override
 	public HudSize measure(Minecraft minecraft, ArmorHudConfig config) {
-		if (!isLayoutCacheValid(minecraft, config)) {
-			HudSize size = layout.recalculate(minecraft, config);
-			captureLayoutState(minecraft, config);
+		return measure(minecraft, config, false);
+	}
+
+	@Override
+	public HudSize measureEditorPreview(Minecraft minecraft, ArmorHudConfig config) {
+		return measure(minecraft, config, true);
+	}
+
+	private HudSize measure(Minecraft minecraft, ArmorHudConfig config, boolean editorPreview) {
+		if (!isLayoutCacheValid(minecraft, config, editorPreview)) {
+			HudSize size = layout.recalculate(minecraft, config, editorPreview);
+			captureLayoutState(minecraft, config, editorPreview);
 			return size;
 		}
 		return layout.getSize();
@@ -104,8 +114,9 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 		}
 	}
 
-	private boolean isLayoutCacheValid(Minecraft minecraft, ArmorHudConfig config) {
+	private boolean isLayoutCacheValid(Minecraft minecraft, ArmorHudConfig config, boolean editorPreview) {
 		if (!layoutCacheInitialized
+				|| cachedEditorPreview != editorPreview
 				|| cachedOrientation != config.getOrientation()
 				|| cachedDurabilityMode != config.getDurabilityMode()
 				|| cachedTextPosition != config.getTextPosition()
@@ -132,7 +143,8 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 		return true;
 	}
 
-	private void captureLayoutState(Minecraft minecraft, ArmorHudConfig config) {
+	private void captureLayoutState(Minecraft minecraft, ArmorHudConfig config, boolean editorPreview) {
+		cachedEditorPreview = editorPreview;
 		cachedOrientation = config.getOrientation();
 		cachedDurabilityMode = config.getDurabilityMode();
 		cachedTextPosition = config.getTextPosition();
