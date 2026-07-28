@@ -9,6 +9,7 @@ import net.davethemlgpro.client.hud.layout.HudLayoutEngine;
 import net.davethemlgpro.client.module.HudModuleConfig;
 import net.davethemlgpro.client.module.HudModuleEntry;
 import net.davethemlgpro.client.module.HudModuleRegistry;
+import net.davethemlgpro.client.screen.popover.HudModulePopover;
 import net.davethemlgpro.client.translation.TranslationKey;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -28,12 +29,15 @@ public final class HudLayoutEditorScreen extends Screen {
 	private final HudModuleRegistry registry;
 	private final HudRenderDispatcher renderDispatcher;
 	private final HudLayoutEngine layoutEngine = new HudLayoutEngine();
+	private final HudModulePopover popover = new HudModulePopover();
 
 	private int selectedModule = -1;
 	private int hoveredModule = -1;
 	private boolean dragging;
 	private int dragOffsetX;
 	private int dragOffsetY;
+	private int lastDragX;
+	private int lastDragY;
 	private boolean saveFailed;
 
 	public HudLayoutEditorScreen(Screen parent, HudEditSession session, HudModuleRegistry registry,
@@ -58,7 +62,7 @@ public final class HudLayoutEditorScreen extends Screen {
 
 	@Override
 	public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
-		graphics.fill(0, 0, width, height, 0x66000000);
+		graphics.fill(0, 0, width, height, 0x4D000000);
 	}
 
 	@Override
@@ -75,6 +79,12 @@ public final class HudLayoutEditorScreen extends Screen {
 			}
 		}
 
+		HudBounds selectedBounds = selectedModule >= 0 ? renderDispatcher.getLastBounds(selectedModule) : null;
+		if (selectedBounds != null && popover.isOpen()) {
+			popover.render(graphics, font, selectedBounds, colors, mouseX, mouseY,
+				width, 32, height - FOOTER_HEIGHT);
+		}
+
 		graphics.centeredText(font, title, width / 2, 8, 0xFFFFFFFF);
 		graphics.centeredText(font, INSTRUCTIONS, width / 2, 19, 0xFFCCCCCC);
 		if (saveFailed) {
@@ -85,14 +95,27 @@ public final class HudLayoutEditorScreen extends Screen {
 
 	@Override
 	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+		int clickedModule = event.button() == 0 && event.y() < height - FOOTER_HEIGHT
+			? findModuleAt((int) event.x(), (int) event.y()) : -1;
+		int visibilityModule = event.button() == 0 && event.y() < height - FOOTER_HEIGHT
+			? findVisibilityButtonAt((int) event.x(), (int) event.y()) : -1;
+		boolean clickedSelectedHud = clickedModule >= 0 && clickedModule == selectedModule
+			&& visibilityModule < 0;
+		if (popover.isOpen() && !popover.contains(event.x(), event.y()) && !clickedSelectedHud) {
+			popover.close();
+		}
 		if (super.mouseClicked(event, doubleClick)) {
+			return true;
+		}
+		if (popover.mouseClicked(event.x(), event.y(), event.button())) {
+			dragging = false;
+			saveFailed = false;
 			return true;
 		}
 		if (event.button() != 0 || event.y() >= height - FOOTER_HEIGHT) {
 			return false;
 		}
 
-		int visibilityModule = findVisibilityButtonAt((int) event.x(), (int) event.y());
 		if (visibilityModule >= 0) {
 			HudModuleConfig<?> config = configAt(visibilityModule);
 			config.setEnabled(!config.enabled());
@@ -102,7 +125,11 @@ public final class HudLayoutEditorScreen extends Screen {
 			return true;
 		}
 
-		selectedModule = findModuleAt((int) event.x(), (int) event.y());
+		boolean selectionChanged = clickedModule != selectedModule;
+		selectedModule = clickedModule;
+		if (selectedModule >= 0 && event.hasShiftDown() && (selectionChanged || !popover.isOpen())) {
+			openSelectedPopover();
+		}
 		saveFailed = false;
 		if (selectedModule < 0) {
 			dragging = false;
@@ -116,11 +143,16 @@ public final class HudLayoutEditorScreen extends Screen {
 		dragging = true;
 		dragOffsetX = (int) event.x() - bounds.x();
 		dragOffsetY = (int) event.y() - bounds.y();
+		lastDragX = bounds.x();
+		lastDragY = bounds.y();
 		return true;
 	}
 
 	@Override
 	public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
+		if (popover.mouseDragged(event.x(), event.y())) {
+			return true;
+		}
 		if (!dragging || selectedModule < 0) {
 			return super.mouseDragged(event, dragX, dragY);
 		}
@@ -134,6 +166,11 @@ public final class HudLayoutEditorScreen extends Screen {
 		int requestedX = (int) event.x() - dragOffsetX;
 		int requestedY = Math.clamp((int) event.y() - dragOffsetY, 0,
 			Math.max(0, height - FOOTER_HEIGHT - bounds.height()));
+		int resolvedX = Math.clamp(requestedX, 0, Math.max(0, width - bounds.width()));
+		int resolvedY = Math.clamp(requestedY, 0, Math.max(0, height - bounds.height()));
+		popover.moveBy(resolvedX - lastDragX, resolvedY - lastDragY);
+		lastDragX = resolvedX;
+		lastDragY = resolvedY;
 		layoutEngine.applyDragOffset(config.getLayout(), bounds.width(), bounds.height(),
 			requestedX, requestedY, width, height);
 		return true;
@@ -141,11 +178,22 @@ public final class HudLayoutEditorScreen extends Screen {
 
 	@Override
 	public boolean mouseReleased(MouseButtonEvent event) {
+		if (popover.mouseReleased()) {
+			return true;
+		}
 		if (event.button() == 0 && dragging) {
 			dragging = false;
 			return true;
 		}
 		return super.mouseReleased(event);
+	}
+
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+		if (popover.mouseScrolled(mouseX, mouseY, scrollY)) {
+			return true;
+		}
+		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
 	}
 
 	@Override
@@ -200,6 +248,13 @@ public final class HudLayoutEditorScreen extends Screen {
 		return configAt(selectedModule);
 	}
 
+	private HudModuleEntry<?> selectedEntry() {
+		if (selectedModule < 0 || selectedModule >= registry.getEntries().size()) {
+			return null;
+		}
+		return registry.getEntries().get(selectedModule);
+	}
+
 	private HudModuleConfig<?> configAt(int index) {
 		HudModuleEntry<?> entry = registry.getEntries().get(index);
 		return session.getDraft().getRawConfig(entry.getModule().id());
@@ -216,6 +271,17 @@ public final class HudLayoutEditorScreen extends Screen {
 
 	private void resetDraft() {
 		session.resetToOpeningState();
+		popover.close();
 		saveFailed = false;
+	}
+
+	private void openSelectedPopover() {
+		HudModuleEntry<?> entry = selectedEntry();
+		HudModuleConfig<?> config = selectedConfig();
+		if (entry == null || config == null) {
+			popover.close();
+			return;
+		}
+		popover.open(entry.getModule().displayName(), entry.createPopoverControlsUntyped(config));
 	}
 }

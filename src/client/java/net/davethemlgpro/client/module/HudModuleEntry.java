@@ -5,10 +5,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import net.davethemlgpro.client.hud.HudBounds;
 import net.davethemlgpro.client.hud.HudSize;
+import net.davethemlgpro.client.screen.popover.HudPopoverControl;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -16,12 +18,19 @@ public class HudModuleEntry<C extends HudModuleConfig<C>> {
 	private HudModule<C> module;
 	private Class<C> configType;
 	private Supplier<C> defaults;
+	private HudModulePopoverFactory<C> popoverFactory;
 	private C config;
 
 	public HudModuleEntry(HudModule<C> module, Class<C> configType, Supplier<C> defaults) {
+		this(module, configType, defaults, null);
+	}
+
+	public HudModuleEntry(HudModule<C> module, Class<C> configType, Supplier<C> defaults,
+						  HudModulePopoverFactory<C> popoverFactory) {
 		this.module = module;
 		this.configType = configType;
 		this.defaults = defaults;
+		this.popoverFactory = popoverFactory;
 		this.config = newDefaultConfig();
 	}
 
@@ -43,6 +52,17 @@ public class HudModuleEntry<C extends HudModuleConfig<C>> {
 
 	public C copyConfig() {
 		return config.copy();
+	}
+
+	public boolean hasPopoverControls() {
+		return popoverFactory != null;
+	}
+
+	public List<HudPopoverControl> createPopoverControlsUntyped(HudModuleConfig<?> value) {
+		if (popoverFactory == null) {
+			return List.of();
+		}
+		return popoverFactory.create(configType.cast(value));
 	}
 
 	public C newDefaultConfig() {

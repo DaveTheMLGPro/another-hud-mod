@@ -7,6 +7,7 @@ import net.davethemlgpro.client.input.HudKeyMappings;
 import net.davethemlgpro.client.module.HudModuleRegistry;
 import net.davethemlgpro.client.module.armor.ArmorHudConfig;
 import net.davethemlgpro.client.module.armor.ArmorHudModule;
+import net.davethemlgpro.client.module.armor.ArmorHudPopover;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
@@ -18,7 +19,8 @@ public class AnotherHUDModClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		MODULES.register(new ArmorHudModule(), ArmorHudConfig.class, ArmorHudConfig::new);
+		MODULES.register(new ArmorHudModule(), ArmorHudConfig.class, ArmorHudConfig::new,
+			ArmorHudPopover::create);
 
 		configManager = HudConfigManager.createDefault(MODULES);
 		if (!configManager.load())

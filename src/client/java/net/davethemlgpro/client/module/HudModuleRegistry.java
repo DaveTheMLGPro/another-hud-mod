@@ -9,11 +9,16 @@ public class HudModuleRegistry {
 	private List<HudModuleEntry<?>> entries = List.of();
 
 	public <C extends HudModuleConfig<C>> HudModuleEntry<C> register(HudModule<C> module, Class<C> configType, Supplier<C> defaults) {
+		return register(module, configType, defaults, null);
+	}
+
+	public <C extends HudModuleConfig<C>> HudModuleEntry<C> register(HudModule<C> module, Class<C> configType,
+																	Supplier<C> defaults, HudModulePopoverFactory<C> popoverFactory) {
 		Identifier id = module.id();
 		if (modules.containsKey(id)) {
 			throw new IllegalArgumentException("Duplicate HUD module: " + id.toString());
 		}
-		HudModuleEntry<C> entry = new HudModuleEntry<>(module, configType, defaults);
+		HudModuleEntry<C> entry = new HudModuleEntry<>(module, configType, defaults, popoverFactory);
 		modules.put(id, entry);
 		entries = List.copyOf(modules.values());
 		return entry;
