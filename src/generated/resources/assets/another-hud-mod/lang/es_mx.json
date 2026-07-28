@@ -1,0 +1,9 @@
+{
+  "key.another-hud-mod.open_layout_editor": "Abrir el editor de diseños del HUD",
+  "key.category.another-hud-mod.general": "Another HUD Mod",
+  "module.another-hud-mod.armor": "HUD de armadura",
+  "screen.another-hud-mod.editor.instructions": "Arrastra los módulos para cambiar su posición.",
+  "screen.another-hud-mod.editor.reset": "Restablecer",
+  "screen.another-hud-mod.editor.save_failed": "No se han podido guardar los cambios.",
+  "screen.another-hud-mod.editor.title": "Editor de diseño de HUD"
+}

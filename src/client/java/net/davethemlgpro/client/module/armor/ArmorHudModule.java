@@ -4,6 +4,7 @@ import net.davethemlgpro.AnotherHUDMod;
 import net.davethemlgpro.client.hud.HudBounds;
 import net.davethemlgpro.client.hud.HudSize;
 import net.davethemlgpro.client.module.HudModule;
+import net.davethemlgpro.client.translation.TranslationKey;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -16,7 +17,7 @@ import org.joml.Matrix3x2fStack;
 public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 	public static final Identifier ID = AnotherHUDMod.id("armor");
 
-	private static final Component DISPLAY_NAME = Component.translatable("module.another-hud-mod.armor");
+	private static final Component DISPLAY_NAME = TranslationKey.MODULE_ARMOR.component();
 	private static final Identifier INVENTORY_SLOT_SPRITE = Identifier.withDefaultNamespace("container/slot");
 	private static final Identifier HOTBAR_SLOT_TEXTURE = AnotherHUDMod.id("textures/hotbar_icon.png");
 	private static final Identifier[] EMPTY_ARMOR_ICONS = {

@@ -1,0 +1,9 @@
+{
+  "key.another-hud-mod.open_layout_editor": "Ouvrir l'éditeur de disposition HUD",
+  "key.category.another-hud-mod.general": "Another HUD Mod",
+  "module.another-hud-mod.armor": "Interface d'affichage de l'armure",
+  "screen.another-hud-mod.editor.instructions": "Faites glisser les modules pour les repositionner.",
+  "screen.another-hud-mod.editor.reset": "Réinitialiser",
+  "screen.another-hud-mod.editor.save_failed": "Les modifications n'ont pas pu être enregistrées.",
+  "screen.another-hud-mod.editor.title": "Éditeur de mise en page HUD"
+}

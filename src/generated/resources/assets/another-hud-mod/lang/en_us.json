@@ -1,0 +1,9 @@
+{
+  "key.another-hud-mod.open_layout_editor": "Open HUD Layout Editor",
+  "key.category.another-hud-mod.general": "Another HUD Mod",
+  "module.another-hud-mod.armor": "Armor HUD",
+  "screen.another-hud-mod.editor.instructions": "Drag modules to reposition them.",
+  "screen.another-hud-mod.editor.reset": "Reset",
+  "screen.another-hud-mod.editor.save_failed": "Changes could not be saved.",
+  "screen.another-hud-mod.editor.title": "HUD Layout Editor"
+}

@@ -9,6 +9,7 @@ import net.davethemlgpro.client.hud.layout.HudLayoutEngine;
 import net.davethemlgpro.client.module.HudModuleConfig;
 import net.davethemlgpro.client.module.HudModuleEntry;
 import net.davethemlgpro.client.module.HudModuleRegistry;
+import net.davethemlgpro.client.translation.TranslationKey;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -19,10 +20,8 @@ import net.minecraft.network.chat.Component;
 public final class HudLayoutEditorScreen extends Screen {
 	private static final int FOOTER_HEIGHT = 36;
 	private static final int BUTTON_HEIGHT = 20;
-	private static final Component INSTRUCTIONS =
-		Component.translatable("screen.another-hud-mod.editor.instructions");
-	private static final Component SAVE_FAILED =
-		Component.translatable("screen.another-hud-mod.editor.save_failed");
+	private static final Component INSTRUCTIONS = TranslationKey.EDITOR_INSTRUCTIONS.component();
+	private static final Component SAVE_FAILED = TranslationKey.EDITOR_SAVE_FAILED.component();
 
 	private final Screen parent;
 	private final HudEditSession session;
@@ -39,7 +38,7 @@ public final class HudLayoutEditorScreen extends Screen {
 
 	public HudLayoutEditorScreen(Screen parent, HudEditSession session, HudModuleRegistry registry,
 								 HudRenderDispatcher renderDispatcher) {
-		super(Component.translatable("screen.another-hud-mod.editor.title"));
+		super(TranslationKey.EDITOR_TITLE.component());
 		this.parent = parent;
 		this.session = session;
 		this.registry = registry;
@@ -53,7 +52,7 @@ public final class HudLayoutEditorScreen extends Screen {
 			.bounds(width / 2 - 154, footerY, 100, BUTTON_HEIGHT).build());
 		addRenderableWidget(Button.builder(CommonComponents.GUI_CANCEL, button -> onClose())
 			.bounds(width / 2 - 50, footerY, 100, BUTTON_HEIGHT).build());
-		addRenderableWidget(Button.builder(Component.translatable("screen.another-hud-mod.editor.reset"),
+		addRenderableWidget(Button.builder(TranslationKey.EDITOR_RESET.component(),
 			button -> resetDraft()).bounds(width / 2 + 54, footerY, 100, BUTTON_HEIGHT).build());
 	}
 
