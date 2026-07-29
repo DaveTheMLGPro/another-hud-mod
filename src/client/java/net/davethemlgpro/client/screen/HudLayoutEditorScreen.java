@@ -29,7 +29,7 @@ public final class HudLayoutEditorScreen extends Screen {
 	private static final int SETTINGS_BUTTON_X = 6;
 	private static final int SETTINGS_BUTTON_Y = 6;
 	private static final int SETTINGS_BUTTON_SIZE = 20;
-	private static final Component SETTINGS_BUTTON_LABEL = Component.literal("\u2699");
+	private static final int SETTINGS_ICON_SIZE = 16;
 	private static final Component INSTRUCTIONS = TranslationKey.EDITOR_INSTRUCTIONS.component();
 	private static final Component SAVE_FAILED = TranslationKey.EDITOR_SAVE_FAILED.component();
 
@@ -61,10 +61,12 @@ public final class HudLayoutEditorScreen extends Screen {
 
 	@Override
 	protected void init() {
-		addRenderableWidget(Button.builder(SETTINGS_BUTTON_LABEL, button -> openGlobalSettings())
-			.bounds(SETTINGS_BUTTON_X, SETTINGS_BUTTON_Y, SETTINGS_BUTTON_SIZE, SETTINGS_BUTTON_SIZE)
-			.tooltip(Tooltip.create(TranslationKey.EDITOR_SETTINGS_OPEN.component()))
-			.build());
+		HudIconButton settingsButton = new HudIconButton(
+			SETTINGS_BUTTON_X, SETTINGS_BUTTON_Y, SETTINGS_BUTTON_SIZE, SETTINGS_BUTTON_SIZE,
+			TranslationKey.EDITOR_SETTINGS_OPEN.component(), button -> openGlobalSettings(),
+			AnotherHUDMod.id("textures/settings_icon.png"), SETTINGS_ICON_SIZE);
+		settingsButton.setTooltip(Tooltip.create(TranslationKey.EDITOR_SETTINGS_OPEN.component()));
+		addRenderableWidget(settingsButton);
 		int footerY = height - 28;
 		addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> saveAndClose())
 			.bounds(width / 2 - 154, footerY, 100, BUTTON_HEIGHT).build());
@@ -328,7 +330,8 @@ public final class HudLayoutEditorScreen extends Screen {
 		dragging = false;
 		globalSettingsOpen = true;
 		EditorConfig config = session.getDraft().getRawEditor();
-		popover.open(TranslationKey.EDITOR_SETTINGS_TITLE.component(), EditorGridSettingsPopover.create(config));
+		popover.openBelow(TranslationKey.EDITOR_SETTINGS_TITLE.component(),
+			EditorGridSettingsPopover.create(config));
 		saveFailed = false;
 	}
 

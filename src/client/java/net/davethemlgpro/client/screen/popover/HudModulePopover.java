@@ -20,6 +20,7 @@ public final class HudModulePopover implements HudPopoverContext {
 	private static final int TAB_HEIGHT = 22;
 	private static final int PADDING = 5;
 	private static final int PLACEMENT_GAP = 16;
+	private static final int CONTROL_PLACEMENT_GAP = 4;
 	private static final int SCREEN_MARGIN = 4;
 	private static final int EMPTY_BODY_HEIGHT = 28;
 	private static final int SCROLLBAR_WIDTH = 3;
@@ -42,6 +43,7 @@ public final class HudModulePopover implements HudPopoverContext {
 	private int visibleControlCount;
 	private boolean open;
 	private boolean positioned;
+	private boolean placeBelowAnchor;
 	private boolean dragging;
 	private boolean draggingScrollbar;
 	private int dragOffsetX;
@@ -51,10 +53,19 @@ public final class HudModulePopover implements HudPopoverContext {
 	private int editorBottom;
 
 	public void open(Component title, List<HudPopoverTab> tabs) {
+		open(title, tabs, false);
+	}
+
+	public void openBelow(Component title, List<HudPopoverTab> tabs) {
+		open(title, tabs, true);
+	}
+
+	private void open(Component title, List<HudPopoverTab> tabs, boolean placeBelowAnchor) {
 		releaseActiveControl();
 		colorPicker.finish();
 		this.title = title;
 		this.tabs = List.copyOf(tabs);
+		this.placeBelowAnchor = placeBelowAnchor;
 		for (HudPopoverTab tab : this.tabs) {
 			for (HudPopoverControl control : tab.controls()) {
 				control.onAdded(this);
@@ -77,6 +88,7 @@ public final class HudModulePopover implements HudPopoverContext {
 		scrollOffset = 0;
 		maxScroll = 0;
 		positioned = false;
+		placeBelowAnchor = false;
 		dragging = false;
 		draggingScrollbar = false;
 		open = false;
@@ -337,6 +349,14 @@ public final class HudModulePopover implements HudPopoverContext {
 			return;
 		}
 		positioned = true;
+
+		if (placeBelowAnchor) {
+			x = Math.clamp(moduleBounds.x(), SCREEN_MARGIN,
+				Math.max(SCREEN_MARGIN, screenWidth - SCREEN_MARGIN - width));
+			y = Math.clamp(moduleBounds.bottom() + CONTROL_PLACEMENT_GAP, editorTop,
+				Math.max(editorTop, editorBottom - height));
+			return;
+		}
 
 		int rightX = moduleBounds.right() + PLACEMENT_GAP;
 		if (rightX + width <= screenWidth - SCREEN_MARGIN) {
