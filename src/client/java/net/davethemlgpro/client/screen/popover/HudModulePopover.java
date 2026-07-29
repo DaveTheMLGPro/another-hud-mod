@@ -5,11 +5,16 @@ import net.davethemlgpro.client.hud.HudBounds;
 import net.davethemlgpro.client.translation.TranslationKey;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
+import java.util.function.IntConsumer;
+import java.util.function.IntSupplier;
 
-public final class HudModulePopover {
+public final class HudModulePopover implements HudPopoverContext {
 	private static final int WIDTH = 196;
 	private static final int HEADER_HEIGHT = 22;
 	private static final int TAB_HEIGHT = 22;
@@ -21,6 +26,7 @@ public final class HudModulePopover {
 	private static final int CLOSE_BUTTON_WIDTH = 20;
 	private static final Component CLOSE_LABEL = Component.literal("X");
 
+	private final HudColorPicker colorPicker = new HudColorPicker();
 	private Component title = Component.empty();
 	private List<HudPopoverTab> tabs = List.of();
 	private int selectedTab;
@@ -46,8 +52,14 @@ public final class HudModulePopover {
 
 	public void open(Component title, List<HudPopoverTab> tabs) {
 		releaseActiveControl();
+		colorPicker.finish();
 		this.title = title;
 		this.tabs = List.copyOf(tabs);
+		for (HudPopoverTab tab : this.tabs) {
+			for (HudPopoverControl control : tab.controls()) {
+				control.onAdded(this);
+			}
+		}
 		selectedTab = 0;
 		scrollOffset = 0;
 		positioned = false;
@@ -58,6 +70,7 @@ public final class HudModulePopover {
 
 	public void close() {
 		releaseActiveControl();
+		colorPicker.finish();
 		tabs = List.of();
 		selectedTab = 0;
 		hoveredControl = -1;
@@ -136,9 +149,19 @@ public final class HudModulePopover {
 				graphics.setTooltipForNextFrame(font, description, mouseX, mouseY);
 			}
 		}
+		colorPicker.render(graphics, font, mouseX, mouseY, x, y, width, screenWidth, editorBottom);
 	}
 
-	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+		double mouseX = event.x();
+		double mouseY = event.y();
+		int button = event.button();
+		if (colorPicker.mouseClicked(event, doubleClick)) {
+			return true;
+		}
+		if (colorPicker.isOpen()) {
+			colorPicker.finish();
+		}
 		if (!open || !contains(mouseX, mouseY, x, y, width, height)) {
 			return false;
 		}
@@ -191,7 +214,12 @@ public final class HudModulePopover {
 		return true;
 	}
 
-	public boolean mouseDragged(double mouseX, double mouseY) {
+	public boolean mouseDragged(MouseButtonEvent event) {
+		double mouseX = event.x();
+		double mouseY = event.y();
+		if (colorPicker.mouseDragged(event)) {
+			return true;
+		}
 		if (open && draggingScrollbar) {
 			setScrollFromMouse(mouseY, y + HEADER_HEIGHT + tabBarHeight(), y + height - PADDING);
 			return true;
@@ -223,6 +251,9 @@ public final class HudModulePopover {
 	}
 
 	public boolean mouseReleased() {
+		if (colorPicker.mouseReleased()) {
+			return true;
+		}
 		if (draggingScrollbar) {
 			draggingScrollbar = false;
 			return true;
@@ -248,7 +279,21 @@ public final class HudModulePopover {
 	}
 
 	public boolean contains(double mouseX, double mouseY) {
-		return open && contains(mouseX, mouseY, x, y, width, height);
+		return open && (contains(mouseX, mouseY, x, y, width, height)
+			|| colorPicker.contains(mouseX, mouseY));
+	}
+
+	public boolean keyPressed(KeyEvent event) {
+		return colorPicker.keyPressed(event);
+	}
+
+	public boolean charTyped(CharacterEvent event) {
+		return colorPicker.charTyped(event);
+	}
+
+	@Override
+	public void openColorPicker(Component title, IntSupplier getter, IntConsumer setter) {
+		colorPicker.open(title, getter, setter);
 	}
 
 	public void moveBy(int deltaX, int deltaY) {
@@ -369,6 +414,7 @@ public final class HudModulePopover {
 			return;
 		}
 		releaseActiveControl();
+		colorPicker.finish();
 		selectedTab = index;
 		scrollOffset = 0;
 		maxScroll = 0;

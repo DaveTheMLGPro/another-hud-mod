@@ -1,6 +1,7 @@
 package net.davethemlgpro.client.module.armor;
 
 import net.davethemlgpro.client.screen.popover.HudConditionalControl;
+import net.davethemlgpro.client.screen.popover.HudColorControl;
 import net.davethemlgpro.client.screen.popover.HudCycleControl;
 import net.davethemlgpro.client.screen.popover.HudPopoverControl;
 import net.davethemlgpro.client.screen.popover.HudPopoverTab;
@@ -11,6 +12,9 @@ import net.davethemlgpro.client.translation.TranslationKey;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
+import java.util.function.BooleanSupplier;
+import java.util.function.IntConsumer;
+import java.util.function.IntSupplier;
 
 public final class ArmorHudPopover {
 	private ArmorHudPopover() {
@@ -59,7 +63,20 @@ public final class ArmorHudPopover {
 				TranslationKey.SETTINGS_ARMOR_DURABILITY_BAR_VISIBLE_DESCRIPTION.component(),
 				config::isDurabilityBarVisible, config::setDurabilityBarVisible),
 			durabilityBarHeight(config),
-			durabilityBarPadding(config)
+			durabilityBarPadding(config),
+			conditionalSection(TranslationKey.SETTINGS_SECTION_COLORS, config::isDurabilityBarVisible),
+			durabilityBarColor(config, TranslationKey.SETTINGS_ARMOR_DURABILITY_BAR_BACKGROUND_COLOR,
+				TranslationKey.SETTINGS_ARMOR_DURABILITY_BAR_BACKGROUND_COLOR_DESCRIPTION, config::getDurabilityBackgroundColor,
+				config::setDurabilityBackgroundColor, ArmorHudConfig.DEFAULT_DURABILITY_BACKGROUND_COLOR),
+			durabilityBarColor(config, TranslationKey.SETTINGS_ARMOR_DURABILITY_BAR_HEALTHY_COLOR,
+				TranslationKey.SETTINGS_ARMOR_DURABILITY_BAR_HEALTHY_COLOR_DESCRIPTION, config::getDurabilityHealthyColor,
+				config::setDurabilityHealthyColor, ArmorHudConfig.DEFAULT_DURABILITY_HEALTHY_COLOR),
+			durabilityBarColor(config, TranslationKey.SETTINGS_ARMOR_DURABILITY_BAR_WARNING_COLOR,
+				TranslationKey.SETTINGS_ARMOR_DURABILITY_BAR_WARNING_COLOR_DESCRIPTION, config::getDurabilityWarningColor,
+				config::setDurabilityWarningColor, ArmorHudConfig.DEFAULT_DURABILITY_WARNING_COLOR),
+			durabilityBarColor(config, TranslationKey.SETTINGS_ARMOR_DURABILITY_BAR_CRITICAL_COLOR,
+				TranslationKey.SETTINGS_ARMOR_DURABILITY_BAR_CRITICAL_COLOR_DESCRIPTION, config::getDurabilityCriticalColor,
+				config::setDurabilityCriticalColor, ArmorHudConfig.DEFAULT_DURABILITY_CRITICAL_COLOR)
 		);
 	}
 
@@ -73,12 +90,25 @@ public final class ArmorHudPopover {
 			durabilityTextScale(config),
 			durabilityTextShadow(config),
 			colorBasedDurabilityText(config),
+			conditionalSection(TranslationKey.SETTINGS_SECTION_COLORS,
+				() -> config.getDurabilityMode() != ArmorHudDurabilityMode.NONE),
+			fixedDurabilityTextColor(config),
+			durabilityTextColor(config, TranslationKey.SETTINGS_ARMOR_DURABILITY_TEXT_HEALTHY_COLOR,
+				TranslationKey.SETTINGS_ARMOR_DURABILITY_TEXT_HEALTHY_COLOR_DESCRIPTION, config::getTextHealthyColor,
+				config::setTextHealthyColor, ArmorHudConfig.DEFAULT_TEXT_HEALTHY_COLOR),
+			durabilityTextColor(config, TranslationKey.SETTINGS_ARMOR_DURABILITY_TEXT_WARNING_COLOR,
+				TranslationKey.SETTINGS_ARMOR_DURABILITY_TEXT_WARNING_COLOR_DESCRIPTION, config::getTextWarningColor,
+				config::setTextWarningColor, ArmorHudConfig.DEFAULT_TEXT_WARNING_COLOR),
+			durabilityTextColor(config, TranslationKey.SETTINGS_ARMOR_DURABILITY_TEXT_CRITICAL_COLOR,
+				TranslationKey.SETTINGS_ARMOR_DURABILITY_TEXT_CRITICAL_COLOR_DESCRIPTION, config::getTextCriticalColor,
+				config::setTextCriticalColor, ArmorHudConfig.DEFAULT_TEXT_CRITICAL_COLOR),
 			new HudSectionControl(TranslationKey.SETTINGS_SECTION_LOW_DURABILITY_WARNING.component()),
 			new HudToggleControl(TranslationKey.SETTINGS_ARMOR_LOW_DURABILITY_WARNING_VISIBLE.component(),
 				TranslationKey.SETTINGS_ARMOR_LOW_DURABILITY_WARNING_VISIBLE_DESCRIPTION.component(),
 				config::isLowDurabilityWarningEnabled, config::setLowDurabilityWarningEnabled),
 			lowDurabilityThreshold(config),
-			lowDurabilityWarningStyle(config)
+			lowDurabilityWarningStyle(config),
+			lowDurabilityWarningColor(config)
 		);
 	}
 
@@ -132,6 +162,18 @@ public final class ArmorHudPopover {
 		return new HudConditionalControl(control, config::isDurabilityBarVisible);
 	}
 
+	private static HudPopoverControl conditionalSection(TranslationKey title, BooleanSupplier visible) {
+		return new HudConditionalControl(new HudSectionControl(title.component()), visible);
+	}
+
+	private static HudPopoverControl durabilityBarColor(ArmorHudConfig config, TranslationKey label,
+														TranslationKey description, IntSupplier getter,
+														IntConsumer setter, int defaultColor) {
+		HudColorControl control = new HudColorControl(label.component(), description.component(), getter, setter,
+			defaultColor);
+		return new HudConditionalControl(control, config::isDurabilityBarVisible);
+	}
+
 	private static HudPopoverControl durabilityBarPadding(ArmorHudConfig config) {
 		HudSliderControl control = new HudSliderControl(TranslationKey.SETTINGS_ARMOR_DURABILITY_BAR_PADDING.component(),
 			TranslationKey.SETTINGS_ARMOR_DURABILITY_BAR_PADDING_DESCRIPTION.component(), 0.0,
@@ -175,6 +217,24 @@ public final class ArmorHudPopover {
 		return new HudConditionalControl(control, () -> config.getDurabilityMode() != ArmorHudDurabilityMode.NONE);
 	}
 
+	private static HudPopoverControl fixedDurabilityTextColor(ArmorHudConfig config) {
+		HudColorControl control = new HudColorControl(TranslationKey.SETTINGS_ARMOR_DURABILITY_TEXT_COLOR.component(),
+			TranslationKey.SETTINGS_ARMOR_DURABILITY_TEXT_COLOR_DESCRIPTION.component(),
+			config::getDurabilityTextColor, config::setDurabilityTextColor,
+			ArmorHudConfig.DEFAULT_DURABILITY_TEXT_COLOR);
+		return new HudConditionalControl(control, () -> config.getDurabilityMode() != ArmorHudDurabilityMode.NONE
+			&& !config.isColorBasedDurabilityText());
+	}
+
+	private static HudPopoverControl durabilityTextColor(ArmorHudConfig config, TranslationKey label,
+														 TranslationKey description, IntSupplier getter,
+														 IntConsumer setter, int defaultColor) {
+		HudColorControl control = new HudColorControl(label.component(), description.component(), getter, setter,
+			defaultColor);
+		return new HudConditionalControl(control, () -> config.getDurabilityMode() != ArmorHudDurabilityMode.NONE
+			&& config.isColorBasedDurabilityText());
+	}
+
 	private static HudPopoverControl lowDurabilityThreshold(ArmorHudConfig config) {
 		HudSliderControl control = new HudSliderControl(
 			TranslationKey.SETTINGS_ARMOR_LOW_DURABILITY_THRESHOLD.component(),
@@ -193,6 +253,15 @@ public final class ArmorHudPopover {
 			TranslationKey.SETTINGS_ARMOR_LOW_DURABILITY_WARNING_STYLE_DESCRIPTION.component(),
 			List.of(ArmorHudWarningStyle.values()), config::getWarningStyle, config::setWarningStyle,
 			ArmorHudPopover::warningStyleName);
+		return new HudConditionalControl(control, config::isLowDurabilityWarningEnabled);
+	}
+
+	private static HudPopoverControl lowDurabilityWarningColor(ArmorHudConfig config) {
+		HudColorControl control = new HudColorControl(
+			TranslationKey.SETTINGS_ARMOR_LOW_DURABILITY_WARNING_COLOR.component(),
+			TranslationKey.SETTINGS_ARMOR_LOW_DURABILITY_WARNING_COLOR_DESCRIPTION.component(),
+			config::getLowDurabilityWarningColor, config::setLowDurabilityWarningColor,
+			ArmorHudConfig.DEFAULT_LOW_DURABILITY_WARNING_COLOR);
 		return new HudConditionalControl(control, config::isLowDurabilityWarningEnabled);
 	}
 

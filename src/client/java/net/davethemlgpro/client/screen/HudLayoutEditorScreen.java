@@ -14,6 +14,8 @@ import net.davethemlgpro.client.translation.TranslationKey;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -107,7 +109,7 @@ public final class HudLayoutEditorScreen extends Screen {
 		if (super.mouseClicked(event, doubleClick)) {
 			return true;
 		}
-		if (popover.mouseClicked(event.x(), event.y(), event.button())) {
+		if (popover.mouseClicked(event, doubleClick)) {
 			dragging = false;
 			saveFailed = false;
 			return true;
@@ -150,7 +152,7 @@ public final class HudLayoutEditorScreen extends Screen {
 
 	@Override
 	public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
-		if (popover.mouseDragged(event.x(), event.y())) {
+		if (popover.mouseDragged(event)) {
 			return true;
 		}
 		if (!dragging || selectedModule < 0) {
@@ -194,6 +196,22 @@ public final class HudLayoutEditorScreen extends Screen {
 			return true;
 		}
 		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+	}
+
+	@Override
+	public boolean keyPressed(KeyEvent event) {
+		if (popover.keyPressed(event)) {
+			return true;
+		}
+		return super.keyPressed(event);
+	}
+
+	@Override
+	public boolean charTyped(CharacterEvent event) {
+		if (popover.charTyped(event)) {
+			return true;
+		}
+		return super.charTyped(event);
 	}
 
 	@Override

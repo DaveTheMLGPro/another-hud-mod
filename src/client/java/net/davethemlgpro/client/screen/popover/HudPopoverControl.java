@@ -9,6 +9,9 @@ public interface HudPopoverControl {
 
 	Component description();
 
+	default void onAdded(HudPopoverContext context) {
+	}
+
 	default boolean visible() {
 		return true;
 	}

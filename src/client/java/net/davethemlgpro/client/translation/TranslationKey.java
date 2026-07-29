@@ -18,6 +18,7 @@ public enum TranslationKey {
 	SETTINGS_SECTION_DURABILITY_BAR("screen.another-hud-mod.settings.section.durability_bar"),
 	SETTINGS_SECTION_DURABILITY_TEXT("screen.another-hud-mod.settings.section.durability_text"),
 	SETTINGS_SECTION_LOW_DURABILITY_WARNING("screen.another-hud-mod.settings.section.low_durability_warning"),
+	SETTINGS_SECTION_COLORS("screen.another-hud-mod.settings.section.colors"),
 	SETTINGS_ARMOR_ORIENTATION("screen.another-hud-mod.settings.armor.orientation"),
 	SETTINGS_ARMOR_ORIENTATION_DESCRIPTION("screen.another-hud-mod.settings.armor.orientation.description"),
 	SETTINGS_ARMOR_SCALE("screen.another-hud-mod.settings.armor.scale"),
@@ -39,6 +40,22 @@ public enum TranslationKey {
 	SETTINGS_ARMOR_DURABILITY_BAR_PADDING("screen.another-hud-mod.settings.armor.durability_bar.padding"),
 	SETTINGS_ARMOR_DURABILITY_BAR_PADDING_DESCRIPTION(
 		"screen.another-hud-mod.settings.armor.durability_bar.padding.description"),
+	SETTINGS_ARMOR_DURABILITY_BAR_BACKGROUND_COLOR(
+		"screen.another-hud-mod.settings.armor.durability_bar.background_color"),
+	SETTINGS_ARMOR_DURABILITY_BAR_BACKGROUND_COLOR_DESCRIPTION(
+		"screen.another-hud-mod.settings.armor.durability_bar.background_color.description"),
+	SETTINGS_ARMOR_DURABILITY_BAR_HEALTHY_COLOR(
+		"screen.another-hud-mod.settings.armor.durability_bar.healthy_color"),
+	SETTINGS_ARMOR_DURABILITY_BAR_HEALTHY_COLOR_DESCRIPTION(
+		"screen.another-hud-mod.settings.armor.durability_bar.healthy_color.description"),
+	SETTINGS_ARMOR_DURABILITY_BAR_WARNING_COLOR(
+		"screen.another-hud-mod.settings.armor.durability_bar.warning_color"),
+	SETTINGS_ARMOR_DURABILITY_BAR_WARNING_COLOR_DESCRIPTION(
+		"screen.another-hud-mod.settings.armor.durability_bar.warning_color.description"),
+	SETTINGS_ARMOR_DURABILITY_BAR_CRITICAL_COLOR(
+		"screen.another-hud-mod.settings.armor.durability_bar.critical_color"),
+	SETTINGS_ARMOR_DURABILITY_BAR_CRITICAL_COLOR_DESCRIPTION(
+		"screen.another-hud-mod.settings.armor.durability_bar.critical_color.description"),
 	SETTINGS_ARMOR_DURABILITY_MODE("screen.another-hud-mod.settings.armor.durability_text.mode"),
 	SETTINGS_ARMOR_DURABILITY_MODE_DESCRIPTION(
 		"screen.another-hud-mod.settings.armor.durability_text.mode.description"),
@@ -55,6 +72,22 @@ public enum TranslationKey {
 		"screen.another-hud-mod.settings.armor.durability_text.color_based"),
 	SETTINGS_ARMOR_COLOR_BASED_DURABILITY_TEXT_DESCRIPTION(
 		"screen.another-hud-mod.settings.armor.durability_text.color_based.description"),
+	SETTINGS_ARMOR_DURABILITY_TEXT_COLOR(
+		"screen.another-hud-mod.settings.armor.durability_text.color"),
+	SETTINGS_ARMOR_DURABILITY_TEXT_COLOR_DESCRIPTION(
+		"screen.another-hud-mod.settings.armor.durability_text.color.description"),
+	SETTINGS_ARMOR_DURABILITY_TEXT_HEALTHY_COLOR(
+		"screen.another-hud-mod.settings.armor.durability_text.healthy_color"),
+	SETTINGS_ARMOR_DURABILITY_TEXT_HEALTHY_COLOR_DESCRIPTION(
+		"screen.another-hud-mod.settings.armor.durability_text.healthy_color.description"),
+	SETTINGS_ARMOR_DURABILITY_TEXT_WARNING_COLOR(
+		"screen.another-hud-mod.settings.armor.durability_text.warning_color"),
+	SETTINGS_ARMOR_DURABILITY_TEXT_WARNING_COLOR_DESCRIPTION(
+		"screen.another-hud-mod.settings.armor.durability_text.warning_color.description"),
+	SETTINGS_ARMOR_DURABILITY_TEXT_CRITICAL_COLOR(
+		"screen.another-hud-mod.settings.armor.durability_text.critical_color"),
+	SETTINGS_ARMOR_DURABILITY_TEXT_CRITICAL_COLOR_DESCRIPTION(
+		"screen.another-hud-mod.settings.armor.durability_text.critical_color.description"),
 	SETTINGS_ARMOR_LOW_DURABILITY_WARNING_VISIBLE(
 		"screen.another-hud-mod.settings.armor.low_durability_warning.visible"),
 	SETTINGS_ARMOR_LOW_DURABILITY_WARNING_VISIBLE_DESCRIPTION(
@@ -67,6 +100,12 @@ public enum TranslationKey {
 		"screen.another-hud-mod.settings.armor.low_durability_warning.style"),
 	SETTINGS_ARMOR_LOW_DURABILITY_WARNING_STYLE_DESCRIPTION(
 		"screen.another-hud-mod.settings.armor.low_durability_warning.style.description"),
+	SETTINGS_ARMOR_LOW_DURABILITY_WARNING_COLOR(
+		"screen.another-hud-mod.settings.armor.low_durability_warning.color"),
+	SETTINGS_ARMOR_LOW_DURABILITY_WARNING_COLOR_DESCRIPTION(
+		"screen.another-hud-mod.settings.armor.low_durability_warning.color.description"),
+	COLOR_PICKER_ALPHA("screen.another-hud-mod.color_picker.alpha"),
+	COLOR_PICKER_INPUT("screen.another-hud-mod.color_picker.input"),
 	SETTINGS_VALUE_HORIZONTAL("screen.another-hud-mod.settings.value.horizontal"),
 	SETTINGS_VALUE_VERTICAL("screen.another-hud-mod.settings.value.vertical"),
 	SETTINGS_VALUE_CLEAR("screen.another-hud-mod.settings.value.clear"),

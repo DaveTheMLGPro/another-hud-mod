@@ -21,6 +21,11 @@ public final class HudConditionalControl implements HudPopoverControl {
 	}
 
 	@Override
+	public void onAdded(HudPopoverContext context) {
+		control.onAdded(context);
+	}
+
+	@Override
 	public boolean visible() {
 		return visible.getAsBoolean();
 	}

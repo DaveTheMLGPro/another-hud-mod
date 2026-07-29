@@ -16,6 +16,15 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 	public static final float MAX_DURABILITY_TEXT_SCALE = 0.75F;
 	public static final int MIN_LOW_DURABILITY_THRESHOLD_PERCENT = 1;
 	public static final int MAX_LOW_DURABILITY_THRESHOLD_PERCENT = 100;
+	public static final int DEFAULT_DURABILITY_BACKGROUND_COLOR = 0xFF000000;
+	public static final int DEFAULT_DURABILITY_HEALTHY_COLOR = 0xFF00FF00;
+	public static final int DEFAULT_DURABILITY_WARNING_COLOR = 0xFFFFFF00;
+	public static final int DEFAULT_DURABILITY_CRITICAL_COLOR = 0xFFFF0000;
+	public static final int DEFAULT_DURABILITY_TEXT_COLOR = 0xFFFFFFFF;
+	public static final int DEFAULT_TEXT_HEALTHY_COLOR = 0xFF00FF00;
+	public static final int DEFAULT_TEXT_WARNING_COLOR = 0xFFFFFF00;
+	public static final int DEFAULT_TEXT_CRITICAL_COLOR = 0xFFFF0000;
+	public static final int DEFAULT_LOW_DURABILITY_WARNING_COLOR = 0xFFFF3333;
 
 	private boolean enabled = true;
 	private ModuleLayout layout = new ModuleLayout(HudAnchor.CENTER_RIGHT, -8, 0);
@@ -29,25 +38,25 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 	private boolean durabilityBarVisible = true;
 	private int durabilityBarHeight = 2;
 	private float durabilityBarHorizontalPadding = 2.0F;
-	private int durabilityBackgroundColor = 0xFF000000;
-	private int durabilityHealthyColor = 0xFF00FF00;
-	private int durabilityWarningColor = 0xFFFFFF00;
-	private int durabilityCriticalColor = 0xFFFF0000;
+	private int durabilityBackgroundColor = DEFAULT_DURABILITY_BACKGROUND_COLOR;
+	private int durabilityHealthyColor = DEFAULT_DURABILITY_HEALTHY_COLOR;
+	private int durabilityWarningColor = DEFAULT_DURABILITY_WARNING_COLOR;
+	private int durabilityCriticalColor = DEFAULT_DURABILITY_CRITICAL_COLOR;
 
 	private ArmorHudDurabilityMode durabilityMode = ArmorHudDurabilityMode.PERCENT;
 	private ArmorHudTextPosition textPosition = ArmorHudTextPosition.BOTTOM;
 	private float durabilityTextScale = 0.5F;
 	private boolean durabilityTextShadow = true;
-	private int durabilityTextColor = 0xFFFFFFFF;
+	private int durabilityTextColor = DEFAULT_DURABILITY_TEXT_COLOR;
 	private boolean colorBasedDurabilityText = true;
-	private int textHealthyColor = 0xFF00FF00;
-	private int textWarningColor = 0xFFFFFF00;
-	private int textCriticalColor = 0xFFFF0000;
+	private int textHealthyColor = DEFAULT_TEXT_HEALTHY_COLOR;
+	private int textWarningColor = DEFAULT_TEXT_WARNING_COLOR;
+	private int textCriticalColor = DEFAULT_TEXT_CRITICAL_COLOR;
 
 	private boolean lowDurabilityWarningEnabled = true;
 	private int lowDurabilityThresholdPercent = 20;
 	private ArmorHudWarningStyle warningStyle = ArmorHudWarningStyle.PULSE;
-	private int lowDurabilityWarningColor = 0xFFFF3333;
+	private int lowDurabilityWarningColor = DEFAULT_LOW_DURABILITY_WARNING_COLOR;
 
 	public ArmorHudConfig() {
 	}
