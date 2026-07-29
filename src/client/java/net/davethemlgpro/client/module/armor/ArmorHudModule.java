@@ -3,6 +3,7 @@ package net.davethemlgpro.client.module.armor;
 import net.davethemlgpro.AnotherHUDMod;
 import net.davethemlgpro.client.hud.HudBounds;
 import net.davethemlgpro.client.hud.HudSize;
+import net.davethemlgpro.client.hud.layout.ModuleLayout;
 import net.davethemlgpro.client.module.HudModule;
 import net.davethemlgpro.client.translation.TranslationKey;
 import net.minecraft.client.DeltaTracker;
@@ -69,6 +70,73 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 		return measure(minecraft, config, true);
 	}
 
+	@Override
+	public int elementCount(ArmorHudConfig config) {
+		return config.getLayoutMode() == ArmorHudLayoutMode.INDIVIDUAL
+			? ArmorHudLayout.getSlotCount() : 1;
+	}
+
+	@Override
+	public ModuleLayout elementLayout(ArmorHudConfig config, int elementIndex) {
+		if (config.getLayoutMode() == ArmorHudLayoutMode.GROUPED) {
+			if (elementIndex != 0) {
+				throw new IndexOutOfBoundsException("Grouped Armor HUD has no element " + elementIndex);
+			}
+			return config.getLayout();
+		}
+		return config.getIndividualLayout(elementIndex);
+	}
+
+	@Override
+	public boolean elementVisible(ArmorHudConfig config, int elementIndex) {
+		if (config.getLayoutMode() == ArmorHudLayoutMode.GROUPED) {
+			if (elementIndex != 0) {
+				throw new IndexOutOfBoundsException("Grouped Armor HUD has no element " + elementIndex);
+			}
+			return config.enabled();
+		}
+		return config.isIndividualSlotVisible(elementIndex);
+	}
+
+	@Override
+	public void setElementVisible(ArmorHudConfig config, int elementIndex, boolean visible) {
+		if (config.getLayoutMode() == ArmorHudLayoutMode.GROUPED) {
+			if (elementIndex != 0) {
+				throw new IndexOutOfBoundsException("Grouped Armor HUD has no element " + elementIndex);
+			}
+			config.setEnabled(visible);
+			return;
+		}
+		config.setIndividualSlotVisible(elementIndex, visible);
+	}
+
+	@Override
+	public HudSize measureElement(Minecraft minecraft, ArmorHudConfig config, int elementIndex,
+								  boolean editorPreview) {
+		if (config.getLayoutMode() == ArmorHudLayoutMode.GROUPED) {
+			if (elementIndex != 0) {
+				throw new IndexOutOfBoundsException("Grouped Armor HUD has no element " + elementIndex);
+			}
+			return measure(minecraft, config, editorPreview);
+		}
+		measure(minecraft, config, editorPreview);
+		return layout.getIndividualSize(elementIndex);
+	}
+
+	@Override
+	public void renderElement(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, Minecraft minecraft,
+							  ArmorHudConfig config, int elementIndex, HudBounds bounds,
+							  boolean editorPreview) {
+		if (config.getLayoutMode() == ArmorHudLayoutMode.GROUPED) {
+			if (elementIndex != 0) {
+				throw new IndexOutOfBoundsException("Grouped Armor HUD has no element " + elementIndex);
+			}
+			renderSlots(graphics, minecraft, config, bounds, -1);
+			return;
+		}
+		renderSlots(graphics, minecraft, config, bounds, elementIndex);
+	}
+
 	private HudSize measure(Minecraft minecraft, ArmorHudConfig config, boolean editorPreview) {
 		if (!isLayoutCacheValid(minecraft, config, editorPreview)) {
 			HudSize size = layout.recalculate(minecraft, config, editorPreview);
@@ -80,20 +148,30 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 
 	@Override
 	public void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, Minecraft minecraft, ArmorHudConfig config, HudBounds bounds) {
+		renderSlots(graphics, minecraft, config, bounds, -1);
+	}
+
+	private void renderSlots(GuiGraphicsExtractor graphics, Minecraft minecraft, ArmorHudConfig config,
+							 HudBounds bounds, int individualSlot) {
 		if (minecraft.player == null || bounds.width() == 0 || bounds.height() == 0) {
 			return;
 		}
 
 		float warningOpacity = -1.0F;
 		for (int i = 0; i < ArmorHudLayout.getSlotCount(); i++) {
+			if (individualSlot >= 0 && i != individualSlot) {
+				continue;
+			}
 			ArmorHudSlotLayout slot = layout.getSlot(i);
 			if (!slot.isVisible()) {
 				continue;
 			}
 
 			ItemStack stack = minecraft.player.getItemBySlot(ArmorHudLayout.getEquipmentSlot(i));
-			int itemX = bounds.x() + slot.getItemX();
-			int itemY = bounds.y() + slot.getItemY();
+			HudBounds renderBounds = individualSlot < 0 ? bounds : bounds.translate(
+				-layout.getGroupedEntryOffsetX(i), -layout.getGroupedEntryOffsetY(i));
+			int itemX = renderBounds.x() + slot.getItemX();
+			int itemY = renderBounds.y() + slot.getItemY();
 			drawSlotBackground(graphics, itemX, itemY, slot.getItemSize(), config);
 			if (stack.isEmpty()) {
 				drawScaledEmptyArmorIcon(graphics, i, itemX, itemY, config.getScale());
@@ -111,7 +189,7 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 				drawLowDurabilityWarning(graphics, itemX, itemY, slot.getItemSize(),
 					config.getLowDurabilityWarningColor(), warningOpacity);
 			}
-			drawDurabilityText(graphics, minecraft, stack, slot, bounds, config);
+			drawDurabilityText(graphics, minecraft, stack, slot, renderBounds, config);
 		}
 	}
 

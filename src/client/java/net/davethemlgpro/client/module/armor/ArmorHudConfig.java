@@ -5,6 +5,7 @@ import net.davethemlgpro.client.hud.layout.ModuleLayout;
 import net.davethemlgpro.client.module.HudModuleConfig;
 
 public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
+	public static final int ARMOR_SLOT_COUNT = 4;
 	public static final float MIN_SCALE = 0.75F;
 	public static final float MAX_SCALE = 3.0F;
 	public static final int MIN_SPACING = 0;
@@ -28,6 +29,9 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 
 	private boolean enabled = true;
 	private ModuleLayout layout = new ModuleLayout(HudAnchor.CENTER_RIGHT, -8, 0);
+	private ArmorHudLayoutMode layoutMode = ArmorHudLayoutMode.GROUPED;
+	private ModuleLayout[] individualLayouts = createDefaultIndividualLayouts();
+	private boolean[] individualSlotVisible = createDefaultIndividualSlotVisibility();
 	private ArmorHudOrientation orientation = ArmorHudOrientation.VERTICAL;
 	private int spacing = 2;
 	private float scale = 1.0F;
@@ -88,6 +92,9 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 		enabled = source.enabled;
 		layout = new ModuleLayout();
 		layout.copyFrom(source.layout);
+		layoutMode = source.layoutMode;
+		individualLayouts = copyIndividualLayouts(source.individualLayouts);
+		individualSlotVisible = copyIndividualSlotVisibility(source.individualSlotVisible);
 		orientation = source.orientation;
 		spacing = source.spacing;
 		scale = source.scale;
@@ -123,6 +130,11 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 			layout = new ModuleLayout(HudAnchor.CENTER_RIGHT, -8, 0);
 		}
 		layout.validate();
+		if (layoutMode == null) {
+			layoutMode = ArmorHudLayoutMode.GROUPED;
+		}
+		individualLayouts = validatedIndividualLayouts(individualLayouts);
+		individualSlotVisible = copyIndividualSlotVisibility(individualSlotVisible);
 		if (orientation == null) {
 			orientation = ArmorHudOrientation.VERTICAL;
 		}
@@ -155,6 +167,29 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 
 	public void setOrientation(ArmorHudOrientation orientation) {
 		this.orientation = orientation == null ? ArmorHudOrientation.VERTICAL : orientation;
+	}
+
+	public ArmorHudLayoutMode getLayoutMode() {
+		return layoutMode;
+	}
+
+	public void setLayoutMode(ArmorHudLayoutMode layoutMode) {
+		this.layoutMode = layoutMode == null ? ArmorHudLayoutMode.GROUPED : layoutMode;
+	}
+
+	public ModuleLayout getIndividualLayout(int slotIndex) {
+		requireArmorSlot(slotIndex);
+		return individualLayouts[slotIndex];
+	}
+
+	public boolean isIndividualSlotVisible(int slotIndex) {
+		requireArmorSlot(slotIndex);
+		return individualSlotVisible[slotIndex];
+	}
+
+	public void setIndividualSlotVisible(int slotIndex, boolean visible) {
+		requireArmorSlot(slotIndex);
+		individualSlotVisible[slotIndex] = visible;
 	}
 
 	public int getSpacing() {
@@ -358,5 +393,53 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 
 	public void setLowDurabilityWarningColor(int lowDurabilityWarningColor) {
 		this.lowDurabilityWarningColor = lowDurabilityWarningColor;
+	}
+
+	private static ModuleLayout[] createDefaultIndividualLayouts() {
+		return new ModuleLayout[] {
+			new ModuleLayout(HudAnchor.CENTER_RIGHT, -8, -33),
+			new ModuleLayout(HudAnchor.CENTER_RIGHT, -8, -11),
+			new ModuleLayout(HudAnchor.CENTER_RIGHT, -8, 11),
+			new ModuleLayout(HudAnchor.CENTER_RIGHT, -8, 33)
+		};
+	}
+
+	private static ModuleLayout[] copyIndividualLayouts(ModuleLayout[] source) {
+		ModuleLayout[] defaults = createDefaultIndividualLayouts();
+		if (source == null) {
+			return defaults;
+		}
+		for (int i = 0; i < Math.min(source.length, defaults.length); i++) {
+			if (source[i] != null) {
+				defaults[i].copyFrom(source[i]);
+			}
+		}
+		return defaults;
+	}
+
+	private static ModuleLayout[] validatedIndividualLayouts(ModuleLayout[] source) {
+		ModuleLayout[] layouts = copyIndividualLayouts(source);
+		for (ModuleLayout layout : layouts) {
+			layout.validate();
+		}
+		return layouts;
+	}
+
+	private static boolean[] createDefaultIndividualSlotVisibility() {
+		return new boolean[] {true, true, true, true};
+	}
+
+	private static boolean[] copyIndividualSlotVisibility(boolean[] source) {
+		boolean[] visibility = createDefaultIndividualSlotVisibility();
+		if (source != null) {
+			System.arraycopy(source, 0, visibility, 0, Math.min(source.length, visibility.length));
+		}
+		return visibility;
+	}
+
+	private static void requireArmorSlot(int slotIndex) {
+		if (slotIndex < 0 || slotIndex >= ARMOR_SLOT_COUNT) {
+			throw new IndexOutOfBoundsException("Unknown armor slot " + slotIndex);
+		}
 	}
 }

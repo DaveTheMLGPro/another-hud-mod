@@ -35,6 +35,9 @@ final class ArmorHudLayout {
 	private final int[] textWidths = new int[ARMOR_SLOTS.length];
 	private final int[] textHeights = new int[ARMOR_SLOTS.length];
 	private final String[] durabilityTexts = new String[ARMOR_SLOTS.length];
+	private final int[] groupedEntryOffsetsX = new int[ARMOR_SLOTS.length];
+	private final int[] groupedEntryOffsetsY = new int[ARMOR_SLOTS.length];
+	private int visualOutset;
 
 	private HudSize size = new HudSize(0, 0);
 
@@ -91,10 +94,12 @@ final class ArmorHudLayout {
 			groupHeight += totalSpacing;
 		}
 
-		int visualOutset = slotVisualOutset(config);
+		visualOutset = slotVisualOutset(config);
 		int cursor = 0;
 		for (int i = 0; i < ARMOR_SLOTS.length; i++) {
 			if (!includedSlots[i]) {
+				groupedEntryOffsetsX[i] = 0;
+				groupedEntryOffsetsY[i] = 0;
 				continue;
 			}
 
@@ -108,6 +113,8 @@ final class ArmorHudLayout {
 				entryX = verticalEntryOffset(config.getTextPosition(), groupWidth, entryWidths[i]);
 				cursor += entryHeights[i] + spacing;
 			}
+			groupedEntryOffsetsX[i] = entryX;
+			groupedEntryOffsetsY[i] = entryY;
 
 			if (renderedSlots[i]) {
 				slots[i].setEntry(visualOutset + entryX + itemOffsetsX[i], visualOutset + entryY + itemOffsetsY[i], itemSize,
@@ -127,6 +134,21 @@ final class ArmorHudLayout {
 
 	public HudSize getSize() {
 		return size;
+	}
+
+	public HudSize getIndividualSize(int index) {
+		if (!slots[index].isVisible()) {
+			return new HudSize(0, 0);
+		}
+		return new HudSize(entryWidths[index] + visualOutset * 2, entryHeights[index] + visualOutset * 2);
+	}
+
+	public int getGroupedEntryOffsetX(int index) {
+		return groupedEntryOffsetsX[index];
+	}
+
+	public int getGroupedEntryOffsetY(int index) {
+		return groupedEntryOffsetsY[index];
 	}
 
 	public static int getSlotCount() {

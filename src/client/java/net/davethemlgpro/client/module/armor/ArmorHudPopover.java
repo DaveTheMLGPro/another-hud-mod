@@ -30,20 +30,24 @@ public final class ArmorHudPopover {
 
 	private static List<HudPopoverControl> layoutControls(ArmorHudConfig config) {
 		return List.of(
-			new HudCycleControl<>(TranslationKey.SETTINGS_ARMOR_ORIENTATION.component(),
+			new HudCycleControl<>(TranslationKey.SETTINGS_ARMOR_LAYOUT_MODE.component(),
+				TranslationKey.SETTINGS_ARMOR_LAYOUT_MODE_DESCRIPTION.component(),
+				List.of(ArmorHudLayoutMode.values()), config::getLayoutMode, config::setLayoutMode,
+				ArmorHudPopover::layoutModeName),
+			groupedOnly(new HudCycleControl<>(TranslationKey.SETTINGS_ARMOR_ORIENTATION.component(),
 				TranslationKey.SETTINGS_ARMOR_ORIENTATION_DESCRIPTION.component(),
 				List.of(ArmorHudOrientation.values()), config::getOrientation, config::setOrientation,
-				ArmorHudPopover::orientationName),
+				ArmorHudPopover::orientationName), config),
 			new HudSliderControl(TranslationKey.SETTINGS_ARMOR_SCALE.component(),
 				TranslationKey.SETTINGS_ARMOR_SCALE_DESCRIPTION.component(),
 				ArmorHudConfig.MIN_SCALE, ArmorHudConfig.MAX_SCALE, 0.05,
 				config::getScale, value -> config.setScale((float) value),
 				value -> Component.literal(Math.round(value * 100.0) + "%")),
-			new HudSliderControl(TranslationKey.SETTINGS_ARMOR_SPACING.component(),
+			groupedOnly(new HudSliderControl(TranslationKey.SETTINGS_ARMOR_SPACING.component(),
 				TranslationKey.SETTINGS_ARMOR_SPACING_DESCRIPTION.component(),
 				ArmorHudConfig.MIN_SPACING, ArmorHudConfig.MAX_SPACING, 1.0,
 				config::getSpacing, value -> config.setSpacing((int) Math.round(value)),
-				value -> Component.literal(Integer.toString((int) Math.round(value)))),
+				value -> Component.literal(Integer.toString((int) Math.round(value)))), config),
 			new HudCycleControl<>(TranslationKey.SETTINGS_ARMOR_SLOT_STYLE.component(),
 				TranslationKey.SETTINGS_ARMOR_SLOT_STYLE_DESCRIPTION.component(),
 				List.of(ArmorHudSlotStyle.values()), config::getSlotStyle, config::setSlotStyle,
@@ -51,9 +55,9 @@ public final class ArmorHudPopover {
 			new HudToggleControl(TranslationKey.SETTINGS_ARMOR_SHOW_EMPTY.component(),
 				TranslationKey.SETTINGS_ARMOR_SHOW_EMPTY_DESCRIPTION.component(),
 				config::isShowEmptySlots, config::setShowEmptySlots),
-			new HudToggleControl(TranslationKey.SETTINGS_ARMOR_CENTER_VISIBLE.component(),
+			groupedOnly(new HudToggleControl(TranslationKey.SETTINGS_ARMOR_CENTER_VISIBLE.component(),
 				TranslationKey.SETTINGS_ARMOR_CENTER_VISIBLE_DESCRIPTION.component(),
-				config::isCenterVisibleSlots, config::setCenterVisibleSlots)
+				config::isCenterVisibleSlots, config::setCenterVisibleSlots), config)
 		);
 	}
 
@@ -117,6 +121,17 @@ public final class ArmorHudPopover {
 			case HORIZONTAL -> TranslationKey.SETTINGS_VALUE_HORIZONTAL.component();
 			case VERTICAL -> TranslationKey.SETTINGS_VALUE_VERTICAL.component();
 		};
+	}
+
+	private static Component layoutModeName(ArmorHudLayoutMode mode) {
+		return switch (mode) {
+			case GROUPED -> TranslationKey.SETTINGS_VALUE_GROUPED.component();
+			case INDIVIDUAL -> TranslationKey.SETTINGS_VALUE_INDIVIDUAL.component();
+		};
+	}
+
+	private static HudPopoverControl groupedOnly(HudPopoverControl control, ArmorHudConfig config) {
+		return new HudConditionalControl(control, () -> config.getLayoutMode() == ArmorHudLayoutMode.GROUPED);
 	}
 
 	private static Component slotStyleName(ArmorHudSlotStyle slotStyle) {

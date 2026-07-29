@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import net.davethemlgpro.client.hud.HudBounds;
 import net.davethemlgpro.client.hud.HudSize;
+import net.davethemlgpro.client.hud.layout.ModuleLayout;
 import net.davethemlgpro.client.screen.popover.HudPopoverTab;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -116,5 +117,33 @@ public class HudModuleEntry<C extends HudModuleConfig<C>> {
 
 	public HudSize measureEditorPreviewUntyped(Minecraft minecraft, HudModuleConfig<?> value) {
 		return module.measureEditorPreview(minecraft, configType.cast(value));
+	}
+
+	public int elementCountUntyped(HudModuleConfig<?> value) {
+		return module.elementCount(configType.cast(value));
+	}
+
+	public ModuleLayout elementLayoutUntyped(HudModuleConfig<?> value, int elementIndex) {
+		return module.elementLayout(configType.cast(value), elementIndex);
+	}
+
+	public boolean elementVisibleUntyped(HudModuleConfig<?> value, int elementIndex) {
+		return module.elementVisible(configType.cast(value), elementIndex);
+	}
+
+	public void setElementVisibleUntyped(HudModuleConfig<?> value, int elementIndex, boolean visible) {
+		module.setElementVisible(configType.cast(value), elementIndex, visible);
+	}
+
+	public HudSize measureElementUntyped(Minecraft minecraft, HudModuleConfig<?> value, int elementIndex,
+										 boolean editorPreview) {
+		return module.measureElement(minecraft, configType.cast(value), elementIndex, editorPreview);
+	}
+
+	public void renderElementUntyped(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, Minecraft minecraft,
+									 HudModuleConfig<?> value, int elementIndex, HudBounds bounds,
+									 boolean editorPreview) {
+		module.renderElement(graphics, deltaTracker, minecraft, configType.cast(value), elementIndex, bounds,
+			editorPreview);
 	}
 }

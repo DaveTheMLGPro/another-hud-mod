@@ -36,6 +36,8 @@ public enum TranslationKey {
 	SETTINGS_SECTION_LOW_DURABILITY_WARNING(
 		"module.another-hud-mod.armor.settings.section.low_durability_warning"),
 	SETTINGS_SECTION_COLORS("module.another-hud-mod.armor.settings.section.colors"),
+	SETTINGS_ARMOR_LAYOUT_MODE("module.another-hud-mod.armor.settings.layout_mode"),
+	SETTINGS_ARMOR_LAYOUT_MODE_DESCRIPTION("module.another-hud-mod.armor.settings.layout_mode.description"),
 	SETTINGS_ARMOR_ORIENTATION("module.another-hud-mod.armor.settings.orientation"),
 	SETTINGS_ARMOR_ORIENTATION_DESCRIPTION("module.another-hud-mod.armor.settings.orientation.description"),
 	SETTINGS_ARMOR_SCALE("module.another-hud-mod.armor.settings.scale"),
@@ -125,6 +127,8 @@ public enum TranslationKey {
 	COLOR_PICKER_INPUT("popover.another-hud-mod.color_picker.input"),
 	SETTINGS_VALUE_HORIZONTAL("option.another-hud-mod.horizontal"),
 	SETTINGS_VALUE_VERTICAL("option.another-hud-mod.vertical"),
+	SETTINGS_VALUE_GROUPED("option.another-hud-mod.grouped"),
+	SETTINGS_VALUE_INDIVIDUAL("option.another-hud-mod.individual"),
 	SETTINGS_VALUE_CLEAR("option.another-hud-mod.clear"),
 	SETTINGS_VALUE_INVENTORY("option.another-hud-mod.inventory"),
 	SETTINGS_VALUE_HOTBAR("option.another-hud-mod.hotbar"),

@@ -12,17 +12,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HudRenderDispatcher implements HudElement {
 	private final HudModuleRegistry registry;
-	private final HudBounds[] lastBounds;
-	private final boolean[] renderedModules;
+	private List<HudRenderedElement> lastElements = List.of();
 
 	public HudRenderDispatcher(HudModuleRegistry registry) {
 		this.registry = registry;
-		lastBounds = new HudBounds[registry.getEntries().size()];
-		renderedModules = new boolean[lastBounds.length];
 	}
 
 	@Override
@@ -33,38 +31,42 @@ public class HudRenderDispatcher implements HudElement {
 		HudEditSession editSession = HudEditSession.getActive();
 		boolean editorPreview = editSession != null && editSession.isEditorPreview();
 
-		Arrays.fill(renderedModules, false);
+		List<HudRenderedElement> renderedElements = new ArrayList<>();
 
 		for (int i = 0; i < registry.getEntries().size(); i++) {
 			HudModuleEntry<?> entry = registry.getEntries().get(i);
 			HudModuleConfig<?> config = resolveConfig(entry, editSession);
-			if (!config.enabled() && !editorPreview) {
-				continue;
-			}
 
-			HudSize size = editorPreview
-				? entry.measureEditorPreviewUntyped(minecraft, config)
-				: entry.measureUntyped(minecraft, config);
-			HudBounds bounds = HudLayoutEngine.resolve(config.getLayout(), size, screenWidth, screenHeight);
-			lastBounds[i] = bounds;
-			renderedModules[i] = true;
-			if (editorPreview) {
-				entry.renderEditorPreviewUntyped(graphics, deltaTracker, minecraft, config, bounds);
-			} else {
-				entry.renderUntyped(graphics, deltaTracker, minecraft, config, bounds);
+			int elementCount = entry.elementCountUntyped(config);
+			for (int elementIndex = 0; elementIndex < elementCount; elementIndex++) {
+				if (!entry.elementVisibleUntyped(config, elementIndex) && !editorPreview) {
+					continue;
+				}
+				HudSize size = entry.measureElementUntyped(minecraft, config, elementIndex, editorPreview);
+				if (size.width() == 0 || size.height() == 0) {
+					continue;
+				}
+				HudBounds bounds = HudLayoutEngine.resolve(
+					entry.elementLayoutUntyped(config, elementIndex), size, screenWidth, screenHeight);
+				renderedElements.add(new HudRenderedElement(i, elementIndex, bounds));
+				entry.renderElementUntyped(graphics, deltaTracker, minecraft, config, elementIndex, bounds,
+					editorPreview);
 			}
 		}
+		lastElements = List.copyOf(renderedElements);
 	}
 
-	public int getTrackedModuleCount() {
-		return lastBounds.length;
+	public List<HudRenderedElement> getLastElements() {
+		return lastElements;
 	}
 
-	public HudBounds getLastBounds(int index) {
-		if (index < 0 || index >= lastBounds.length || !renderedModules[index]) {
-			return null;
+	public HudRenderedElement getLastElement(int moduleIndex, int elementIndex) {
+		for (HudRenderedElement element : lastElements) {
+			if (element.moduleIndex() == moduleIndex && element.elementIndex() == elementIndex) {
+				return element;
+			}
 		}
-		return lastBounds[index];
+		return null;
 	}
 
 	private HudModuleConfig<?> resolveConfig(HudModuleEntry<?> entry, HudEditSession editSession) {

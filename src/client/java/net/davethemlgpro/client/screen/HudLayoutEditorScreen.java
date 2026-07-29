@@ -6,6 +6,7 @@ import net.davethemlgpro.client.config.EditorConfig;
 import net.davethemlgpro.client.config.HudEditSession;
 import net.davethemlgpro.client.hud.HudBounds;
 import net.davethemlgpro.client.hud.HudRenderDispatcher;
+import net.davethemlgpro.client.hud.HudRenderedElement;
 import net.davethemlgpro.client.hud.layout.HudLayoutEngine;
 import net.davethemlgpro.client.hud.layout.HudPlacementConstraints;
 import net.davethemlgpro.client.module.HudModuleConfig;
@@ -41,7 +42,9 @@ public final class HudLayoutEditorScreen extends Screen {
 	private final HudModulePopover popover = new HudModulePopover();
 
 	private int selectedModule = -1;
+	private int selectedElement = -1;
 	private int hoveredModule = -1;
+	private int hoveredElement = -1;
 	private boolean dragging;
 	private int dragOffsetX;
 	private int dragOffsetY;
@@ -83,7 +86,10 @@ public final class HudLayoutEditorScreen extends Screen {
 
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
-		hoveredModule = findModuleAt(mouseX, mouseY);
+		normalizeSelection();
+		HudRenderedElement hovered = findElementAt(mouseX, mouseY);
+		hoveredModule = hovered == null ? -1 : hovered.moduleIndex();
+		hoveredElement = hovered == null ? -1 : hovered.elementIndex();
 		EditorConfig colors = session.getDraft().getRawEditor();
 		if (isGridActive()) {
 			HudGridRenderer.render(graphics, width, height, height / 2, colors);
@@ -91,14 +97,16 @@ public final class HudLayoutEditorScreen extends Screen {
 		if (dragging) {
 			HudProtectedRegionRenderer.render(graphics, font, protectedRegion());
 		}
-		int count = Math.min(registry.getEntries().size(), renderDispatcher.getTrackedModuleCount());
-		for (int i = 0; i < count; i++) {
-			HudBounds bounds = renderDispatcher.getLastBounds(i);
-			if (bounds != null) {
-				HudModuleConfig<?> config = configAt(i);
-				HudSelectionRenderer.render(graphics, bounds, config.enabled(), i == selectedModule,
-					i == hoveredModule, colors, mouseX, mouseY, width, height);
-			}
+		for (HudRenderedElement element : renderDispatcher.getLastElements()) {
+			HudModuleConfig<?> config = configAt(element.moduleIndex());
+			HudModuleEntry<?> entry = registry.getEntries().get(element.moduleIndex());
+			boolean selected = element.moduleIndex() == selectedModule
+				&& element.elementIndex() == selectedElement;
+			boolean isHovered = element.moduleIndex() == hoveredModule
+				&& element.elementIndex() == hoveredElement;
+			boolean visible = entry.elementVisibleUntyped(config, element.elementIndex());
+			HudSelectionRenderer.render(graphics, element.bounds(), visible, selected,
+				isHovered, colors, mouseX, mouseY, width, height);
 		}
 
 		HudBounds popoverAnchor = popoverAnchor();
@@ -117,12 +125,14 @@ public final class HudLayoutEditorScreen extends Screen {
 
 	@Override
 	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-		int clickedModule = event.button() == 0
-			? findModuleAt((int) event.x(), (int) event.y()) : -1;
-		int visibilityModule = event.button() == 0
-			? findVisibilityButtonAt((int) event.x(), (int) event.y()) : -1;
-		boolean clickedSelectedHud = clickedModule >= 0 && clickedModule == selectedModule
-			&& visibilityModule < 0 && !globalSettingsOpen;
+		HudRenderedElement clickedElement = event.button() == 0
+			? findElementAt((int) event.x(), (int) event.y()) : null;
+		HudRenderedElement visibilityElement = event.button() == 0
+			? findVisibilityButtonAt((int) event.x(), (int) event.y()) : null;
+		boolean clickedSelectedHud = clickedElement != null
+			&& clickedElement.moduleIndex() == selectedModule
+			&& clickedElement.elementIndex() == selectedElement
+			&& visibilityElement == null && !globalSettingsOpen;
 		if (popover.isOpen() && !popover.contains(event.x(), event.y()) && !clickedSelectedHud) {
 			popover.close();
 			globalSettingsOpen = false;
@@ -139,17 +149,23 @@ public final class HudLayoutEditorScreen extends Screen {
 			return false;
 		}
 
-		if (visibilityModule >= 0) {
-			HudModuleConfig<?> config = configAt(visibilityModule);
-			config.setEnabled(!config.enabled());
-			selectedModule = visibilityModule;
+		if (visibilityElement != null) {
+			HudModuleConfig<?> config = configAt(visibilityElement.moduleIndex());
+			HudModuleEntry<?> entry = registry.getEntries().get(visibilityElement.moduleIndex());
+			boolean visible = entry.elementVisibleUntyped(config, visibilityElement.elementIndex());
+			entry.setElementVisibleUntyped(config, visibilityElement.elementIndex(), !visible);
+			selectedModule = visibilityElement.moduleIndex();
+			selectedElement = visibilityElement.elementIndex();
 			dragging = false;
 			saveFailed = false;
 			return true;
 		}
 
-		boolean selectionChanged = clickedModule != selectedModule;
-		selectedModule = clickedModule;
+		boolean selectionChanged = clickedElement == null
+			? selectedModule >= 0
+			: clickedElement.moduleIndex() != selectedModule || clickedElement.elementIndex() != selectedElement;
+		selectedModule = clickedElement == null ? -1 : clickedElement.moduleIndex();
+		selectedElement = clickedElement == null ? -1 : clickedElement.elementIndex();
 		if (selectedModule >= 0 && event.hasShiftDown() && (selectionChanged || !popover.isOpen())) {
 			openSelectedPopover();
 		}
@@ -159,10 +175,10 @@ public final class HudLayoutEditorScreen extends Screen {
 			return false;
 		}
 
-		HudBounds bounds = renderDispatcher.getLastBounds(selectedModule);
-		if (bounds == null) {
+		if (clickedElement == null) {
 			return false;
 		}
+		HudBounds bounds = clickedElement.bounds();
 		dragging = true;
 		dragOffsetX = (int) event.x() - bounds.x();
 		dragOffsetY = (int) event.y() - bounds.y();
@@ -180,17 +196,20 @@ public final class HudLayoutEditorScreen extends Screen {
 			return super.mouseDragged(event, dragX, dragY);
 		}
 
-		HudBounds bounds = renderDispatcher.getLastBounds(selectedModule);
+		HudRenderedElement selected = selectedRenderedElement();
 		HudModuleConfig<?> config = selectedConfig();
-		if (bounds == null || config == null) {
+		HudModuleEntry<?> entry = selectedEntry();
+		if (selected == null || config == null || entry == null) {
 			return true;
 		}
+		HudBounds bounds = selected.bounds();
 
 		int requestedX = (int) event.x() - dragOffsetX;
 		int requestedY = (int) event.y() - dragOffsetY;
 		int gridSpacing = isGridActive() ? HudGridRenderer.MINOR_SPACING : 1;
 		HudBounds resolved = layoutEngine.applyConstrainedDragOffset(
-			config.getLayout(), bounds.width(), bounds.height(), requestedX, requestedY,
+			entry.elementLayoutUntyped(config, selectedElement),
+			bounds.width(), bounds.height(), requestedX, requestedY,
 			width, height, protectedRegion(), gridSpacing);
 		popover.moveBy(resolved.x() - lastDragX, resolved.y() - lastDragY);
 		lastDragX = resolved.x();
@@ -257,26 +276,26 @@ public final class HudLayoutEditorScreen extends Screen {
 		return true;
 	}
 
-	private int findModuleAt(int x, int y) {
-		int count = Math.min(registry.getEntries().size(), renderDispatcher.getTrackedModuleCount());
-		for (int i = count - 1; i >= 0; i--) {
-			HudBounds bounds = renderDispatcher.getLastBounds(i);
-			if (bounds != null && HudSelectionRenderer.containsSelection(bounds, x, y)) {
-				return i;
+	private HudRenderedElement findElementAt(int x, int y) {
+		var elements = renderDispatcher.getLastElements();
+		for (int i = elements.size() - 1; i >= 0; i--) {
+			HudRenderedElement element = elements.get(i);
+			if (HudSelectionRenderer.containsSelection(element.bounds(), x, y)) {
+				return element;
 			}
 		}
-		return -1;
+		return null;
 	}
 
-	private int findVisibilityButtonAt(int x, int y) {
-		int count = Math.min(registry.getEntries().size(), renderDispatcher.getTrackedModuleCount());
-		for (int i = count - 1; i >= 0; i--) {
-			HudBounds bounds = renderDispatcher.getLastBounds(i);
-			if (bounds != null && HudSelectionRenderer.containsVisibilityButton(bounds, x, y, width, height)) {
-				return i;
+	private HudRenderedElement findVisibilityButtonAt(int x, int y) {
+		var elements = renderDispatcher.getLastElements();
+		for (int i = elements.size() - 1; i >= 0; i--) {
+			HudRenderedElement element = elements.get(i);
+			if (HudSelectionRenderer.containsVisibilityButton(element.bounds(), x, y, width, height)) {
+				return element;
 			}
 		}
-		return -1;
+		return null;
 	}
 
 	private HudModuleConfig<?> selectedConfig() {
@@ -309,6 +328,7 @@ public final class HudLayoutEditorScreen extends Screen {
 
 	private void resetDraft() {
 		session.resetToOpeningState();
+		selectedElement = selectedModule >= 0 ? 0 : -1;
 		popover.close();
 		globalSettingsOpen = false;
 		saveFailed = false;
@@ -337,6 +357,7 @@ public final class HudLayoutEditorScreen extends Screen {
 
 	private void resetAllToDefaults() {
 		session.resetToDefaults();
+		selectedElement = selectedModule >= 0 ? 0 : -1;
 		openGlobalSettings();
 	}
 
@@ -345,7 +366,29 @@ public final class HudLayoutEditorScreen extends Screen {
 			return new HudBounds(SETTINGS_BUTTON_X, SETTINGS_BUTTON_Y,
 				SETTINGS_BUTTON_SIZE, SETTINGS_BUTTON_SIZE);
 		}
-		return selectedModule >= 0 ? renderDispatcher.getLastBounds(selectedModule) : null;
+		HudRenderedElement selected = selectedRenderedElement();
+		return selected == null ? null : selected.bounds();
+	}
+
+	private HudRenderedElement selectedRenderedElement() {
+		return selectedModule < 0 ? null
+			: renderDispatcher.getLastElement(selectedModule, selectedElement);
+	}
+
+	private void normalizeSelection() {
+		if (selectedModule < 0 || selectedRenderedElement() != null) {
+			return;
+		}
+		for (HudRenderedElement element : renderDispatcher.getLastElements()) {
+			if (element.moduleIndex() == selectedModule) {
+				selectedElement = element.elementIndex();
+				return;
+			}
+		}
+		selectedModule = -1;
+		selectedElement = -1;
+		popover.close();
+		globalSettingsOpen = false;
 	}
 
 	private boolean isGridActive() {
