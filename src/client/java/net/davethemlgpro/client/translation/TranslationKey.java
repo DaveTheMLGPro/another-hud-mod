@@ -13,7 +13,10 @@ public enum TranslationKey {
 	EDITOR_VANILLA_HUD_AREA("screen.another-hud-mod.editor.vanilla_hud_area"),
 	EDITOR_SETTINGS_OPEN("screen.another-hud-mod.editor.settings.open"),
 	EDITOR_SETTINGS_TITLE("screen.another-hud-mod.editor.settings.title"),
+	EDITOR_SETTINGS_TAB_GENERAL("screen.another-hud-mod.editor.settings.tab.general"),
 	EDITOR_SETTINGS_TAB_GRID("screen.another-hud-mod.editor.settings.tab.grid"),
+	EDITOR_SETTINGS_RESET_ALL("screen.another-hud-mod.editor.settings.reset_all"),
+	EDITOR_SETTINGS_RESET_ALL_DESCRIPTION("screen.another-hud-mod.editor.settings.reset_all.description"),
 	EDITOR_SETTINGS_MINOR_GRID_COLOR("screen.another-hud-mod.editor.settings.grid.minor_color"),
 	EDITOR_SETTINGS_MINOR_GRID_COLOR_DESCRIPTION(
 		"screen.another-hud-mod.editor.settings.grid.minor_color.description"),

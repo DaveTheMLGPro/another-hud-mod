@@ -218,7 +218,10 @@ public final class HudModulePopover implements HudPopoverContext {
 			}
 			if (controlY < contentBottom && controlY + control.height() > contentTop
 				&& control.mouseClicked(mouseX, mouseY, button, x + PADDING, controlY, controlWidth)) {
-				activeControl = i;
+				List<HudPopoverControl> currentControls = controls();
+				if (open && i < currentControls.size() && currentControls.get(i) == control) {
+					activeControl = i;
+				}
 				return true;
 			}
 			controlY += control.height();

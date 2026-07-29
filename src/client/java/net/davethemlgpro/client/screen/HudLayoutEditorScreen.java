@@ -331,8 +331,13 @@ public final class HudLayoutEditorScreen extends Screen {
 		globalSettingsOpen = true;
 		EditorConfig config = session.getDraft().getRawEditor();
 		popover.openBelow(TranslationKey.EDITOR_SETTINGS_TITLE.component(),
-			EditorGridSettingsPopover.create(config));
+			EditorGlobalSettingsPopover.create(config, this::resetAllToDefaults));
 		saveFailed = false;
+	}
+
+	private void resetAllToDefaults() {
+		session.resetToDefaults();
+		openGlobalSettings();
 	}
 
 	private HudBounds popoverAnchor() {
