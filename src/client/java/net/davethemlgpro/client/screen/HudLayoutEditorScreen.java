@@ -282,6 +282,6 @@ public final class HudLayoutEditorScreen extends Screen {
 			popover.close();
 			return;
 		}
-		popover.open(entry.getModule().displayName(), entry.createPopoverControlsUntyped(config));
+		popover.open(entry.getModule().displayName(), entry.createPopoverTabsUntyped(config));
 	}
 }

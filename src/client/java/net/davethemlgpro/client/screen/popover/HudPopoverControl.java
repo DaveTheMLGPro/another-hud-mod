@@ -9,6 +9,10 @@ public interface HudPopoverControl {
 
 	Component description();
 
+	default boolean visible() {
+		return true;
+	}
+
 	default int height() {
 		return DEFAULT_HEIGHT;
 	}

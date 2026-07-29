@@ -12,6 +12,7 @@ import java.util.List;
 public final class HudModulePopover {
 	private static final int WIDTH = 196;
 	private static final int HEADER_HEIGHT = 22;
+	private static final int TAB_HEIGHT = 22;
 	private static final int PADDING = 5;
 	private static final int PLACEMENT_GAP = 16;
 	private static final int SCREEN_MARGIN = 4;
@@ -21,7 +22,8 @@ public final class HudModulePopover {
 	private static final Component CLOSE_LABEL = Component.literal("X");
 
 	private Component title = Component.empty();
-	private List<HudPopoverControl> controls = List.of();
+	private List<HudPopoverTab> tabs = List.of();
+	private int selectedTab;
 	private int x;
 	private int y;
 	private int width;
@@ -31,37 +33,39 @@ public final class HudModulePopover {
 	private int hoveredControl = -1;
 	private int activeControl = -1;
 	private int bodyHeight;
+	private int visibleControlCount;
 	private boolean open;
 	private boolean positioned;
 	private boolean dragging;
+	private boolean draggingScrollbar;
 	private int dragOffsetX;
 	private int dragOffsetY;
 	private int screenWidth;
 	private int editorTop;
 	private int editorBottom;
 
-	public void open(Component title, List<HudPopoverControl> controls) {
+	public void open(Component title, List<HudPopoverTab> tabs) {
 		releaseActiveControl();
 		this.title = title;
-		this.controls = List.copyOf(controls);
-		bodyHeight = controls.isEmpty() ? EMPTY_BODY_HEIGHT : PADDING * 2;
-		for (HudPopoverControl control : controls) {
-			bodyHeight += control.height();
-		}
+		this.tabs = List.copyOf(tabs);
+		selectedTab = 0;
 		scrollOffset = 0;
 		positioned = false;
 		dragging = false;
+		draggingScrollbar = false;
 		open = true;
 	}
 
 	public void close() {
 		releaseActiveControl();
-		controls = List.of();
+		tabs = List.of();
+		selectedTab = 0;
 		hoveredControl = -1;
 		scrollOffset = 0;
 		maxScroll = 0;
 		positioned = false;
 		dragging = false;
+		draggingScrollbar = false;
 		open = false;
 	}
 
@@ -91,18 +95,23 @@ public final class HudModulePopover {
 		graphics.centeredText(font, CLOSE_LABEL, x + width - CLOSE_BUTTON_WIDTH / 2, y + 7,
 			closeHovered ? 0xFFFFFFFF : 0xFFCCCCCC);
 
-		int contentTop = y + HEADER_HEIGHT;
+		renderTabs(graphics, font, colors.getSelectionColor(), mouseX, mouseY);
+		List<HudPopoverControl> controls = controls();
+		int contentTop = y + HEADER_HEIGHT + tabBarHeight();
 		int contentBottom = y + height - PADDING;
 		int controlWidth = width - PADDING * 2 - (maxScroll > 0 ? SCROLLBAR_WIDTH + 2 : 0);
 		hoveredControl = -1;
 		graphics.enableScissor(x + 1, contentTop, x + width - 1, contentBottom);
-		if (controls.isEmpty()) {
+		if (visibleControlCount == 0) {
 			graphics.centeredText(font, TranslationKey.POPOVER_NO_SETTINGS.component(),
 				x + width / 2, contentTop + 9, 0xFFAAAAAA);
 		} else {
 			int controlY = contentTop + PADDING - scrollOffset;
 			for (int i = 0; i < controls.size(); i++) {
 				HudPopoverControl control = controls.get(i);
+				if (!control.visible()) {
+					continue;
+				}
 				boolean visible = controlY < contentBottom && controlY + control.height() > contentTop;
 				boolean hovered = visible && contains(mouseX, mouseY, x + PADDING, controlY,
 					controlWidth, control.height());
@@ -147,13 +156,31 @@ public final class HudModulePopover {
 			return true;
 		}
 
-		int contentTop = y + HEADER_HEIGHT;
+		int clickedTab = tabAt(mouseX, mouseY);
+		if (button == 0 && clickedTab >= 0) {
+			selectTab(clickedTab);
+			return true;
+		}
+
+		List<HudPopoverControl> controls = controls();
+		int contentTop = y + HEADER_HEIGHT + tabBarHeight();
 		int contentBottom = y + height - PADDING;
+		if (button == 0 && maxScroll > 0 && contains(mouseX, mouseY,
+			x + width - PADDING - SCROLLBAR_WIDTH - 2, contentTop + PADDING,
+			SCROLLBAR_WIDTH + 4, contentBottom - contentTop - PADDING * 2)) {
+			releaseActiveControl();
+			draggingScrollbar = true;
+			setScrollFromMouse(mouseY, contentTop, contentBottom);
+			return true;
+		}
 		int controlWidth = width - PADDING * 2 - (maxScroll > 0 ? SCROLLBAR_WIDTH + 2 : 0);
 		int controlY = contentTop + PADDING - scrollOffset;
 		releaseActiveControl();
 		for (int i = 0; i < controls.size(); i++) {
 			HudPopoverControl control = controls.get(i);
+			if (!control.visible()) {
+				continue;
+			}
 			if (controlY < contentBottom && controlY + control.height() > contentTop
 				&& control.mouseClicked(mouseX, mouseY, button, x + PADDING, controlY, controlWidth)) {
 				activeControl = i;
@@ -165,6 +192,10 @@ public final class HudModulePopover {
 	}
 
 	public boolean mouseDragged(double mouseX, double mouseY) {
+		if (open && draggingScrollbar) {
+			setScrollFromMouse(mouseY, y + HEADER_HEIGHT + tabBarHeight(), y + height - PADDING);
+			return true;
+		}
 		if (open && dragging) {
 			x = Math.clamp((int) mouseX - dragOffsetX, SCREEN_MARGIN,
 				Math.max(SCREEN_MARGIN, screenWidth - SCREEN_MARGIN - width));
@@ -172,19 +203,30 @@ public final class HudModulePopover {
 				Math.max(editorTop, editorBottom - height));
 			return true;
 		}
+		List<HudPopoverControl> controls = controls();
 		if (!open || activeControl < 0 || activeControl >= controls.size()) {
 			return false;
 		}
+		if (!controls.get(activeControl).visible()) {
+			releaseActiveControl();
+			return false;
+		}
 
-		int controlY = y + HEADER_HEIGHT + PADDING - scrollOffset;
+		int controlY = y + HEADER_HEIGHT + tabBarHeight() + PADDING - scrollOffset;
 		for (int i = 0; i < activeControl; i++) {
-			controlY += controls.get(i).height();
+			if (controls.get(i).visible()) {
+				controlY += controls.get(i).height();
+			}
 		}
 		int controlWidth = width - PADDING * 2 - (maxScroll > 0 ? SCROLLBAR_WIDTH + 2 : 0);
 		return controls.get(activeControl).mouseDragged(mouseX, mouseY, x + PADDING, controlY, controlWidth);
 	}
 
 	public boolean mouseReleased() {
+		if (draggingScrollbar) {
+			draggingScrollbar = false;
+			return true;
+		}
 		if (dragging) {
 			dragging = false;
 			return true;
@@ -222,11 +264,27 @@ public final class HudModulePopover {
 		this.screenWidth = screenWidth;
 		this.editorTop = editorTop;
 		this.editorBottom = editorBottom;
-		int availableHeight = Math.max(HEADER_HEIGHT + PADDING * 2, editorBottom - editorTop);
-		width = Math.min(WIDTH, Math.max(80, screenWidth - SCREEN_MARGIN * 2));
-		height = Math.min(HEADER_HEIGHT + bodyHeight, availableHeight);
-		maxScroll = Math.max(0, HEADER_HEIGHT + bodyHeight - height);
+		List<HudPopoverControl> controls = controls();
+		bodyHeight = PADDING * 2;
+		visibleControlCount = 0;
+		for (HudPopoverControl control : controls) {
+			if (control.visible()) {
+				bodyHeight += control.height();
+				visibleControlCount++;
+			}
+		}
+		if (visibleControlCount == 0) {
+			bodyHeight = EMPTY_BODY_HEIGHT;
+		}
+		int fixedHeight = HEADER_HEIGHT + tabBarHeight();
+		int availableHeight = Math.max(fixedHeight + PADDING * 2, editorBottom - editorTop);
+		width = Math.clamp(screenWidth - SCREEN_MARGIN * 2, 80, WIDTH);
+		height = Math.min(fixedHeight + bodyHeight, availableHeight);
+		maxScroll = Math.max(0, fixedHeight + bodyHeight - height);
 		scrollOffset = Math.clamp(scrollOffset, 0, maxScroll);
+		if (maxScroll == 0) {
+			draggingScrollbar = false;
+		}
 
 		if (positioned) {
 			x = Math.clamp(x, SCREEN_MARGIN, Math.max(SCREEN_MARGIN, screenWidth - SCREEN_MARGIN - width));
@@ -268,6 +326,67 @@ public final class HudModulePopover {
 		y = Math.clamp(moduleBounds.y(), editorTop, editorBottom - height);
 	}
 
+	private void renderTabs(GuiGraphicsExtractor graphics, Font font, int accentColor, int mouseX, int mouseY) {
+		if (tabs.isEmpty()) {
+			return;
+		}
+		int tabY = y + HEADER_HEIGHT;
+		int innerX = x + 1;
+		int innerWidth = width - 2;
+		for (int i = 0; i < tabs.size(); i++) {
+			int tabX = innerX + i * innerWidth / tabs.size();
+			int tabRight = innerX + (i + 1) * innerWidth / tabs.size();
+			boolean selected = i == selectedTab;
+			boolean hovered = contains(mouseX, mouseY, tabX, tabY, tabRight - tabX, TAB_HEIGHT);
+			int background = selected ? 0xFF333333 : hovered ? 0xFF303030 : 0xFF242424;
+			graphics.fill(tabX, tabY, tabRight, tabY + TAB_HEIGHT, background);
+			if (i > 0) {
+				graphics.fill(tabX, tabY, tabX + 1, tabY + TAB_HEIGHT, 0xFF555555);
+			}
+			graphics.enableScissor(tabX + 2, tabY, tabRight - 2, tabY + TAB_HEIGHT);
+			graphics.centeredText(font, tabs.get(i).title(), (tabX + tabRight) / 2, tabY + 7,
+				selected ? accentColor : 0xFFCCCCCC);
+			graphics.disableScissor();
+			if (selected) {
+				graphics.fill(tabX, tabY + TAB_HEIGHT - 2, tabRight, tabY + TAB_HEIGHT, accentColor);
+			} else {
+				graphics.fill(tabX, tabY + TAB_HEIGHT - 1, tabRight, tabY + TAB_HEIGHT, 0xFF555555);
+			}
+		}
+	}
+
+	private int tabAt(double mouseX, double mouseY) {
+		if (tabs.isEmpty() || !contains(mouseX, mouseY, x + 1, y + HEADER_HEIGHT,
+			width - 2, TAB_HEIGHT)) {
+			return -1;
+		}
+		int relativeX = Math.clamp((int) mouseX - (x + 1), 0, width - 3);
+		return Math.min(tabs.size() - 1, relativeX * tabs.size() / (width - 2));
+	}
+
+	private void selectTab(int index) {
+		if (index == selectedTab || index < 0 || index >= tabs.size()) {
+			return;
+		}
+		releaseActiveControl();
+		selectedTab = index;
+		scrollOffset = 0;
+		maxScroll = 0;
+		hoveredControl = -1;
+		draggingScrollbar = false;
+	}
+
+	private List<HudPopoverControl> controls() {
+		if (tabs.isEmpty() || selectedTab < 0 || selectedTab >= tabs.size()) {
+			return List.of();
+		}
+		return tabs.get(selectedTab).controls();
+	}
+
+	private int tabBarHeight() {
+		return tabs.isEmpty() ? 0 : TAB_HEIGHT;
+	}
+
 	private void renderScrollbar(GuiGraphicsExtractor graphics, int contentTop, int contentBottom) {
 		int trackHeight = contentBottom - contentTop - PADDING * 2;
 		int contentHeight = trackHeight + maxScroll;
@@ -280,7 +399,22 @@ public final class HudModulePopover {
 		graphics.fill(scrollbarX, thumbY, scrollbarX + SCROLLBAR_WIDTH, thumbY + thumbHeight, 0xFFAAAAAA);
 	}
 
+	private void setScrollFromMouse(double mouseY, int contentTop, int contentBottom) {
+		int trackHeight = contentBottom - contentTop - PADDING * 2;
+		int contentHeight = trackHeight + maxScroll;
+		int thumbHeight = Math.max(12, trackHeight * trackHeight / contentHeight);
+		int thumbTravel = Math.max(0, trackHeight - thumbHeight);
+		if (thumbTravel == 0) {
+			scrollOffset = 0;
+			return;
+		}
+		int thumbTop = Math.clamp((int) Math.round(mouseY) - thumbHeight / 2,
+			contentTop + PADDING, contentBottom - PADDING - thumbHeight);
+		scrollOffset = (thumbTop - contentTop - PADDING) * maxScroll / thumbTravel;
+	}
+
 	private void releaseActiveControl() {
+		List<HudPopoverControl> controls = controls();
 		if (activeControl >= 0 && activeControl < controls.size()) {
 			controls.get(activeControl).mouseReleased();
 		}

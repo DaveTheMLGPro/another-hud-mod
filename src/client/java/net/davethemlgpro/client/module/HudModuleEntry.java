@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import net.davethemlgpro.client.hud.HudBounds;
 import net.davethemlgpro.client.hud.HudSize;
-import net.davethemlgpro.client.screen.popover.HudPopoverControl;
+import net.davethemlgpro.client.screen.popover.HudPopoverTab;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -58,7 +58,7 @@ public class HudModuleEntry<C extends HudModuleConfig<C>> {
 		return popoverFactory != null;
 	}
 
-	public List<HudPopoverControl> createPopoverControlsUntyped(HudModuleConfig<?> value) {
+	public List<HudPopoverTab> createPopoverTabsUntyped(HudModuleConfig<?> value) {
 		if (popoverFactory == null) {
 			return List.of();
 		}
