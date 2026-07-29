@@ -93,5 +93,6 @@
   "screen.another-hud-mod.editor.settings.open": "Global settings",
   "screen.another-hud-mod.editor.settings.tab.grid": "Grid",
   "screen.another-hud-mod.editor.settings.title": "Global Settings",
-  "screen.another-hud-mod.editor.title": "HUD Layout Editor"
+  "screen.another-hud-mod.editor.title": "HUD Layout Editor",
+  "screen.another-hud-mod.editor.vanilla_hud_area": "Vanilla HUD area"
 }

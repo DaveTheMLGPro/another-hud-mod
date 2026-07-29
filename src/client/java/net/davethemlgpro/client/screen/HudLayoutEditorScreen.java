@@ -7,6 +7,7 @@ import net.davethemlgpro.client.config.HudEditSession;
 import net.davethemlgpro.client.hud.HudBounds;
 import net.davethemlgpro.client.hud.HudRenderDispatcher;
 import net.davethemlgpro.client.hud.layout.HudLayoutEngine;
+import net.davethemlgpro.client.hud.layout.HudPlacementConstraints;
 import net.davethemlgpro.client.module.HudModuleConfig;
 import net.davethemlgpro.client.module.HudModuleEntry;
 import net.davethemlgpro.client.module.HudModuleRegistry;
@@ -83,7 +84,10 @@ public final class HudLayoutEditorScreen extends Screen {
 		hoveredModule = findModuleAt(mouseX, mouseY);
 		EditorConfig colors = session.getDraft().getRawEditor();
 		if (isGridActive()) {
-			HudGridRenderer.render(graphics, width, height - FOOTER_HEIGHT, height / 2, colors);
+			HudGridRenderer.render(graphics, width, height, height / 2, colors);
+		}
+		if (dragging) {
+			HudProtectedRegionRenderer.render(graphics, font, protectedRegion());
 		}
 		int count = Math.min(registry.getEntries().size(), renderDispatcher.getTrackedModuleCount());
 		for (int i = 0; i < count; i++) {
@@ -111,9 +115,9 @@ public final class HudLayoutEditorScreen extends Screen {
 
 	@Override
 	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-		int clickedModule = event.button() == 0 && event.y() < height - FOOTER_HEIGHT
+		int clickedModule = event.button() == 0
 			? findModuleAt((int) event.x(), (int) event.y()) : -1;
-		int visibilityModule = event.button() == 0 && event.y() < height - FOOTER_HEIGHT
+		int visibilityModule = event.button() == 0
 			? findVisibilityButtonAt((int) event.x(), (int) event.y()) : -1;
 		boolean clickedSelectedHud = clickedModule >= 0 && clickedModule == selectedModule
 			&& visibilityModule < 0 && !globalSettingsOpen;
@@ -129,7 +133,7 @@ public final class HudLayoutEditorScreen extends Screen {
 			saveFailed = false;
 			return true;
 		}
-		if (event.button() != 0 || event.y() >= height - FOOTER_HEIGHT) {
+		if (event.button() != 0) {
 			return false;
 		}
 
@@ -181,16 +185,11 @@ public final class HudLayoutEditorScreen extends Screen {
 		}
 
 		int requestedX = (int) event.x() - dragOffsetX;
-		int requestedY = Math.clamp((int) event.y() - dragOffsetY, 0,
-			Math.max(0, height - FOOTER_HEIGHT - bounds.height()));
-		if (isGridActive()) {
-			requestedX = HudLayoutEngine.snapToGrid(requestedX, HudGridRenderer.MINOR_SPACING);
-			requestedY = HudLayoutEngine.snapToGrid(requestedY, HudGridRenderer.MINOR_SPACING);
-		}
-		requestedY = Math.clamp(requestedY, 0,
-			Math.max(0, height - FOOTER_HEIGHT - bounds.height()));
-		HudBounds resolved = layoutEngine.applyDragOffset(config.getLayout(), bounds.width(), bounds.height(),
-			requestedX, requestedY, width, height);
+		int requestedY = (int) event.y() - dragOffsetY;
+		int gridSpacing = isGridActive() ? HudGridRenderer.MINOR_SPACING : 1;
+		HudBounds resolved = layoutEngine.applyConstrainedDragOffset(
+			config.getLayout(), bounds.width(), bounds.height(), requestedX, requestedY,
+			width, height, protectedRegion(), gridSpacing);
 		popover.moveBy(resolved.x() - lastDragX, resolved.y() - lastDragY);
 		lastDragX = resolved.x();
 		lastDragY = resolved.y();
@@ -343,5 +342,9 @@ public final class HudLayoutEditorScreen extends Screen {
 
 	private boolean isGridActive() {
 		return InputConstants.isKeyDown(minecraft.getWindow(), InputConstants.KEY_LALT);
+	}
+
+	private HudBounds protectedRegion() {
+		return HudPlacementConstraints.vanillaHudRegion(width, height);
 	}
 }

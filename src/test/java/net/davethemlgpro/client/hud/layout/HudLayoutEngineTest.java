@@ -46,4 +46,17 @@ class HudLayoutEngineTest {
 		assertEquals(0, layout.getOffsetY());
 	}
 
+	@Test
+	void allowsZeroOffsetAtBottomRightOutsideVanillaHud() {
+		ModuleLayout layout = new ModuleLayout(HudAnchor.BOTTOM_RIGHT, 12, -8);
+		HudBounds protectedRegion = HudPlacementConstraints.vanillaHudRegion(427, 240);
+
+		HudBounds bounds = engine.applyConstrainedDragOffset(layout, 20, 30,
+			407, 210, 427, 240, protectedRegion, 1);
+
+		assertEquals(new HudBounds(407, 210, 20, 30), bounds);
+		assertEquals(0, layout.getOffsetX());
+		assertEquals(0, layout.getOffsetY());
+	}
+
 }

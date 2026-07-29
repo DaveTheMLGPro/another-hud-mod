@@ -10,6 +10,7 @@ public enum TranslationKey {
 	EDITOR_INSTRUCTIONS("screen.another-hud-mod.editor.instructions"),
 	EDITOR_RESET("screen.another-hud-mod.editor.reset"),
 	EDITOR_SAVE_FAILED("screen.another-hud-mod.editor.save_failed"),
+	EDITOR_VANILLA_HUD_AREA("screen.another-hud-mod.editor.vanilla_hud_area"),
 	EDITOR_SETTINGS_OPEN("screen.another-hud-mod.editor.settings.open"),
 	EDITOR_SETTINGS_TITLE("screen.another-hud-mod.editor.settings.title"),
 	EDITOR_SETTINGS_TAB_GRID("screen.another-hud-mod.editor.settings.tab.grid"),

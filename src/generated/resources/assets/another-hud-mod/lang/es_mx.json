@@ -93,5 +93,6 @@
   "screen.another-hud-mod.editor.settings.open": "Ajustes globales",
   "screen.another-hud-mod.editor.settings.tab.grid": "Cuadrícula",
   "screen.another-hud-mod.editor.settings.title": "Ajustes globales",
-  "screen.another-hud-mod.editor.title": "Editor de diseño de HUD"
+  "screen.another-hud-mod.editor.title": "Editor de diseño de HUD",
+  "screen.another-hud-mod.editor.vanilla_hud_area": "Área del HUD original"
 }

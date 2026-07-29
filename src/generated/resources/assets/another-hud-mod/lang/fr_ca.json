@@ -93,5 +93,6 @@
   "screen.another-hud-mod.editor.settings.open": "Paramètres globaux",
   "screen.another-hud-mod.editor.settings.tab.grid": "Grille",
   "screen.another-hud-mod.editor.settings.title": "Paramètres globaux",
-  "screen.another-hud-mod.editor.title": "Éditeur de mise en page HUD"
+  "screen.another-hud-mod.editor.title": "Éditeur de mise en page HUD",
+  "screen.another-hud-mod.editor.vanilla_hud_area": "Zone de l'interface classique"
 }

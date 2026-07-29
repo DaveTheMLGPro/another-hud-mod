@@ -48,6 +48,26 @@ public class HudLayoutEngine {
 			screenWidth, screenHeight, gridSpacing);
 	}
 
+	public HudBounds applyConstrainedDragOffset(ModuleLayout layout, int contentWidth, int contentHeight,
+												int desiredX, int desiredY, int screenWidth, int screenHeight,
+												HudBounds protectedRegion, int gridSpacing) {
+		if (gridSpacing <= 0) {
+			throw new IllegalArgumentException("Grid spacing must be positive.");
+		}
+		layout.validate();
+		HudBounds desired = new HudBounds(
+			snapToGrid(desiredX, gridSpacing),
+			snapToGrid(desiredY, gridSpacing),
+			contentWidth,
+			contentHeight);
+		HudBounds resolved = HudPlacementConstraints.avoid(desired, protectedRegion,
+			screenWidth, screenHeight, gridSpacing);
+		layout.setOffset(
+			resolved.x() - layout.getAnchor().baseX(screenWidth, contentWidth),
+			resolved.y() - layout.getAnchor().baseY(screenHeight, contentHeight));
+		return resolved;
+	}
+
 	private HudBounds applyDragOffset(ModuleLayout layout, int contentWidth, int contentHeight,
 									  int desiredX, int desiredY, int screenWidth, int screenHeight,
 									  int gridSpacing) {
