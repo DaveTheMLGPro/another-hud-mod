@@ -1,5 +1,6 @@
 package net.davethemlgpro.client.screen;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.davethemlgpro.AnotherHUDMod;
 import net.davethemlgpro.client.config.EditorConfig;
 import net.davethemlgpro.client.config.HudEditSession;
@@ -13,6 +14,7 @@ import net.davethemlgpro.client.screen.popover.HudModulePopover;
 import net.davethemlgpro.client.translation.TranslationKey;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -23,6 +25,10 @@ import net.minecraft.network.chat.Component;
 public final class HudLayoutEditorScreen extends Screen {
 	private static final int FOOTER_HEIGHT = 36;
 	private static final int BUTTON_HEIGHT = 20;
+	private static final int SETTINGS_BUTTON_X = 6;
+	private static final int SETTINGS_BUTTON_Y = 6;
+	private static final int SETTINGS_BUTTON_SIZE = 20;
+	private static final Component SETTINGS_BUTTON_LABEL = Component.literal("\u2699");
 	private static final Component INSTRUCTIONS = TranslationKey.EDITOR_INSTRUCTIONS.component();
 	private static final Component SAVE_FAILED = TranslationKey.EDITOR_SAVE_FAILED.component();
 
@@ -41,6 +47,7 @@ public final class HudLayoutEditorScreen extends Screen {
 	private int lastDragX;
 	private int lastDragY;
 	private boolean saveFailed;
+	private boolean globalSettingsOpen;
 
 	public HudLayoutEditorScreen(Screen parent, HudEditSession session, HudModuleRegistry registry,
 								 HudRenderDispatcher renderDispatcher) {
@@ -53,6 +60,10 @@ public final class HudLayoutEditorScreen extends Screen {
 
 	@Override
 	protected void init() {
+		addRenderableWidget(Button.builder(SETTINGS_BUTTON_LABEL, button -> openGlobalSettings())
+			.bounds(SETTINGS_BUTTON_X, SETTINGS_BUTTON_Y, SETTINGS_BUTTON_SIZE, SETTINGS_BUTTON_SIZE)
+			.tooltip(Tooltip.create(TranslationKey.EDITOR_SETTINGS_OPEN.component()))
+			.build());
 		int footerY = height - 28;
 		addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> saveAndClose())
 			.bounds(width / 2 - 154, footerY, 100, BUTTON_HEIGHT).build());
@@ -71,6 +82,9 @@ public final class HudLayoutEditorScreen extends Screen {
 	public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
 		hoveredModule = findModuleAt(mouseX, mouseY);
 		EditorConfig colors = session.getDraft().getRawEditor();
+		if (isGridActive()) {
+			HudGridRenderer.render(graphics, width, height - FOOTER_HEIGHT, height / 2, colors);
+		}
 		int count = Math.min(registry.getEntries().size(), renderDispatcher.getTrackedModuleCount());
 		for (int i = 0; i < count; i++) {
 			HudBounds bounds = renderDispatcher.getLastBounds(i);
@@ -81,9 +95,9 @@ public final class HudLayoutEditorScreen extends Screen {
 			}
 		}
 
-		HudBounds selectedBounds = selectedModule >= 0 ? renderDispatcher.getLastBounds(selectedModule) : null;
-		if (selectedBounds != null && popover.isOpen()) {
-			popover.render(graphics, font, selectedBounds, colors, mouseX, mouseY,
+		HudBounds popoverAnchor = popoverAnchor();
+		if (popoverAnchor != null && popover.isOpen()) {
+			popover.render(graphics, font, popoverAnchor, colors, mouseX, mouseY,
 				width, 32, height - FOOTER_HEIGHT);
 		}
 
@@ -102,9 +116,10 @@ public final class HudLayoutEditorScreen extends Screen {
 		int visibilityModule = event.button() == 0 && event.y() < height - FOOTER_HEIGHT
 			? findVisibilityButtonAt((int) event.x(), (int) event.y()) : -1;
 		boolean clickedSelectedHud = clickedModule >= 0 && clickedModule == selectedModule
-			&& visibilityModule < 0;
+			&& visibilityModule < 0 && !globalSettingsOpen;
 		if (popover.isOpen() && !popover.contains(event.x(), event.y()) && !clickedSelectedHud) {
 			popover.close();
+			globalSettingsOpen = false;
 		}
 		if (super.mouseClicked(event, doubleClick)) {
 			return true;
@@ -168,13 +183,17 @@ public final class HudLayoutEditorScreen extends Screen {
 		int requestedX = (int) event.x() - dragOffsetX;
 		int requestedY = Math.clamp((int) event.y() - dragOffsetY, 0,
 			Math.max(0, height - FOOTER_HEIGHT - bounds.height()));
-		int resolvedX = Math.clamp(requestedX, 0, Math.max(0, width - bounds.width()));
-		int resolvedY = Math.clamp(requestedY, 0, Math.max(0, height - bounds.height()));
-		popover.moveBy(resolvedX - lastDragX, resolvedY - lastDragY);
-		lastDragX = resolvedX;
-		lastDragY = resolvedY;
-		layoutEngine.applyDragOffset(config.getLayout(), bounds.width(), bounds.height(),
+		if (isGridActive()) {
+			requestedX = HudLayoutEngine.snapToGrid(requestedX, HudGridRenderer.MINOR_SPACING);
+			requestedY = HudLayoutEngine.snapToGrid(requestedY, HudGridRenderer.MINOR_SPACING);
+		}
+		requestedY = Math.clamp(requestedY, 0,
+			Math.max(0, height - FOOTER_HEIGHT - bounds.height()));
+		HudBounds resolved = layoutEngine.applyDragOffset(config.getLayout(), bounds.width(), bounds.height(),
 			requestedX, requestedY, width, height);
+		popover.moveBy(resolved.x() - lastDragX, resolved.y() - lastDragY);
+		lastDragX = resolved.x();
+		lastDragY = resolved.y();
 		return true;
 	}
 
@@ -290,6 +309,7 @@ public final class HudLayoutEditorScreen extends Screen {
 	private void resetDraft() {
 		session.resetToOpeningState();
 		popover.close();
+		globalSettingsOpen = false;
 		saveFailed = false;
 	}
 
@@ -298,8 +318,30 @@ public final class HudLayoutEditorScreen extends Screen {
 		HudModuleConfig<?> config = selectedConfig();
 		if (entry == null || config == null) {
 			popover.close();
+			globalSettingsOpen = false;
 			return;
 		}
+		globalSettingsOpen = false;
 		popover.open(entry.getModule().displayName(), entry.createPopoverTabsUntyped(config));
+	}
+
+	private void openGlobalSettings() {
+		dragging = false;
+		globalSettingsOpen = true;
+		EditorConfig config = session.getDraft().getRawEditor();
+		popover.open(TranslationKey.EDITOR_SETTINGS_TITLE.component(), EditorGridSettingsPopover.create(config));
+		saveFailed = false;
+	}
+
+	private HudBounds popoverAnchor() {
+		if (globalSettingsOpen) {
+			return new HudBounds(SETTINGS_BUTTON_X, SETTINGS_BUTTON_Y,
+				SETTINGS_BUTTON_SIZE, SETTINGS_BUTTON_SIZE);
+		}
+		return selectedModule >= 0 ? renderDispatcher.getLastBounds(selectedModule) : null;
+	}
+
+	private boolean isGridActive() {
+		return InputConstants.isKeyDown(minecraft.getWindow(), InputConstants.KEY_LALT);
 	}
 }

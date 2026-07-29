@@ -1,12 +1,19 @@
 package net.davethemlgpro.client.config;
 
 public class EditorConfig {
-	private int selectionColor = 0xFF66AAFF;
-	private int hoveredSelectionColor = 0xFFFFFFFF;
-	private int hiddenOverlayColor = 0x22444444;
-	private int minorGridColor = 0x33FFFFFF;
-	private int majorGridColor = 0x55FFFFFF;
-	private int centerGuideColor = 0x88FFFFFF;
+	public static final int DEFAULT_SELECTION_COLOR = 0xFF66AAFF;
+	public static final int DEFAULT_HOVERED_SELECTION_COLOR = 0xFFFFFFFF;
+	public static final int DEFAULT_HIDDEN_OVERLAY_COLOR = 0x22444444;
+	public static final int DEFAULT_MINOR_GRID_COLOR = 0x33FFFFFF;
+	public static final int DEFAULT_MAJOR_GRID_COLOR = 0x55FFFFFF;
+	public static final int DEFAULT_CENTER_GUIDE_COLOR = 0x88FFFFFF;
+
+	private int selectionColor = DEFAULT_SELECTION_COLOR;
+	private int hoveredSelectionColor = DEFAULT_HOVERED_SELECTION_COLOR;
+	private int hiddenOverlayColor = DEFAULT_HIDDEN_OVERLAY_COLOR;
+	private int minorGridColor = DEFAULT_MINOR_GRID_COLOR;
+	private int majorGridColor = DEFAULT_MAJOR_GRID_COLOR;
+	private int centerGuideColor = DEFAULT_CENTER_GUIDE_COLOR;
 
 	public EditorConfig copy() {
 		EditorConfig copy = new EditorConfig();
@@ -45,11 +52,23 @@ public class EditorConfig {
 		return minorGridColor;
 	}
 
+	public void setMinorGridColor(int minorGridColor) {
+		this.minorGridColor = minorGridColor;
+	}
+
 	public int getMajorGridColor() {
 		return majorGridColor;
 	}
 
+	public void setMajorGridColor(int majorGridColor) {
+		this.majorGridColor = majorGridColor;
+	}
+
 	public int getCenterGuideColor() {
 		return centerGuideColor;
+	}
+
+	public void setCenterGuideColor(int centerGuideColor) {
+		this.centerGuideColor = centerGuideColor;
 	}
 }

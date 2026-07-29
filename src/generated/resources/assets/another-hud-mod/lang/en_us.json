@@ -81,8 +81,17 @@
   "popover.another-hud-mod.color_picker.alpha": "Alpha",
   "popover.another-hud-mod.color_picker.input": "Color value",
   "popover.another-hud-mod.no_settings": "No quick settings available.",
-  "screen.another-hud-mod.editor.instructions": "Drag to move. Shift-click a HUD for quick settings.",
+  "screen.another-hud-mod.editor.instructions": "Drag to move. Hold Left Alt for grid snapping. Shift-click for quick settings.",
   "screen.another-hud-mod.editor.reset": "Reset",
   "screen.another-hud-mod.editor.save_failed": "Changes could not be saved.",
+  "screen.another-hud-mod.editor.settings.grid.center_guide_color": "Center Guides",
+  "screen.another-hud-mod.editor.settings.grid.center_guide_color.description": "Sets the color of the horizontal and vertical center guides.",
+  "screen.another-hud-mod.editor.settings.grid.major_color": "Major Grid",
+  "screen.another-hud-mod.editor.settings.grid.major_color.description": "Sets the color of the twenty-pixel grid lines.",
+  "screen.another-hud-mod.editor.settings.grid.minor_color": "Minor Grid",
+  "screen.another-hud-mod.editor.settings.grid.minor_color.description": "Sets the color of the five-pixel grid lines.",
+  "screen.another-hud-mod.editor.settings.open": "Global settings",
+  "screen.another-hud-mod.editor.settings.tab.grid": "Grid",
+  "screen.another-hud-mod.editor.settings.title": "Global Settings",
   "screen.another-hud-mod.editor.title": "HUD Layout Editor"
 }

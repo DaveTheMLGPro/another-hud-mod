@@ -10,6 +10,18 @@ public enum TranslationKey {
 	EDITOR_INSTRUCTIONS("screen.another-hud-mod.editor.instructions"),
 	EDITOR_RESET("screen.another-hud-mod.editor.reset"),
 	EDITOR_SAVE_FAILED("screen.another-hud-mod.editor.save_failed"),
+	EDITOR_SETTINGS_OPEN("screen.another-hud-mod.editor.settings.open"),
+	EDITOR_SETTINGS_TITLE("screen.another-hud-mod.editor.settings.title"),
+	EDITOR_SETTINGS_TAB_GRID("screen.another-hud-mod.editor.settings.tab.grid"),
+	EDITOR_SETTINGS_MINOR_GRID_COLOR("screen.another-hud-mod.editor.settings.grid.minor_color"),
+	EDITOR_SETTINGS_MINOR_GRID_COLOR_DESCRIPTION(
+		"screen.another-hud-mod.editor.settings.grid.minor_color.description"),
+	EDITOR_SETTINGS_MAJOR_GRID_COLOR("screen.another-hud-mod.editor.settings.grid.major_color"),
+	EDITOR_SETTINGS_MAJOR_GRID_COLOR_DESCRIPTION(
+		"screen.another-hud-mod.editor.settings.grid.major_color.description"),
+	EDITOR_SETTINGS_CENTER_GUIDE_COLOR("screen.another-hud-mod.editor.settings.grid.center_guide_color"),
+	EDITOR_SETTINGS_CENTER_GUIDE_COLOR_DESCRIPTION(
+		"screen.another-hud-mod.editor.settings.grid.center_guide_color.description"),
 	POPOVER_NO_SETTINGS("popover.another-hud-mod.no_settings"),
 	SETTINGS_TAB_LAYOUT("module.another-hud-mod.armor.settings.tab.layout"),
 	SETTINGS_TAB_BAR("module.another-hud-mod.armor.settings.tab.bar"),

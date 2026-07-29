@@ -81,8 +81,17 @@
   "popover.another-hud-mod.color_picker.alpha": "Alpha",
   "popover.another-hud-mod.color_picker.input": "Valeur de couleur",
   "popover.another-hud-mod.no_settings": "Aucun réglage rapide disponible.",
-  "screen.another-hud-mod.editor.instructions": "Glisser pour déplacer. Maj-clic : réglages rapides.",
+  "screen.another-hud-mod.editor.instructions": "Glisser pour déplacer. Alt gauche : aimantation à la grille. Maj-clic : réglages rapides.",
   "screen.another-hud-mod.editor.reset": "Réinitialiser",
   "screen.another-hud-mod.editor.save_failed": "Les modifications n'ont pas pu être enregistrées.",
+  "screen.another-hud-mod.editor.settings.grid.center_guide_color": "Guides centraux",
+  "screen.another-hud-mod.editor.settings.grid.center_guide_color.description": "Définit la couleur des guides centraux horizontal et vertical.",
+  "screen.another-hud-mod.editor.settings.grid.major_color": "Grille principale",
+  "screen.another-hud-mod.editor.settings.grid.major_color.description": "Définit la couleur des lignes de grille espacées de vingt pixels.",
+  "screen.another-hud-mod.editor.settings.grid.minor_color": "Grille secondaire",
+  "screen.another-hud-mod.editor.settings.grid.minor_color.description": "Définit la couleur des lignes de grille espacées de cinq pixels.",
+  "screen.another-hud-mod.editor.settings.open": "Paramètres globaux",
+  "screen.another-hud-mod.editor.settings.tab.grid": "Grille",
+  "screen.another-hud-mod.editor.settings.title": "Paramètres globaux",
   "screen.another-hud-mod.editor.title": "Éditeur de mise en page HUD"
 }

@@ -81,8 +81,17 @@
   "popover.another-hud-mod.color_picker.alpha": "Alpha",
   "popover.another-hud-mod.color_picker.input": "Farbwert",
   "popover.another-hud-mod.no_settings": "Keine Schnelleinstellungen verfügbar.",
-  "screen.another-hud-mod.editor.instructions": "Ziehen zum Verschieben. Umschalt-Klick: Schnelleinstellungen.",
+  "screen.another-hud-mod.editor.instructions": "Ziehen zum Verschieben. Linke Alt-Taste: Rasterfang. Umschalt-Klick: Schnelleinstellungen.",
   "screen.another-hud-mod.editor.reset": "Zurücksetzen",
   "screen.another-hud-mod.editor.save_failed": "Änderungen konnten nicht gespeichert werden.",
+  "screen.another-hud-mod.editor.settings.grid.center_guide_color": "Mittellinien",
+  "screen.another-hud-mod.editor.settings.grid.center_guide_color.description": "Legt die Farbe der horizontalen und vertikalen Mittellinien fest.",
+  "screen.another-hud-mod.editor.settings.grid.major_color": "Grobes Raster",
+  "screen.another-hud-mod.editor.settings.grid.major_color.description": "Legt die Farbe der 20-Pixel-Rasterlinien fest.",
+  "screen.another-hud-mod.editor.settings.grid.minor_color": "Feines Raster",
+  "screen.another-hud-mod.editor.settings.grid.minor_color.description": "Legt die Farbe der 5-Pixel-Rasterlinien fest.",
+  "screen.another-hud-mod.editor.settings.open": "Globale Einstellungen",
+  "screen.another-hud-mod.editor.settings.tab.grid": "Raster",
+  "screen.another-hud-mod.editor.settings.title": "Globale Einstellungen",
   "screen.another-hud-mod.editor.title": "HUD-Layout-Editor"
 }

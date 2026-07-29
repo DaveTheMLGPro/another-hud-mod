@@ -81,8 +81,17 @@
   "popover.another-hud-mod.color_picker.alpha": "Alfa",
   "popover.another-hud-mod.color_picker.input": "Valor de color",
   "popover.another-hud-mod.no_settings": "No hay ajustes rápidos disponibles.",
-  "screen.another-hud-mod.editor.instructions": "Arrastra para mover. Mayús-clic: ajustes rápidos.",
+  "screen.another-hud-mod.editor.instructions": "Arrastra para mover. Alt izquierdo: ajuste a cuadrícula. Mayús-clic: ajustes rápidos.",
   "screen.another-hud-mod.editor.reset": "Restablecer",
   "screen.another-hud-mod.editor.save_failed": "No se han podido guardar los cambios.",
+  "screen.another-hud-mod.editor.settings.grid.center_guide_color": "Guías centrales",
+  "screen.another-hud-mod.editor.settings.grid.center_guide_color.description": "Define el color de las guías centrales horizontal y vertical.",
+  "screen.another-hud-mod.editor.settings.grid.major_color": "Cuadrícula mayor",
+  "screen.another-hud-mod.editor.settings.grid.major_color.description": "Define el color de las líneas de cuadrícula de veinte píxeles.",
+  "screen.another-hud-mod.editor.settings.grid.minor_color": "Cuadrícula menor",
+  "screen.another-hud-mod.editor.settings.grid.minor_color.description": "Define el color de las líneas de cuadrícula de cinco píxeles.",
+  "screen.another-hud-mod.editor.settings.open": "Ajustes globales",
+  "screen.another-hud-mod.editor.settings.tab.grid": "Cuadrícula",
+  "screen.another-hud-mod.editor.settings.title": "Ajustes globales",
   "screen.another-hud-mod.editor.title": "Editor de diseño de HUD"
 }

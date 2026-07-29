@@ -32,13 +32,38 @@ public class HudLayoutEngine {
 		return new HudBounds(x, y, size.width(),  size.height());
 	}
 
-	public void applyDragOffset(ModuleLayout layout, int contentWidth, int contentHeight, int desiredX, int desiredY,
-								int screenWidth, int screenHeight) {
+	public HudBounds applyDragOffset(ModuleLayout layout, int contentWidth, int contentHeight,
+									 int desiredX, int desiredY, int screenWidth, int screenHeight) {
+		return applyDragOffset(layout, contentWidth, contentHeight, desiredX, desiredY,
+			screenWidth, screenHeight, 1);
+	}
+
+	public HudBounds applySnappedDragOffset(ModuleLayout layout, int contentWidth, int contentHeight,
+											int desiredX, int desiredY, int screenWidth, int screenHeight,
+											int gridSpacing) {
+		if (gridSpacing <= 0) {
+			throw new IllegalArgumentException("Grid spacing must be positive.");
+		}
+		return applyDragOffset(layout, contentWidth, contentHeight, desiredX, desiredY,
+			screenWidth, screenHeight, gridSpacing);
+	}
+
+	private HudBounds applyDragOffset(ModuleLayout layout, int contentWidth, int contentHeight,
+									  int desiredX, int desiredY, int screenWidth, int screenHeight,
+									  int gridSpacing) {
 		layout.validate();
-		int x = clampAxis(desiredX, screenWidth, contentWidth);
-		int y = clampAxis(desiredY, screenHeight, contentHeight);
+		int x = clampAxis(snapToGrid(desiredX, gridSpacing), screenWidth, contentWidth);
+		int y = clampAxis(snapToGrid(desiredY, gridSpacing), screenHeight, contentHeight);
 		layout.setOffset(x - layout.getAnchor().baseX(screenWidth, contentWidth),
 			y - layout.getAnchor().baseY(screenHeight, contentHeight));
+		return new HudBounds(x, y, contentWidth, contentHeight);
+	}
+
+	public static int snapToGrid(int desired, int gridSpacing) {
+		if (gridSpacing <= 0) {
+			throw new IllegalArgumentException("Grid spacing must be positive.");
+		}
+		return Math.round((float) desired / gridSpacing) * gridSpacing;
 	}
 
 	private static int clampAxis(int desired, int screenSize, int contentSize) {
