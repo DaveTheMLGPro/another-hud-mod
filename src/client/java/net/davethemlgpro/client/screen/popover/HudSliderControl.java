@@ -45,7 +45,7 @@ public final class HudSliderControl implements HudPopoverControl {
 	public void render(GuiGraphicsExtractor graphics, Font font, int x, int y, int width,
 					   boolean hovered, int accentColor) {
 		if (hovered || dragging) {
-			graphics.fill(x, y, x + width, y + height(), 0x3355AAFF);
+			graphics.fill(x, y, x + width, y + height(), withAlpha(accentColor, 0x33));
 		}
 
 		Component value = formatter.apply(getter.getAsDouble());
@@ -98,7 +98,7 @@ public final class HudSliderControl implements HudPopoverControl {
 		setter.accept(Math.clamp(steppedValue, minimum, maximum));
 	}
 
-	private static boolean contains(double mouseX, double mouseY, int x, int y, int width, int height) {
+	private boolean contains(double mouseX, double mouseY, int x, int y, int width, int height) {
 		return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
 	}
 }

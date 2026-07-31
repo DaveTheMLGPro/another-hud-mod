@@ -19,6 +19,24 @@ final class EditorGlobalSettingsPopover {
 	public static List<HudPopoverTab> create(EditorConfig config, Runnable resetAll) {
 		return List.of(
 			new HudPopoverTab(TranslationKey.EDITOR_SETTINGS_TAB_GENERAL.component(), List.of(
+				new HudColorControl(
+					TranslationKey.EDITOR_SETTINGS_ACCENT_COLOR.component(),
+					TranslationKey.EDITOR_SETTINGS_ACCENT_COLOR_DESCRIPTION.component(),
+					config::getAccentColor,
+					config::setAccentColor,
+					EditorConfig.DEFAULT_ACCENT_COLOR),
+				new HudColorControl(
+					TranslationKey.EDITOR_SETTINGS_MODULE_BORDER_COLOR.component(),
+					TranslationKey.EDITOR_SETTINGS_MODULE_BORDER_COLOR_DESCRIPTION.component(),
+					config::getSelectionColor,
+					config::setSelectionColor,
+					EditorConfig.DEFAULT_SELECTION_COLOR),
+				new HudColorControl(
+					TranslationKey.EDITOR_SETTINGS_MODULE_HIGHLIGHT_COLOR.component(),
+					TranslationKey.EDITOR_SETTINGS_MODULE_HIGHLIGHT_COLOR_DESCRIPTION.component(),
+					config::getHoveredSelectionColor,
+					config::setHoveredSelectionColor,
+					EditorConfig.DEFAULT_HOVERED_SELECTION_COLOR),
 				new HudActionControl(
 					TranslationKey.EDITOR_SETTINGS_RESET_ALL.component(),
 					TranslationKey.EDITOR_SETTINGS_RESET_ALL_DESCRIPTION.component(),

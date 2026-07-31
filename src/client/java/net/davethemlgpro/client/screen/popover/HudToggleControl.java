@@ -30,7 +30,7 @@ public final class HudToggleControl implements HudPopoverControl {
 	public void render(GuiGraphicsExtractor graphics, Font font, int x, int y, int width,
 					   boolean hovered, int accentColor) {
 		if (hovered) {
-			graphics.fill(x, y, x + width, y + height(), 0x3355AAFF);
+			graphics.fill(x, y, x + width, y + height(), withAlpha(accentColor, 0x33));
 		}
 		graphics.text(font, label, x + 4, y + 3, 0xFFFFFFFF);
 
@@ -52,11 +52,7 @@ public final class HudToggleControl implements HudPopoverControl {
 		return true;
 	}
 
-	private static int withAlpha(int color, int alpha) {
-		return alpha << 24 | color & 0x00FFFFFF;
-	}
-
-	private static boolean contains(double mouseX, double mouseY, int x, int y, int width, int height) {
+	private boolean contains(double mouseX, double mouseY, int x, int y, int width, int height) {
 		return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
 	}
 }

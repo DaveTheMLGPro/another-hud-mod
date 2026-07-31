@@ -2,6 +2,7 @@ package net.davethemlgpro.client.config;
 
 public class EditorConfig {
 	public static final int DEFAULT_SELECTION_COLOR = 0xFF66AAFF;
+	public static final int DEFAULT_ACCENT_COLOR = 0xFF66AAFF;
 	public static final int DEFAULT_HOVERED_SELECTION_COLOR = 0xFFFFFFFF;
 	public static final int DEFAULT_HIDDEN_OVERLAY_COLOR = 0x22444444;
 	public static final int DEFAULT_MINOR_GRID_COLOR = 0x33FFFFFF;
@@ -9,6 +10,7 @@ public class EditorConfig {
 	public static final int DEFAULT_CENTER_GUIDE_COLOR = 0x88FFFFFF;
 
 	private int selectionColor = DEFAULT_SELECTION_COLOR;
+	private int accentColor = DEFAULT_ACCENT_COLOR;
 	private int hoveredSelectionColor = DEFAULT_HOVERED_SELECTION_COLOR;
 	private int hiddenOverlayColor = DEFAULT_HIDDEN_OVERLAY_COLOR;
 	private int minorGridColor = DEFAULT_MINOR_GRID_COLOR;
@@ -23,6 +25,7 @@ public class EditorConfig {
 
 	public void copyFrom(EditorConfig source) {
 		this.selectionColor = source.selectionColor;
+		this.accentColor = source.accentColor;
 		this.hoveredSelectionColor = source.hoveredSelectionColor;
 		this.hiddenOverlayColor = source.hiddenOverlayColor;
 		this.minorGridColor = source.minorGridColor;
@@ -40,8 +43,24 @@ public class EditorConfig {
 		return selectionColor;
 	}
 
+	public void setSelectionColor(int selectionColor) {
+		this.selectionColor = selectionColor;
+	}
+
+	public int getAccentColor() {
+		return accentColor;
+	}
+
+	public void setAccentColor(int accentColor) {
+		this.accentColor = accentColor;
+	}
+
 	public int getHoveredSelectionColor() {
 		return hoveredSelectionColor;
+	}
+
+	public void setHoveredSelectionColor(int hoveredSelectionColor) {
+		this.hoveredSelectionColor = hoveredSelectionColor;
 	}
 
 	public int getHiddenOverlayColor() {

@@ -30,4 +30,8 @@ public interface HudPopoverControl {
 
 	default void mouseReleased() {
 	}
+
+	default int withAlpha(int color, int alpha) {
+		return alpha << 24 | color & 0x00FFFFFF;
+	}
 }

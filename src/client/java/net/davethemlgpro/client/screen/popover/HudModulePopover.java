@@ -120,7 +120,7 @@ public final class HudModulePopover implements HudPopoverContext {
 		graphics.centeredText(font, CLOSE_LABEL, x + width - CLOSE_BUTTON_WIDTH / 2, y + 7,
 			closeHovered ? 0xFFFFFFFF : 0xFFCCCCCC);
 
-		renderTabs(graphics, font, colors.getSelectionColor(), mouseX, mouseY);
+		renderTabs(graphics, font, colors.getAccentColor(), mouseX, mouseY);
 		List<HudPopoverControl> controls = controls();
 		int contentTop = y + HEADER_HEIGHT + tabBarHeight();
 		int contentBottom = y + height - PADDING;
@@ -145,7 +145,7 @@ public final class HudModulePopover implements HudPopoverContext {
 				}
 				if (visible) {
 					control.render(graphics, font, x + PADDING, controlY, controlWidth,
-						hovered, colors.getSelectionColor());
+						hovered, colors.getAccentColor());
 				}
 				controlY += control.height();
 			}
@@ -490,11 +490,11 @@ public final class HudModulePopover implements HudPopoverContext {
 		activeControl = -1;
 	}
 
-	private static boolean contains(double mouseX, double mouseY, int x, int y, int width, int height) {
+	private boolean contains(double mouseX, double mouseY, int x, int y, int width, int height) {
 		return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
 	}
 
-	private static void drawBorder(GuiGraphicsExtractor graphics, int x, int y, int width, int height, int color) {
+	private void drawBorder(GuiGraphicsExtractor graphics, int x, int y, int width, int height, int color) {
 		graphics.fill(x, y, x + width, y + 1, color);
 		graphics.fill(x, y + height - 1, x + width, y + height, color);
 		graphics.fill(x, y, x + 1, y + height, color);

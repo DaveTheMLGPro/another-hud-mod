@@ -26,6 +26,15 @@ public enum HudLanguage {
 		entry(EDITOR_SETTINGS_TITLE, "Global Settings"),
 		entry(EDITOR_SETTINGS_TAB_GENERAL, "General"),
 		entry(EDITOR_SETTINGS_TAB_GRID, "Grid"),
+		entry(EDITOR_SETTINGS_ACCENT_COLOR, "Accent Color"),
+		entry(EDITOR_SETTINGS_ACCENT_COLOR_DESCRIPTION,
+			"Sets the accent color used by popovers, buttons, sliders, and other editor controls."),
+		entry(EDITOR_SETTINGS_MODULE_BORDER_COLOR, "Module Border"),
+		entry(EDITOR_SETTINGS_MODULE_BORDER_COLOR_DESCRIPTION,
+			"Sets the default outline color around modules in the layout editor."),
+		entry(EDITOR_SETTINGS_MODULE_HIGHLIGHT_COLOR, "Module Highlight"),
+		entry(EDITOR_SETTINGS_MODULE_HIGHLIGHT_COLOR_DESCRIPTION,
+			"Sets the outline color shown when a module is highlighted under the pointer."),
 		entry(EDITOR_SETTINGS_RESET_ALL, "Reset All to Defaults"),
 		entry(EDITOR_SETTINGS_RESET_ALL_DESCRIPTION,
 			"Restores every HUD module, layout, color, and editor setting to its default."),
@@ -272,7 +281,16 @@ public enum HudLanguage {
 		entry(SETTINGS_VALUE_CENTER, "Mitte"),
 		entry(SETTINGS_VALUE_COLOR, "Farbe"),
 		entry(SETTINGS_VALUE_PULSE, "Pulsieren"),
-		entry(SETTINGS_VALUE_FLASH, "Blinken")
+		entry(SETTINGS_VALUE_FLASH, "Blinken"),
+		entry(EDITOR_SETTINGS_ACCENT_COLOR, "Akzentfarbe"),
+		entry(EDITOR_SETTINGS_ACCENT_COLOR_DESCRIPTION,
+			"Legt die Akzentfarbe für Registerkarten, Regler und interaktive Steuerelemente fest."),
+		entry(EDITOR_SETTINGS_MODULE_BORDER_COLOR, "Farbe der Modulrahmen"),
+		entry(EDITOR_SETTINGS_MODULE_BORDER_COLOR_DESCRIPTION,
+			"Legt die Rahmenfarbe für sichtbare HUD-Module im Layout-Editor fest."),
+		entry(EDITOR_SETTINGS_MODULE_HIGHLIGHT_COLOR, "Hervorhebungsfarbe der Module"),
+		entry(EDITOR_SETTINGS_MODULE_HIGHLIGHT_COLOR_DESCRIPTION,
+			"Legt die Hervorhebungsfarbe für ausgewählte oder berührte HUD-Module fest.")
 	), "de_de", "de_at"),
 	ES(translations(
 		entry(KEY_CATEGORY_GENERAL, "Another HUD Mod"),
@@ -407,7 +425,16 @@ public enum HudLanguage {
 		entry(SETTINGS_VALUE_CENTER, "Centro"),
 		entry(SETTINGS_VALUE_COLOR, "Color"),
 		entry(SETTINGS_VALUE_PULSE, "Pulso"),
-		entry(SETTINGS_VALUE_FLASH, "Destello")
+		entry(SETTINGS_VALUE_FLASH, "Destello"),
+		entry(EDITOR_SETTINGS_ACCENT_COLOR, "Color de acento"),
+		entry(EDITOR_SETTINGS_ACCENT_COLOR_DESCRIPTION,
+			"Establece el color de acento de pestañas, controles deslizantes y controles interactivos."),
+		entry(EDITOR_SETTINGS_MODULE_BORDER_COLOR, "Color del borde de los módulos"),
+		entry(EDITOR_SETTINGS_MODULE_BORDER_COLOR_DESCRIPTION,
+			"Establece el color del borde de los módulos HUD visibles en el editor de diseño."),
+		entry(EDITOR_SETTINGS_MODULE_HIGHLIGHT_COLOR, "Color de resaltado de los módulos"),
+		entry(EDITOR_SETTINGS_MODULE_HIGHLIGHT_COLOR_DESCRIPTION,
+			"Establece el color de resaltado de los módulos HUD seleccionados o señalados.")
 	), "es_mx", "es_es"),
 	FR_FR(translations(
 		entry(KEY_CATEGORY_GENERAL, "Another HUD Mod"),
@@ -542,7 +569,16 @@ public enum HudLanguage {
 		entry(SETTINGS_VALUE_CENTER, "Centre"),
 		entry(SETTINGS_VALUE_COLOR, "Couleur"),
 		entry(SETTINGS_VALUE_PULSE, "Pulsation"),
-		entry(SETTINGS_VALUE_FLASH, "Clignotement")
+		entry(SETTINGS_VALUE_FLASH, "Clignotement"),
+		entry(EDITOR_SETTINGS_ACCENT_COLOR, "Couleur d'accentuation"),
+		entry(EDITOR_SETTINGS_ACCENT_COLOR_DESCRIPTION,
+			"Définit la couleur d'accentuation des onglets, curseurs et commandes interactives."),
+		entry(EDITOR_SETTINGS_MODULE_BORDER_COLOR, "Couleur de bordure des modules"),
+		entry(EDITOR_SETTINGS_MODULE_BORDER_COLOR_DESCRIPTION,
+			"Définit la couleur de bordure des modules HUD visibles dans l'éditeur de disposition."),
+		entry(EDITOR_SETTINGS_MODULE_HIGHLIGHT_COLOR, "Couleur de surbrillance des modules"),
+		entry(EDITOR_SETTINGS_MODULE_HIGHLIGHT_COLOR_DESCRIPTION,
+			"Définit la couleur de surbrillance des modules HUD sélectionnés ou survolés.")
 	), "fr_fr"),
 	FR_CA(translations(
 		entry(KEY_CATEGORY_GENERAL, "Another HUD Mod"),
@@ -677,7 +713,16 @@ public enum HudLanguage {
 		entry(SETTINGS_VALUE_CENTER, "Centre"),
 		entry(SETTINGS_VALUE_COLOR, "Couleur"),
 		entry(SETTINGS_VALUE_PULSE, "Pulsation"),
-		entry(SETTINGS_VALUE_FLASH, "Clignotement")
+		entry(SETTINGS_VALUE_FLASH, "Clignotement"),
+		entry(EDITOR_SETTINGS_ACCENT_COLOR, "Couleur d'accent"),
+		entry(EDITOR_SETTINGS_ACCENT_COLOR_DESCRIPTION,
+			"Définit la couleur d'accent des onglets, curseurs et contrôles interactifs."),
+		entry(EDITOR_SETTINGS_MODULE_BORDER_COLOR, "Couleur de bordure des modules"),
+		entry(EDITOR_SETTINGS_MODULE_BORDER_COLOR_DESCRIPTION,
+			"Définit la couleur de bordure des modules HUD visibles dans l'éditeur de disposition."),
+		entry(EDITOR_SETTINGS_MODULE_HIGHLIGHT_COLOR, "Couleur de surbrillance des modules"),
+		entry(EDITOR_SETTINGS_MODULE_HIGHLIGHT_COLOR_DESCRIPTION,
+			"Définit la couleur de surbrillance des modules HUD sélectionnés ou survolés.")
 	), "fr_ca");
 
 	static {

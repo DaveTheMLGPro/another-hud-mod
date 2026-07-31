@@ -48,7 +48,7 @@ public final class HudColorControl implements HudPopoverControl {
 	public void render(GuiGraphicsExtractor graphics, Font font, int x, int y, int width,
 					   boolean hovered, int accentColor) {
 		if (hovered) {
-			graphics.fill(x, y, x + width, y + height(), 0x3355AAFF);
+			graphics.fill(x, y, x + width, y + height(), withAlpha(accentColor, 0x33));
 		}
 		int resetX = x + width - RIGHT_MARGIN - ACTION_SIZE;
 		int undoX = resetX - CONTROL_GAP - ACTION_SIZE;
@@ -86,7 +86,7 @@ public final class HudColorControl implements HudPopoverControl {
 		return true;
 	}
 
-	private static void renderActionButton(GuiGraphicsExtractor graphics, Font font, int x, int y,
+	private void renderActionButton(GuiGraphicsExtractor graphics, Font font, int x, int y,
 										   Component label, boolean active, boolean reset) {
 		int border = reset ? 0xFF663333 : 0xFF555555;
 		int text = active ? reset ? 0xFFFF6666 : 0xFFFFFFFF : 0xFF777777;
@@ -97,7 +97,7 @@ public final class HudColorControl implements HudPopoverControl {
 		graphics.centeredText(font, label, x + ACTION_SIZE / 2, y + 5, text);
 	}
 
-	private static void drawCheckerboard(GuiGraphicsExtractor graphics, int x, int y, int width, int height) {
+	private void drawCheckerboard(GuiGraphicsExtractor graphics, int x, int y, int width, int height) {
 		for (int row = 0; row < height; row += CHECKER_SIZE) {
 			for (int column = 0; column < width; column += CHECKER_SIZE) {
 				int color = ((row / CHECKER_SIZE + column / CHECKER_SIZE) & 1) == 0
@@ -108,7 +108,7 @@ public final class HudColorControl implements HudPopoverControl {
 		}
 	}
 
-	private static boolean contains(double mouseX, double mouseY, int x, int y, int width, int height) {
+	private boolean contains(double mouseX, double mouseY, int x, int y, int width, int height) {
 		return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
 	}
 }
