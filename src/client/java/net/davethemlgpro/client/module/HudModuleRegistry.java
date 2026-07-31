@@ -28,6 +28,11 @@ public class HudModuleRegistry {
 		return modules.get(id);
 	}
 
+	public boolean isModuleEnabled(Identifier id) {
+		HudModuleEntry<?> entry = modules.get(id);
+		return entry != null && entry.isEnabled();
+	}
+
 	public List<HudModuleEntry<?>> getEntries() {
 		return entries;
 	}

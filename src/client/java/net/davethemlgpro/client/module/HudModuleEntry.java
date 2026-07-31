@@ -21,6 +21,7 @@ public class HudModuleEntry<C extends HudModuleConfig<C>> {
 	private Supplier<C> defaults;
 	private HudModulePopoverFactory<C> popoverFactory;
 	private C config;
+	private boolean enabled = true;
 
 	public HudModuleEntry(HudModule<C> module, Class<C> configType, Supplier<C> defaults) {
 		this(module, configType, defaults, null);
@@ -49,6 +50,14 @@ public class HudModuleEntry<C extends HudModuleConfig<C>> {
 
 	public C getConfig() {
 		return config;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
 	public C copyConfig() {

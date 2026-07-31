@@ -16,13 +16,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class HudConfigManager {
-	private static final int SCHEMA_VERSION = 1;
+	private static final int SCHEMA_VERSION = 2;
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
 	private final HudModuleRegistry registry;
 	private final Path path;
 	private EditorConfig editor = new EditorConfig();
 	private JsonObject unknownModules = new JsonObject();
+	private JsonObject unknownModuleEnabled = new JsonObject();
 
 	public HudConfigManager(HudModuleRegistry registry, Path path) {
 		this.registry = registry;
@@ -52,6 +53,7 @@ public class HudConfigManager {
 		for (HudModuleEntry<?> entry : registry.getEntries()) {
 			HudModuleConfig<?> config = snapshot.getConfig(entry.getModule().id());
 			entry.applyUntyped(config);
+			entry.setEnabled(snapshot.isModuleEnabled(entry.getModule().id()));
 		}
 		editor = replacementConfig;
 	}
@@ -79,20 +81,27 @@ public class HudConfigManager {
 			loadedEditor.validate();
 
 			JsonObject serializedModules = getSerializedModules(root);
+			JsonObject serializedModuleEnabled = getSerializedModuleEnabled(root);
 			Map<HudModuleEntry<?>, HudModuleConfig<?>> loadedModules = new LinkedHashMap<>();
+			Map<HudModuleEntry<?>, Boolean> loadedModuleEnabled = new LinkedHashMap<>();
 			JsonObject loadedUnknown = serializedModules.deepCopy();
+			JsonObject loadedUnknownEnabled = serializedModuleEnabled.deepCopy();
 			for (HudModuleEntry<?> entry : registry.getEntries()) {
 				String id = entry.getModule().id().toString();
 				HudModuleConfig<?> config = serializedModules.has(id) ? entry.deserialize(GSON, serializedModules.get(id)) : entry.newDefaultConfig();
 				loadedModules.put(entry, config);
+				loadedModuleEnabled.put(entry, readModuleEnabled(serializedModuleEnabled, id));
 				loadedUnknown.remove(id);
+				loadedUnknownEnabled.remove(id);
 			}
 
 			for (Map.Entry<HudModuleEntry<?>, HudModuleConfig<?>> entry : loadedModules.entrySet()) {
 				entry.getKey().applyUntyped(entry.getValue());
+				entry.getKey().setEnabled(loadedModuleEnabled.get(entry.getKey()));
 			}
 			editor = loadedEditor;
 			unknownModules = loadedUnknown;
+			unknownModuleEnabled = loadedUnknownEnabled;
 			AnotherHUDMod.LOGGER.info("Loaded modular hud config from {}", path);
 			return true;
 
@@ -118,6 +127,28 @@ public class HudConfigManager {
 			throw new JsonParseException("Modules config must be a JSON object.");
 		}
 		return element.getAsJsonObject();
+	}
+
+	private JsonObject getSerializedModuleEnabled(JsonObject root) {
+		JsonElement element = root.get("moduleEnabled");
+		if (element == null || element.isJsonNull()) {
+			return new JsonObject();
+		}
+		if (!element.isJsonObject()) {
+			throw new JsonParseException("Module enabled state must be a JSON object.");
+		}
+		return element.getAsJsonObject();
+	}
+
+	private boolean readModuleEnabled(JsonObject states, String id) {
+		JsonElement element = states.get(id);
+		if (element == null) {
+			return true;
+		}
+		if (!element.isJsonPrimitive() || !element.getAsJsonPrimitive().isBoolean()) {
+			throw new JsonParseException("Module enabled state must be a boolean: " + id);
+		}
+		return element.getAsBoolean();
 	}
 
 	public boolean save() {
@@ -155,6 +186,11 @@ public class HudConfigManager {
 			modules.add(entry.getModule().id().toString(), entry.serializeUntyped(GSON));
 		}
 		root.add("modules", modules);
+		JsonObject moduleEnabled = unknownModuleEnabled.deepCopy();
+		for (HudModuleEntry<?> entry : registry.getEntries()) {
+			moduleEnabled.addProperty(entry.getModule().id().toString(), entry.isEnabled());
+		}
+		root.add("moduleEnabled", moduleEnabled);
 		return root;
 	}
 

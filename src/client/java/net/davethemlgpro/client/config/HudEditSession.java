@@ -1,5 +1,7 @@
 package net.davethemlgpro.client.config;
 
+import net.minecraft.resources.Identifier;
+
 public final class HudEditSession {
 	private static HudEditSession active;
 
@@ -41,6 +43,20 @@ public final class HudEditSession {
 
 	public void resetToDefaults() {
 		draft.copyFrom(manager.defaultSnapshot());
+	}
+
+	public void resetModuleToDefaults(Identifier moduleId) {
+		HudConfigSnapshot defaults = manager.defaultSnapshot();
+		draft.setConfig(moduleId, defaults.getRawConfig(moduleId));
+		draft.setModuleEnabled(moduleId, defaults.isModuleEnabled(moduleId));
+	}
+
+	public void resetModulesToDefaults() {
+		HudConfigSnapshot defaults = manager.defaultSnapshot();
+		for (Identifier moduleId : defaults.getModuleIds()) {
+			draft.setConfig(moduleId, defaults.getRawConfig(moduleId));
+			draft.setModuleEnabled(moduleId, defaults.isModuleEnabled(moduleId));
+		}
 	}
 
 	public void resetToOpeningState() {

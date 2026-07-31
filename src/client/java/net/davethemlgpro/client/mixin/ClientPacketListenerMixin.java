@@ -24,7 +24,8 @@ public abstract class ClientPacketListenerMixin {
 		Entity entity = minecraft.level.getEntity(packet.getItemId());
 		if (entity instanceof ItemEntity itemEntity) {
 			ItemPickupHudModule module = AnotherHUDModClient.getItemPickupHudModule();
-			if (module != null) {
+			if (module != null && AnotherHUDModClient.getHudModuleRegistry()
+				.isModuleEnabled(ItemPickupHudModule.ID)) {
 				module.recordPickup(itemEntity.getItem(), packet.getAmount(), minecraft.level);
 			}
 		}

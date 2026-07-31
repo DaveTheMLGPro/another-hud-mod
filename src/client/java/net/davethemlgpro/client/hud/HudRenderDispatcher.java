@@ -36,6 +36,9 @@ public class HudRenderDispatcher implements HudElement {
 		for (int i = 0; i < registry.getEntries().size(); i++) {
 			HudModuleEntry<?> entry = registry.getEntries().get(i);
 			HudModuleConfig<?> config = resolveConfig(entry, editSession);
+			if (!isModuleEnabled(entry, editSession)) {
+				continue;
+			}
 
 			int elementCount = entry.elementCountUntyped(config);
 			for (int elementIndex = 0; elementIndex < elementCount; elementIndex++) {
@@ -76,5 +79,12 @@ public class HudRenderDispatcher implements HudElement {
 		Identifier id = entry.getModule().id();
 		HudConfigSnapshot draft = editSession.getDraft();
 		return draft.hasConfig(id) ? draft.getRawConfig(id) : entry.getConfig();
+	}
+
+	private boolean isModuleEnabled(HudModuleEntry<?> entry, HudEditSession editSession) {
+		if (editSession == null) {
+			return entry.isEnabled();
+		}
+		return editSession.getDraft().isModuleEnabled(entry.getModule().id());
 	}
 }

@@ -53,14 +53,18 @@ public final class HudModulePopover implements HudPopoverContext {
 	private int editorBottom;
 
 	public void open(Component title, List<HudPopoverTab> tabs) {
-		open(title, tabs, false);
+		open(title, tabs, false, 0);
 	}
 
 	public void openBelow(Component title, List<HudPopoverTab> tabs) {
-		open(title, tabs, true);
+		open(title, tabs, true, 0);
 	}
 
-	private void open(Component title, List<HudPopoverTab> tabs, boolean placeBelowAnchor) {
+	public void openBelow(Component title, List<HudPopoverTab> tabs, int selectedTab) {
+		open(title, tabs, true, selectedTab);
+	}
+
+	private void open(Component title, List<HudPopoverTab> tabs, boolean placeBelowAnchor, int selectedTab) {
 		releaseActiveControl();
 		colorPicker.finish();
 		this.title = title;
@@ -71,7 +75,7 @@ public final class HudModulePopover implements HudPopoverContext {
 				control.onAdded(this);
 			}
 		}
-		selectedTab = 0;
+		this.selectedTab = Math.clamp(selectedTab, 0, Math.max(0, this.tabs.size() - 1));
 		scrollOffset = 0;
 		positioned = false;
 		dragging = false;

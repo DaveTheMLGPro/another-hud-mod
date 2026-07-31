@@ -93,8 +93,9 @@ class ItemPickupHudConfigSerializationTest {
 			""", ItemPickupHudConfig.class);
 		restored.validate();
 
-		assertEquals(HudAnchor.CENTER_LEFT, restored.getLayout().getAnchor());
-		assertEquals(8, restored.getLayout().getOffsetX());
+		assertEquals(HudAnchor.BOTTOM_RIGHT, restored.getLayout().getAnchor());
+		assertEquals(-8, restored.getLayout().getOffsetX());
+		assertEquals(-8, restored.getLayout().getOffsetY());
 		assertEquals(ItemPickupHudConfig.MAX_VISIBLE_ITEMS, restored.getMaxVisibleItems());
 		assertEquals(ItemPickupHudConfig.MIN_DISPLAY_TIME_SECONDS, restored.getDisplayTimeSeconds());
 		assertEquals(ItemPickupHudConfig.MAX_REMOVE_DELAY_SECONDS, restored.getRemoveDelaySeconds());
@@ -124,7 +125,7 @@ class ItemPickupHudConfigSerializationTest {
 		copy.getLayout().setOffset(50, 60);
 
 		assertNotSame(original.getLayout(), copy.getLayout());
-		assertEquals(8, original.getLayout().getOffsetX());
-		assertEquals(0, original.getLayout().getOffsetY());
+		assertEquals(-8, original.getLayout().getOffsetX());
+		assertEquals(-8, original.getLayout().getOffsetY());
 	}
 }

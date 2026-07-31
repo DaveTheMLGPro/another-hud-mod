@@ -23,6 +23,7 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 public final class HudLayoutEditorScreen extends Screen {
 	private static final int FOOTER_HEIGHT = 36;
@@ -31,6 +32,7 @@ public final class HudLayoutEditorScreen extends Screen {
 	private static final int SETTINGS_BUTTON_Y = 6;
 	private static final int SETTINGS_BUTTON_SIZE = 20;
 	private static final int SETTINGS_ICON_SIZE = 16;
+	private static final int GLOBAL_MODULES_TAB = 2;
 	private static final Component INSTRUCTIONS = TranslationKey.EDITOR_INSTRUCTIONS.component();
 	private static final Component SAVE_FAILED = TranslationKey.EDITOR_SAVE_FAILED.component();
 
@@ -104,7 +106,8 @@ public final class HudLayoutEditorScreen extends Screen {
 				&& element.elementIndex() == selectedElement;
 			boolean isHovered = element.moduleIndex() == hoveredModule
 				&& element.elementIndex() == hoveredElement;
-			boolean visible = entry.elementVisibleUntyped(config, element.elementIndex());
+			boolean visible = session.getDraft().isModuleEnabled(entry.getModule().id())
+				&& entry.elementVisibleUntyped(config, element.elementIndex());
 			HudSelectionRenderer.render(graphics, element.bounds(), visible, selected,
 				isHovered, colors, mouseX, mouseY, width, height);
 		}
@@ -347,18 +350,36 @@ public final class HudLayoutEditorScreen extends Screen {
 	}
 
 	private void openGlobalSettings() {
+		openGlobalSettings(0);
+	}
+
+	private void openGlobalSettings(int selectedTab) {
 		dragging = false;
 		globalSettingsOpen = true;
 		EditorConfig config = session.getDraft().getRawEditor();
 		popover.openBelow(TranslationKey.EDITOR_SETTINGS_TITLE.component(),
-			EditorGlobalSettingsPopover.create(config, this::resetAllToDefaults));
+			EditorGlobalSettingsPopover.create(config, session.getDraft(), registry,
+				this::resetModuleToDefaults, this::resetAllModulesToDefaults), selectedTab);
 		saveFailed = false;
 	}
 
-	private void resetAllToDefaults() {
-		session.resetToDefaults();
+	private void resetModuleToDefaults(Identifier moduleId) {
+		session.resetModuleToDefaults(moduleId);
+		normalizeSelectionAfterModuleReset(moduleId);
+		openGlobalSettings(GLOBAL_MODULES_TAB);
+	}
+
+	private void resetAllModulesToDefaults() {
+		session.resetModulesToDefaults();
 		selectedElement = selectedModule >= 0 ? 0 : -1;
-		openGlobalSettings();
+		openGlobalSettings(GLOBAL_MODULES_TAB);
+	}
+
+	private void normalizeSelectionAfterModuleReset(Identifier moduleId) {
+		if (selectedModule >= 0
+			&& registry.getEntries().get(selectedModule).getModule().id().equals(moduleId)) {
+			selectedElement = 0;
+		}
 	}
 
 	private HudBounds popoverAnchor() {
@@ -387,8 +408,9 @@ public final class HudLayoutEditorScreen extends Screen {
 		}
 		selectedModule = -1;
 		selectedElement = -1;
-		popover.close();
-		globalSettingsOpen = false;
+		if (!globalSettingsOpen) {
+			popover.close();
+		}
 	}
 
 	private boolean isGridActive() {

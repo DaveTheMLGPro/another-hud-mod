@@ -25,7 +25,7 @@ public final class ItemPickupHudConfig implements HudModuleConfig<ItemPickupHudC
 	public static final int DEFAULT_TEXT_COLOR = 0xFF55FF55;
 
 	private boolean enabled = true;
-	private ModuleLayout layout = new ModuleLayout(HudAnchor.CENTER_LEFT, 8, 0);
+	private ModuleLayout layout = new ModuleLayout(HudAnchor.BOTTOM_RIGHT, -8, -8);
 	private int maxVisibleItems = 3;
 	private double displayTimeSeconds = 3.0D;
 	private double removeDelaySeconds = 0.5D;
@@ -45,7 +45,7 @@ public final class ItemPickupHudConfig implements HudModuleConfig<ItemPickupHudC
 	private ItemPickupBackgroundStyle backgroundStyle = ItemPickupBackgroundStyle.TINTED_ROWS;
 	private int backgroundColor = DEFAULT_BACKGROUND_COLOR;
 	private int textColor = DEFAULT_TEXT_COLOR;
-	private ItemPickupRemovalMode removalMode = ItemPickupRemovalMode.INSTANT;
+	private ItemPickupRemovalMode removalMode = ItemPickupRemovalMode.FADE_OUT;
 
 	@Override
 	public boolean enabled() {
@@ -100,7 +100,7 @@ public final class ItemPickupHudConfig implements HudModuleConfig<ItemPickupHudC
 	@Override
 	public void validate() {
 		if (layout == null) {
-			layout = new ModuleLayout(HudAnchor.CENTER_LEFT, 8, 0);
+			layout = new ModuleLayout(HudAnchor.BOTTOM_RIGHT, -8, -8);
 		}
 		layout.validate();
 		maxVisibleItems = Math.clamp(maxVisibleItems, MIN_VISIBLE_ITEMS, MAX_VISIBLE_ITEMS);

@@ -16,6 +16,16 @@ public enum TranslationKey {
 	EDITOR_SETTINGS_TITLE("screen.another-hud-mod.editor.settings.title"),
 	EDITOR_SETTINGS_TAB_GENERAL("screen.another-hud-mod.editor.settings.tab.general"),
 	EDITOR_SETTINGS_TAB_GRID("screen.another-hud-mod.editor.settings.tab.grid"),
+	EDITOR_SETTINGS_TAB_MODULES("screen.another-hud-mod.editor.settings.tab.modules"),
+	EDITOR_SETTINGS_MODULE_ENABLED("screen.another-hud-mod.editor.settings.modules.enabled"),
+	EDITOR_SETTINGS_MODULE_ENABLED_DESCRIPTION(
+		"screen.another-hud-mod.editor.settings.modules.enabled.description"),
+	EDITOR_SETTINGS_MODULE_RESET("screen.another-hud-mod.editor.settings.modules.reset"),
+	EDITOR_SETTINGS_MODULE_RESET_DESCRIPTION(
+		"screen.another-hud-mod.editor.settings.modules.reset.description"),
+	EDITOR_SETTINGS_MODULES_RESET_ALL("screen.another-hud-mod.editor.settings.modules.reset_all"),
+	EDITOR_SETTINGS_MODULES_RESET_ALL_DESCRIPTION(
+		"screen.another-hud-mod.editor.settings.modules.reset_all.description"),
 	EDITOR_SETTINGS_ACCENT_COLOR("screen.another-hud-mod.editor.settings.accent_color"),
 	EDITOR_SETTINGS_ACCENT_COLOR_DESCRIPTION(
 		"screen.another-hud-mod.editor.settings.accent_color.description"),
@@ -26,8 +36,6 @@ public enum TranslationKey {
 		"screen.another-hud-mod.editor.settings.module_highlight_color"),
 	EDITOR_SETTINGS_MODULE_HIGHLIGHT_COLOR_DESCRIPTION(
 		"screen.another-hud-mod.editor.settings.module_highlight_color.description"),
-	EDITOR_SETTINGS_RESET_ALL("screen.another-hud-mod.editor.settings.reset_all"),
-	EDITOR_SETTINGS_RESET_ALL_DESCRIPTION("screen.another-hud-mod.editor.settings.reset_all.description"),
 	EDITOR_SETTINGS_MINOR_GRID_COLOR("screen.another-hud-mod.editor.settings.grid.minor_color"),
 	EDITOR_SETTINGS_MINOR_GRID_COLOR_DESCRIPTION(
 		"screen.another-hud-mod.editor.settings.grid.minor_color.description"),
@@ -250,5 +258,9 @@ public enum TranslationKey {
 
 	public Component component() {
 		return Component.translatable(key);
+	}
+
+	public Component component(Object... arguments) {
+		return Component.translatable(key, arguments);
 	}
 }
