@@ -22,14 +22,18 @@ public final class ItemPickupToastLayout {
 	}
 
 	public static HudSize measure(int rowCount, int widestText, int minimumWidth) {
-		if (rowCount < 0 || widestText < 0 || minimumWidth < 0) {
+		return measure(rowCount, widestText, minimumWidth, TEXT_LEFT, ROW_GAP);
+	}
+
+	public static HudSize measure(int rowCount, int widestText, int minimumWidth, int textLeft, int rowGap) {
+		if (rowCount < 0 || widestText < 0 || minimumWidth < 0 || textLeft < 0 || rowGap < 0) {
 			throw new IllegalArgumentException("Toast layout inputs cannot be negative.");
 		}
 		if (rowCount == 0) {
 			return new HudSize(0, 0);
 		}
-		int width = Math.max(minimumWidth, TEXT_LEFT + widestText + RIGHT_PADDING);
-		int height = stackHeight(rowCount);
+		int width = Math.max(minimumWidth, textLeft + widestText + RIGHT_PADDING);
+		int height = stackHeight(rowCount, rowGap);
 		return new HudSize(width, height);
 	}
 
@@ -41,13 +45,21 @@ public final class ItemPickupToastLayout {
 	}
 
 	public static int rowY(int index) {
-		if (index < 0) {
+		return rowY(index, ROW_GAP);
+	}
+
+	public static int rowY(int index, int rowGap) {
+		if (index < 0 || rowGap < 0) {
 			throw new IllegalArgumentException("Toast index cannot be negative.");
 		}
-		return index * (ROW_HEIGHT + ROW_GAP);
+		return index * (ROW_HEIGHT + rowGap);
 	}
 
 	private static int stackHeight(int rowCount) {
-		return rowCount == 0 ? 0 : rowCount * ROW_HEIGHT + (rowCount - 1) * ROW_GAP;
+		return stackHeight(rowCount, ROW_GAP);
+	}
+
+	private static int stackHeight(int rowCount, int rowGap) {
+		return rowCount == 0 ? 0 : rowCount * ROW_HEIGHT + (rowCount - 1) * rowGap;
 	}
 }

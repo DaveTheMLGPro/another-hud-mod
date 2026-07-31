@@ -27,12 +27,13 @@ final class ItemPickupToastQueue<T> {
 		}
 
 		Entry<T> matching = findMergeCandidate(value, nowNanos, mergeWindowNanos, matcher);
+		boolean merged = matching != null;
 		if (matching != null) {
 			entries.remove(matching);
 			overflowFadeStarts.remove(matching);
 			amount = saturatingAdd(matching.amount(), amount);
 		}
-		entries.addLast(new Entry<>(value, amount, nowNanos));
+		entries.addLast(new Entry<>(value, amount, nowNanos, merged));
 		while (entries.size() > capacity) {
 			removeFirst();
 		}
@@ -175,6 +176,6 @@ final class ItemPickupToastQueue<T> {
 		return left + right;
 	}
 
-	record Entry<T>(T value, int amount, long updatedAtNanos) {
+	record Entry<T>(T value, int amount, long updatedAtNanos, boolean merged) {
 	}
 }

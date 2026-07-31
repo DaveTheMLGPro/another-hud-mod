@@ -27,6 +27,15 @@ class ItemPickupToastLayoutTest {
 	}
 
 	@Test
+	void supportsCustomTextInsetAndRowSpacing() {
+		HudSize size = ItemPickupToastLayout.measure(3, 72, 96, 4, 6);
+
+		assertEquals(96, size.width());
+		assertEquals(78, size.height());
+		assertEquals(28, ItemPickupToastLayout.rowY(1, 6));
+	}
+
+	@Test
 	void bottomAlignsPartialStackWithinItsCapacity() {
 		int threeRowHeight = ItemPickupToastLayout.measure(3, 0).height();
 

@@ -37,6 +37,7 @@ class ItemPickupToastQueueTest {
 		assertEquals(List.of("gravel", "sand"),
 			entries.stream().map(ItemPickupToastQueue.Entry::value).toList());
 		assertEquals(4, entries.getLast().amount());
+		assertEquals(true, entries.getLast().merged());
 
 		entries = queue.snapshot(3, SECOND * 4 - 1, SECOND * 3, SECOND / 2, SECOND, false);
 		assertEquals(List.of("sand"),

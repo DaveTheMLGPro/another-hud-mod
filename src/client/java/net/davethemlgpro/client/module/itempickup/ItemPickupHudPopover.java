@@ -7,6 +7,7 @@ import net.davethemlgpro.client.screen.popover.HudPopoverControl;
 import net.davethemlgpro.client.screen.popover.HudPopoverTab;
 import net.davethemlgpro.client.screen.popover.HudSectionControl;
 import net.davethemlgpro.client.screen.popover.HudSliderControl;
+import net.davethemlgpro.client.screen.popover.HudToggleControl;
 import net.davethemlgpro.client.translation.TranslationKey;
 import net.minecraft.network.chat.Component;
 
@@ -27,10 +28,37 @@ public final class ItemPickupHudPopover {
 
 	private static List<HudPopoverControl> appearanceControls(ItemPickupHudConfig config) {
 		return List.of(
-			new HudCycleControl<>(TranslationKey.SETTINGS_ITEM_PICKUP_STYLE.component(),
+			new HudCycleControl<>(TranslationKey.SETTINGS_ITEM_PICKUP_PRESENTATION.component(),
+				TranslationKey.SETTINGS_ITEM_PICKUP_PRESENTATION_DESCRIPTION.component(),
+				List.of(ItemPickupPresentation.values()), config::getPresentation, config::setPresentation,
+				ItemPickupHudPopover::presentationName),
+			new HudConditionalControl(new HudCycleControl<>(TranslationKey.SETTINGS_ITEM_PICKUP_STYLE.component(),
 				TranslationKey.SETTINGS_ITEM_PICKUP_STYLE_DESCRIPTION.component(),
 				List.of(ItemPickupHudStyle.values()), config::getStyle, config::setStyle,
 				ItemPickupHudPopover::styleName),
+				() -> config.getPresentation() == ItemPickupPresentation.LIST),
+			new HudConditionalControl(new HudToggleControl(
+				TranslationKey.SETTINGS_ITEM_PICKUP_SHOW_ITEM_ICON.component(),
+				TranslationKey.SETTINGS_ITEM_PICKUP_SHOW_ITEM_ICON_DESCRIPTION.component(),
+				config::isShowItemIcon, config::setShowItemIcon),
+				() -> config.getPresentation() == ItemPickupPresentation.LIST
+					&& config.getStyle() == ItemPickupHudStyle.NORMAL),
+			new HudSectionControl(TranslationKey.SETTINGS_ITEM_PICKUP_SECTION_LAYOUT.component()),
+			new HudConditionalControl(new HudToggleControl(
+				TranslationKey.SETTINGS_ITEM_PICKUP_STABLE_WIDTH.component(),
+				TranslationKey.SETTINGS_ITEM_PICKUP_STABLE_WIDTH_DESCRIPTION.component(),
+				config::isStableWidth, config::setStableWidth),
+				() -> config.getPresentation() == ItemPickupPresentation.LIST),
+			new HudSliderControl(TranslationKey.SETTINGS_ITEM_PICKUP_UI_SCALE.component(),
+				TranslationKey.SETTINGS_ITEM_PICKUP_UI_SCALE_DESCRIPTION.component(),
+				ItemPickupHudConfig.MIN_UI_SCALE, ItemPickupHudConfig.MAX_UI_SCALE, 0.01D,
+				config::getUiScale, config::setUiScale,
+				value -> Component.literal(Math.round(value * 100.0D) + "%")),
+			new HudSliderControl(TranslationKey.SETTINGS_ITEM_PICKUP_ROW_SPACING.component(),
+				TranslationKey.SETTINGS_ITEM_PICKUP_ROW_SPACING_DESCRIPTION.component(),
+				ItemPickupHudConfig.MIN_ROW_SPACING, ItemPickupHudConfig.MAX_ROW_SPACING, 1.0D,
+				config::getRowSpacing, value -> config.setRowSpacing((int) Math.round(value)),
+				value -> Component.literal(Integer.toString((int) Math.round(value)))),
 			new HudCycleControl<>(TranslationKey.SETTINGS_ITEM_PICKUP_BACKGROUND_STYLE.component(),
 				TranslationKey.SETTINGS_ITEM_PICKUP_BACKGROUND_STYLE_DESCRIPTION.component(),
 				List.of(ItemPickupBackgroundStyle.values()), config::getBackgroundStyle,
@@ -54,6 +82,22 @@ public final class ItemPickupHudPopover {
 
 	private static List<HudPopoverControl> behaviorControls(ItemPickupHudConfig config) {
 		return List.of(
+			new HudConditionalControl(new HudCycleControl<>(
+				TranslationKey.SETTINGS_ITEM_PICKUP_GROWTH_DIRECTION.component(),
+				TranslationKey.SETTINGS_ITEM_PICKUP_GROWTH_DIRECTION_DESCRIPTION.component(),
+				List.of(ItemPickupGrowthDirection.AUTO, ItemPickupGrowthDirection.UP,
+					ItemPickupGrowthDirection.DOWN),
+				config::getGrowthDirection, config::setGrowthDirection,
+				ItemPickupHudPopover::growthDirectionName),
+				() -> config.getPresentation() == ItemPickupPresentation.LIST),
+			new HudConditionalControl(new HudCycleControl<>(
+				TranslationKey.SETTINGS_ITEM_PICKUP_GROWTH_DIRECTION.component(),
+				TranslationKey.SETTINGS_ITEM_PICKUP_GROWTH_DIRECTION_DESCRIPTION.component(),
+				List.of(ItemPickupGrowthDirection.AUTO, ItemPickupGrowthDirection.LEFT,
+					ItemPickupGrowthDirection.RIGHT),
+				config::getGrowthDirection, config::setGrowthDirection,
+				ItemPickupHudPopover::growthDirectionName),
+				() -> config.getPresentation() == ItemPickupPresentation.CARDS),
 			new HudSliderControl(TranslationKey.SETTINGS_ITEM_PICKUP_MAX_VISIBLE.component(),
 				TranslationKey.SETTINGS_ITEM_PICKUP_MAX_VISIBLE_DESCRIPTION.component(),
 				ItemPickupHudConfig.MIN_VISIBLE_ITEMS, ItemPickupHudConfig.MAX_VISIBLE_ITEMS, 1.0D,
@@ -84,8 +128,56 @@ public final class ItemPickupHudPopover {
 				TranslationKey.SETTINGS_ITEM_PICKUP_MERGE_WINDOW_DESCRIPTION.component(),
 				ItemPickupHudConfig.MIN_MERGE_WINDOW_SECONDS, ItemPickupHudConfig.MAX_MERGE_WINDOW_SECONDS, 0.1D,
 				config::getMergeWindowSeconds, config::setMergeWindowSeconds,
-				ItemPickupHudPopover::seconds)
+				ItemPickupHudPopover::seconds),
+			new HudSectionControl(TranslationKey.SETTINGS_ITEM_PICKUP_SECTION_ANIMATION.component()),
+			new HudCycleControl<>(TranslationKey.SETTINGS_ITEM_PICKUP_ENTRY_ANIMATION.component(),
+				TranslationKey.SETTINGS_ITEM_PICKUP_ENTRY_ANIMATION_DESCRIPTION.component(),
+				List.of(ItemPickupEntryAnimation.values()), config::getEntryAnimation,
+				config::setEntryAnimation, ItemPickupHudPopover::entryAnimationName),
+			new HudConditionalControl(new HudSliderControl(
+				TranslationKey.SETTINGS_ITEM_PICKUP_ENTRY_ANIMATION_DURATION.component(),
+				TranslationKey.SETTINGS_ITEM_PICKUP_ENTRY_ANIMATION_DURATION_DESCRIPTION.component(),
+				ItemPickupHudConfig.MIN_ENTRY_ANIMATION_SECONDS,
+				ItemPickupHudConfig.MAX_ENTRY_ANIMATION_SECONDS, 0.05D,
+				config::getEntryAnimationSeconds, config::setEntryAnimationSeconds,
+				ItemPickupHudPopover::seconds),
+				() -> config.getEntryAnimation() == ItemPickupEntryAnimation.SLIDE),
+			new HudCycleControl<>(TranslationKey.SETTINGS_ITEM_PICKUP_MERGE_FEEDBACK.component(),
+				TranslationKey.SETTINGS_ITEM_PICKUP_MERGE_FEEDBACK_DESCRIPTION.component(),
+				List.of(ItemPickupMergeFeedback.values()), config::getMergeFeedback,
+				config::setMergeFeedback, ItemPickupHudPopover::mergeFeedbackName)
 		);
+	}
+
+	private static Component presentationName(ItemPickupPresentation presentation) {
+		return switch (presentation) {
+			case LIST -> TranslationKey.SETTINGS_VALUE_LIST.component();
+			case CARDS -> TranslationKey.SETTINGS_VALUE_CARDS.component();
+		};
+	}
+
+	private static Component growthDirectionName(ItemPickupGrowthDirection direction) {
+		return switch (direction) {
+			case AUTO -> TranslationKey.SETTINGS_VALUE_AUTO.component();
+			case UP -> TranslationKey.SETTINGS_VALUE_TOP.component();
+			case DOWN -> TranslationKey.SETTINGS_VALUE_BOTTOM.component();
+			case LEFT -> TranslationKey.SETTINGS_VALUE_LEFT.component();
+			case RIGHT -> TranslationKey.SETTINGS_VALUE_RIGHT.component();
+		};
+	}
+
+	private static Component entryAnimationName(ItemPickupEntryAnimation animation) {
+		return switch (animation) {
+			case INSTANT -> TranslationKey.SETTINGS_VALUE_INSTANT.component();
+			case SLIDE -> TranslationKey.SETTINGS_VALUE_SLIDE.component();
+		};
+	}
+
+	private static Component mergeFeedbackName(ItemPickupMergeFeedback feedback) {
+		return switch (feedback) {
+			case NONE -> TranslationKey.SETTINGS_VALUE_NONE.component();
+			case PULSE -> TranslationKey.SETTINGS_VALUE_PULSE.component();
+		};
 	}
 
 	private static Component seconds(double value) {

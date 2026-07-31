@@ -142,8 +142,25 @@ public enum TranslationKey {
 	SETTINGS_ITEM_PICKUP_SECTION_BEHAVIOR(
 		"module.another-hud-mod.item_pickup.settings.section.behavior"),
 	SETTINGS_ITEM_PICKUP_SECTION_TEXT("module.another-hud-mod.item_pickup.settings.section.text"),
+	SETTINGS_ITEM_PICKUP_SECTION_ANIMATION("module.another-hud-mod.item_pickup.settings.section.animation"),
+	SETTINGS_ITEM_PICKUP_SECTION_LAYOUT("module.another-hud-mod.item_pickup.settings.section.layout"),
+	SETTINGS_ITEM_PICKUP_PRESENTATION("module.another-hud-mod.item_pickup.settings.presentation"),
+	SETTINGS_ITEM_PICKUP_PRESENTATION_DESCRIPTION(
+		"module.another-hud-mod.item_pickup.settings.presentation.description"),
 	SETTINGS_ITEM_PICKUP_STYLE("module.another-hud-mod.item_pickup.settings.style"),
 	SETTINGS_ITEM_PICKUP_STYLE_DESCRIPTION("module.another-hud-mod.item_pickup.settings.style.description"),
+	SETTINGS_ITEM_PICKUP_STABLE_WIDTH("module.another-hud-mod.item_pickup.settings.stable_width"),
+	SETTINGS_ITEM_PICKUP_STABLE_WIDTH_DESCRIPTION(
+		"module.another-hud-mod.item_pickup.settings.stable_width.description"),
+	SETTINGS_ITEM_PICKUP_UI_SCALE("module.another-hud-mod.item_pickup.settings.ui_scale"),
+	SETTINGS_ITEM_PICKUP_UI_SCALE_DESCRIPTION(
+		"module.another-hud-mod.item_pickup.settings.ui_scale.description"),
+	SETTINGS_ITEM_PICKUP_ROW_SPACING("module.another-hud-mod.item_pickup.settings.row_spacing"),
+	SETTINGS_ITEM_PICKUP_ROW_SPACING_DESCRIPTION(
+		"module.another-hud-mod.item_pickup.settings.row_spacing.description"),
+	SETTINGS_ITEM_PICKUP_SHOW_ITEM_ICON("module.another-hud-mod.item_pickup.settings.show_item_icon"),
+	SETTINGS_ITEM_PICKUP_SHOW_ITEM_ICON_DESCRIPTION(
+		"module.another-hud-mod.item_pickup.settings.show_item_icon.description"),
 	SETTINGS_ITEM_PICKUP_BACKGROUND_STYLE("module.another-hud-mod.item_pickup.settings.background_style"),
 	SETTINGS_ITEM_PICKUP_BACKGROUND_STYLE_DESCRIPTION(
 		"module.another-hud-mod.item_pickup.settings.background_style.description"),
@@ -174,6 +191,19 @@ public enum TranslationKey {
 	SETTINGS_ITEM_PICKUP_TEXT_COLOR("module.another-hud-mod.item_pickup.settings.text_color"),
 	SETTINGS_ITEM_PICKUP_TEXT_COLOR_DESCRIPTION(
 		"module.another-hud-mod.item_pickup.settings.text_color.description"),
+	SETTINGS_ITEM_PICKUP_GROWTH_DIRECTION("module.another-hud-mod.item_pickup.settings.growth_direction"),
+	SETTINGS_ITEM_PICKUP_GROWTH_DIRECTION_DESCRIPTION(
+		"module.another-hud-mod.item_pickup.settings.growth_direction.description"),
+	SETTINGS_ITEM_PICKUP_ENTRY_ANIMATION("module.another-hud-mod.item_pickup.settings.entry_animation"),
+	SETTINGS_ITEM_PICKUP_ENTRY_ANIMATION_DESCRIPTION(
+		"module.another-hud-mod.item_pickup.settings.entry_animation.description"),
+	SETTINGS_ITEM_PICKUP_ENTRY_ANIMATION_DURATION(
+		"module.another-hud-mod.item_pickup.settings.entry_animation_duration"),
+	SETTINGS_ITEM_PICKUP_ENTRY_ANIMATION_DURATION_DESCRIPTION(
+		"module.another-hud-mod.item_pickup.settings.entry_animation_duration.description"),
+	SETTINGS_ITEM_PICKUP_MERGE_FEEDBACK("module.another-hud-mod.item_pickup.settings.merge_feedback"),
+	SETTINGS_ITEM_PICKUP_MERGE_FEEDBACK_DESCRIPTION(
+		"module.another-hud-mod.item_pickup.settings.merge_feedback.description"),
 	COLOR_PICKER_ALPHA("popover.another-hud-mod.color_picker.alpha"),
 	COLOR_PICKER_INPUT("popover.another-hud-mod.color_picker.input"),
 	SETTINGS_VALUE_HORIZONTAL("option.another-hud-mod.horizontal"),
@@ -202,7 +232,11 @@ public enum TranslationKey {
 	SETTINGS_VALUE_BACKGROUND_CLEAR("option.another-hud-mod.background_clear"),
 	SETTINGS_VALUE_UNIFIED_PANEL("option.another-hud-mod.unified_panel"),
 	SETTINGS_VALUE_INSTANT("option.another-hud-mod.instant"),
-	SETTINGS_VALUE_FADE_OUT("option.another-hud-mod.fade_out");
+	SETTINGS_VALUE_FADE_OUT("option.another-hud-mod.fade_out"),
+	SETTINGS_VALUE_LIST("option.another-hud-mod.list"),
+	SETTINGS_VALUE_CARDS("option.another-hud-mod.cards"),
+	SETTINGS_VALUE_AUTO("option.another-hud-mod.auto"),
+	SETTINGS_VALUE_SLIDE("option.another-hud-mod.slide");
 
 	private final String key;
 
