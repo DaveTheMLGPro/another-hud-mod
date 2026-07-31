@@ -10,6 +10,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
@@ -67,9 +68,14 @@ public final class ItemPickupHudModule implements HudModule<ItemPickupHudConfig>
 		if (source.isEmpty() || amount <= 0) {
 			return;
 		}
+		ItemPickupHudConfig config = AnotherHUDModClient.getItemPickupHudConfig();
+		String itemId = BuiltInRegistries.ITEM.getKey(source.getItem()).toString();
+		if (!ItemPickupFilter.allows(config.getFilterMode(), config.getFilteredItems(), itemId)) {
+			return;
+		}
 		resetForLevel(level);
 		toasts.record(source.copyWithCount(1), amount, System.nanoTime(),
-			secondsToNanos(AnotherHUDModClient.getItemPickupHudConfig().getMergeWindowSeconds()),
+			secondsToNanos(config.getMergeWindowSeconds()),
 			ItemStack::isSameItemSameComponents);
 	}
 

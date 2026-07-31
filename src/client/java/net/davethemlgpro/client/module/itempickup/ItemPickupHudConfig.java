@@ -5,6 +5,11 @@ import net.davethemlgpro.client.hud.layout.HudAnchor;
 import net.davethemlgpro.client.hud.layout.ModuleLayout;
 import net.davethemlgpro.client.module.HudModuleConfig;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+
 public final class ItemPickupHudConfig implements HudModuleConfig<ItemPickupHudConfig> {
 	public static final int MIN_VISIBLE_ITEMS = 1;
 	public static final int MAX_VISIBLE_ITEMS = 10;
@@ -42,6 +47,8 @@ public final class ItemPickupHudConfig implements HudModuleConfig<ItemPickupHudC
 	private double uiScale = 1.0D;
 	private int rowSpacing = 2;
 	private boolean showItemIcon = true;
+	private ItemPickupFilterMode filterMode = ItemPickupFilterMode.SHOW_ALL;
+	private List<String> filteredItems = new ArrayList<>();
 	private ItemPickupHudStyle style = ItemPickupHudStyle.NORMAL;
 	private ItemPickupCountFormat countFormat = ItemPickupCountFormat.PLUS;
 	private ItemPickupBackgroundStyle backgroundStyle = ItemPickupBackgroundStyle.TINTED_ROWS;
@@ -90,6 +97,8 @@ public final class ItemPickupHudConfig implements HudModuleConfig<ItemPickupHudC
 		uiScale = source.uiScale;
 		rowSpacing = source.rowSpacing;
 		showItemIcon = source.showItemIcon;
+		filterMode = source.filterMode;
+		filteredItems = new ArrayList<>(source.filteredItems == null ? List.of() : source.filteredItems);
 		style = source.style;
 		countFormat = source.countFormat;
 		backgroundStyle = source.backgroundStyle;
@@ -135,6 +144,19 @@ public final class ItemPickupHudConfig implements HudModuleConfig<ItemPickupHudC
 		}
 		uiScale = Math.clamp(finiteOrDefault(uiScale, 1.0D), MIN_UI_SCALE, MAX_UI_SCALE);
 		rowSpacing = Math.clamp(rowSpacing, MIN_ROW_SPACING, MAX_ROW_SPACING);
+		if (filterMode == null) {
+			filterMode = ItemPickupFilterMode.SHOW_ALL;
+		}
+		LinkedHashSet<String> repairedItems = new LinkedHashSet<>();
+		if (filteredItems != null) {
+			for (String itemId : filteredItems) {
+				String normalized = normalizeItemId(itemId);
+				if (normalized != null) {
+					repairedItems.add(normalized);
+				}
+			}
+		}
+		filteredItems = new ArrayList<>(repairedItems);
 		if (style == null) {
 			style = ItemPickupHudStyle.NORMAL;
 		}
@@ -269,6 +291,35 @@ public final class ItemPickupHudConfig implements HudModuleConfig<ItemPickupHudC
 		this.showItemIcon = showItemIcon;
 	}
 
+	public ItemPickupFilterMode getFilterMode() {
+		return filterMode;
+	}
+
+	public void setFilterMode(ItemPickupFilterMode filterMode) {
+		this.filterMode = filterMode == null ? ItemPickupFilterMode.SHOW_ALL : filterMode;
+	}
+
+	public List<String> getFilteredItems() {
+		return List.copyOf(filteredItems);
+	}
+
+	public boolean addFilteredItem(String itemId) {
+		String normalized = normalizeItemId(itemId);
+		if (normalized == null || filteredItems.contains(normalized)) {
+			return false;
+		}
+		filteredItems.add(normalized);
+		return true;
+	}
+
+	public void removeFilteredItem(String itemId) {
+		filteredItems.remove(itemId);
+	}
+
+	public void clearFilteredItems() {
+		filteredItems.clear();
+	}
+
 	public ItemPickupHudStyle getStyle() {
 		return style;
 	}
@@ -329,5 +380,16 @@ public final class ItemPickupHudConfig implements HudModuleConfig<ItemPickupHudC
 				&& (direction == ItemPickupGrowthDirection.UP || direction == ItemPickupGrowthDirection.DOWN)
 			|| presentation == ItemPickupPresentation.CARDS
 				&& (direction == ItemPickupGrowthDirection.LEFT || direction == ItemPickupGrowthDirection.RIGHT);
+	}
+
+	static String normalizeItemId(String itemId) {
+		if (itemId == null) {
+			return null;
+		}
+		String normalized = itemId.trim().toLowerCase(Locale.ROOT);
+		if (!normalized.contains(":")) {
+			normalized = "minecraft:" + normalized;
+		}
+		return normalized.matches("[a-z0-9_.-]+:[a-z0-9/._-]+") ? normalized : null;
 	}
 }

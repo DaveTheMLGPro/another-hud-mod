@@ -145,6 +145,7 @@ public enum TranslationKey {
 	SETTINGS_ITEM_PICKUP_TAB_GENERAL("module.another-hud-mod.item_pickup.settings.tab.general"),
 	SETTINGS_ITEM_PICKUP_TAB_APPEARANCE("module.another-hud-mod.item_pickup.settings.tab.appearance"),
 	SETTINGS_ITEM_PICKUP_TAB_BEHAVIOR("module.another-hud-mod.item_pickup.settings.tab.behavior"),
+	SETTINGS_ITEM_PICKUP_TAB_FILTER("module.another-hud-mod.item_pickup.settings.tab.filter"),
 	SETTINGS_ITEM_PICKUP_SECTION_APPEARANCE(
 		"module.another-hud-mod.item_pickup.settings.section.appearance"),
 	SETTINGS_ITEM_PICKUP_SECTION_BEHAVIOR(
@@ -212,6 +213,16 @@ public enum TranslationKey {
 	SETTINGS_ITEM_PICKUP_MERGE_FEEDBACK("module.another-hud-mod.item_pickup.settings.merge_feedback"),
 	SETTINGS_ITEM_PICKUP_MERGE_FEEDBACK_DESCRIPTION(
 		"module.another-hud-mod.item_pickup.settings.merge_feedback.description"),
+	SETTINGS_ITEM_PICKUP_FILTER_MODE("module.another-hud-mod.item_pickup.settings.filter_mode"),
+	SETTINGS_ITEM_PICKUP_FILTER_MODE_DESCRIPTION(
+		"module.another-hud-mod.item_pickup.settings.filter_mode.description"),
+	SETTINGS_ITEM_PICKUP_FILTERED_ITEMS("module.another-hud-mod.item_pickup.settings.filtered_items"),
+	SETTINGS_ITEM_PICKUP_FILTERED_ITEMS_DESCRIPTION(
+		"module.another-hud-mod.item_pickup.settings.filtered_items.description"),
+	SETTINGS_ITEM_PICKUP_FILTER_INPUT("module.another-hud-mod.item_pickup.settings.filter_input"),
+	SETTINGS_ITEM_PICKUP_FILTER_ADD("module.another-hud-mod.item_pickup.settings.filter_add"),
+	SETTINGS_ITEM_PICKUP_FILTER_ADD_HELD("module.another-hud-mod.item_pickup.settings.filter_add_held"),
+	SETTINGS_ITEM_PICKUP_FILTER_EMPTY("module.another-hud-mod.item_pickup.settings.filter_empty"),
 	COLOR_PICKER_ALPHA("popover.another-hud-mod.color_picker.alpha"),
 	COLOR_PICKER_INPUT("popover.another-hud-mod.color_picker.input"),
 	SETTINGS_VALUE_HORIZONTAL("option.another-hud-mod.horizontal"),
@@ -244,7 +255,10 @@ public enum TranslationKey {
 	SETTINGS_VALUE_LIST("option.another-hud-mod.list"),
 	SETTINGS_VALUE_CARDS("option.another-hud-mod.cards"),
 	SETTINGS_VALUE_AUTO("option.another-hud-mod.auto"),
-	SETTINGS_VALUE_SLIDE("option.another-hud-mod.slide");
+	SETTINGS_VALUE_SLIDE("option.another-hud-mod.slide"),
+	SETTINGS_VALUE_SHOW_ALL("option.another-hud-mod.show_all"),
+	SETTINGS_VALUE_HIDE_LISTED("option.another-hud-mod.hide_listed"),
+	SETTINGS_VALUE_ONLY_LISTED("option.another-hud-mod.only_listed");
 
 	private final String key;
 

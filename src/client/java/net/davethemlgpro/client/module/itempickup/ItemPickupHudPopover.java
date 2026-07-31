@@ -22,7 +22,19 @@ public final class ItemPickupHudPopover {
 			new HudPopoverTab(TranslationKey.SETTINGS_ITEM_PICKUP_TAB_APPEARANCE.component(),
 				appearanceControls(config)),
 			new HudPopoverTab(TranslationKey.SETTINGS_ITEM_PICKUP_TAB_BEHAVIOR.component(),
-				behaviorControls(config))
+				behaviorControls(config)),
+			new HudPopoverTab(TranslationKey.SETTINGS_ITEM_PICKUP_TAB_FILTER.component(),
+				filterControls(config))
+		);
+	}
+
+	private static List<HudPopoverControl> filterControls(ItemPickupHudConfig config) {
+		return List.of(
+			new HudCycleControl<>(TranslationKey.SETTINGS_ITEM_PICKUP_FILTER_MODE.component(),
+				TranslationKey.SETTINGS_ITEM_PICKUP_FILTER_MODE_DESCRIPTION.component(),
+				List.of(ItemPickupFilterMode.values()), config::getFilterMode, config::setFilterMode,
+				ItemPickupHudPopover::filterModeName),
+			new ItemPickupFilterListControl(config)
 		);
 	}
 
@@ -177,6 +189,14 @@ public final class ItemPickupHudPopover {
 		return switch (feedback) {
 			case NONE -> TranslationKey.SETTINGS_VALUE_NONE.component();
 			case PULSE -> TranslationKey.SETTINGS_VALUE_PULSE.component();
+		};
+	}
+
+	private static Component filterModeName(ItemPickupFilterMode mode) {
+		return switch (mode) {
+			case SHOW_ALL -> TranslationKey.SETTINGS_VALUE_SHOW_ALL.component();
+			case HIDE_LISTED -> TranslationKey.SETTINGS_VALUE_HIDE_LISTED.component();
+			case ONLY_LISTED -> TranslationKey.SETTINGS_VALUE_ONLY_LISTED.component();
 		};
 	}
 

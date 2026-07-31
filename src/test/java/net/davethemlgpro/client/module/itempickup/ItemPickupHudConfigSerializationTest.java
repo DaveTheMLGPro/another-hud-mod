@@ -32,6 +32,9 @@ class ItemPickupHudConfigSerializationTest {
 		original.setUiScale(1.4D);
 		original.setRowSpacing(7);
 		original.setShowItemIcon(false);
+		original.setFilterMode(ItemPickupFilterMode.ONLY_LISTED);
+		original.addFilteredItem("minecraft:diamond");
+		original.addFilteredItem("oak_log");
 		original.setStyle(ItemPickupHudStyle.COMPACT);
 		original.setCountFormat(ItemPickupCountFormat.MULTIPLY);
 		original.setBackgroundStyle(ItemPickupBackgroundStyle.UNIFIED_PANEL);
@@ -63,6 +66,9 @@ class ItemPickupHudConfigSerializationTest {
 		assertEquals(1.4D, restored.getUiScale());
 		assertEquals(7, restored.getRowSpacing());
 		assertFalse(restored.isShowItemIcon());
+		assertEquals(ItemPickupFilterMode.ONLY_LISTED, restored.getFilterMode());
+		assertEquals(java.util.List.of("minecraft:diamond", "minecraft:oak_log"),
+			restored.getFilteredItems());
 		assertEquals(ItemPickupHudStyle.COMPACT, restored.getStyle());
 		assertEquals(ItemPickupCountFormat.MULTIPLY, restored.getCountFormat());
 		assertEquals(ItemPickupBackgroundStyle.UNIFIED_PANEL, restored.getBackgroundStyle());
@@ -88,6 +94,8 @@ class ItemPickupHudConfigSerializationTest {
 			  "mergeFeedback": null,
 			  "uiScale": 99,
 			  "rowSpacing": 99,
+			  "filterMode": null,
+			  "filteredItems": [" DIAMOND ", "minecraft:diamond", "bad id", null],
 			  "style": null,
 			  "countFormat": null,
 			  "backgroundStyle": null,
@@ -113,6 +121,8 @@ class ItemPickupHudConfigSerializationTest {
 		assertEquals(ItemPickupHudConfig.MAX_ROW_SPACING, restored.getRowSpacing());
 		assertTrue(restored.isStableWidth());
 		assertTrue(restored.isShowItemIcon());
+		assertEquals(ItemPickupFilterMode.SHOW_ALL, restored.getFilterMode());
+		assertEquals(java.util.List.of("minecraft:diamond"), restored.getFilteredItems());
 		assertEquals(ItemPickupHudStyle.NORMAL, restored.getStyle());
 		assertEquals(ItemPickupCountFormat.PLUS, restored.getCountFormat());
 		assertEquals(ItemPickupBackgroundStyle.TINTED_ROWS, restored.getBackgroundStyle());
@@ -126,9 +136,11 @@ class ItemPickupHudConfigSerializationTest {
 		ItemPickupHudConfig original = new ItemPickupHudConfig();
 		ItemPickupHudConfig copy = original.copy();
 		copy.getLayout().setOffset(50, 60);
+		copy.addFilteredItem("minecraft:diamond");
 
 		assertNotSame(original.getLayout(), copy.getLayout());
 		assertEquals(-8, original.getLayout().getOffsetX());
 		assertEquals(-8, original.getLayout().getOffsetY());
+		assertTrue(original.getFilteredItems().isEmpty());
 	}
 }

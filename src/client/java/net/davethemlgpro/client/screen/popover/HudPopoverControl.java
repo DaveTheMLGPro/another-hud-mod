@@ -2,6 +2,8 @@ package net.davethemlgpro.client.screen.popover;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 
 public interface HudPopoverControl {
@@ -29,6 +31,17 @@ public interface HudPopoverControl {
 	}
 
 	default void mouseReleased() {
+	}
+
+	default boolean keyPressed(KeyEvent event) {
+		return false;
+	}
+
+	default boolean charTyped(CharacterEvent event) {
+		return false;
+	}
+
+	default void focusLost() {
 	}
 
 	default int withAlpha(int color, int alpha) {

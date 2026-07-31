@@ -215,6 +215,7 @@ public final class HudModulePopover implements HudPopoverContext {
 		int controlWidth = width - PADDING * 2 - (maxScroll > 0 ? SCROLLBAR_WIDTH + 2 : 0);
 		int controlY = contentTop + PADDING - scrollOffset;
 		releaseActiveControl();
+		controls.forEach(HudPopoverControl::focusLost);
 		for (int i = 0; i < controls.size(); i++) {
 			HudPopoverControl control = controls.get(i);
 			if (!control.visible()) {
@@ -303,11 +304,27 @@ public final class HudModulePopover implements HudPopoverContext {
 	}
 
 	public boolean keyPressed(KeyEvent event) {
-		return colorPicker.keyPressed(event);
+		if (colorPicker.keyPressed(event)) {
+			return true;
+		}
+		for (HudPopoverControl control : controls()) {
+			if (control.visible() && control.keyPressed(event)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean charTyped(CharacterEvent event) {
-		return colorPicker.charTyped(event);
+		if (colorPicker.charTyped(event)) {
+			return true;
+		}
+		for (HudPopoverControl control : controls()) {
+			if (control.visible() && control.charTyped(event)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
