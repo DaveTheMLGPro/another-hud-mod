@@ -111,6 +111,16 @@ public class HudModuleEntry<C extends HudModuleConfig<C>> {
 		replaceConfig(configType.cast(value).copy());
 	}
 
+	public C prepareConfigUntyped(HudModuleConfig<?> value) {
+		C prepared = configType.cast(value);
+		prepared.validate();
+		return prepared;
+	}
+
+	public void replacePreparedConfigUntyped(HudModuleConfig<?> value) {
+		this.config = configType.cast(value);
+	}
+
 	public void renderUntyped(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, Minecraft minecraft, HudModuleConfig<?> value, HudBounds bounds) {
 		module.render(graphics, deltaTracker, minecraft, configType.cast(value), bounds);
 	}

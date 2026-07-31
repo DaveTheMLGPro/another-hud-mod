@@ -1,5 +1,6 @@
 package net.davethemlgpro.client.module.itempickup;
 
+import com.google.gson.annotations.SerializedName;
 import net.davethemlgpro.client.hud.layout.HudAnchor;
 import net.davethemlgpro.client.hud.layout.ModuleLayout;
 import net.davethemlgpro.client.module.HudModuleConfig;
@@ -24,7 +25,8 @@ public final class ItemPickupHudConfig implements HudModuleConfig<ItemPickupHudC
 	public static final int DEFAULT_BACKGROUND_COLOR = 0x40000000;
 	public static final int DEFAULT_TEXT_COLOR = 0xFF55FF55;
 
-	private boolean enabled = true;
+	@SerializedName("enabled")
+	private boolean visible = true;
 	private ModuleLayout layout = new ModuleLayout(HudAnchor.BOTTOM_RIGHT, -8, -8);
 	private int maxVisibleItems = 3;
 	private double displayTimeSeconds = 3.0D;
@@ -48,13 +50,13 @@ public final class ItemPickupHudConfig implements HudModuleConfig<ItemPickupHudC
 	private ItemPickupRemovalMode removalMode = ItemPickupRemovalMode.FADE_OUT;
 
 	@Override
-	public boolean enabled() {
-		return enabled;
+	public boolean visible() {
+		return visible;
 	}
 
 	@Override
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
+	public void setVisible(boolean visible) {
+		this.visible = visible;
 	}
 
 	@Override
@@ -71,7 +73,7 @@ public final class ItemPickupHudConfig implements HudModuleConfig<ItemPickupHudC
 
 	@Override
 	public void copyFrom(ItemPickupHudConfig source) {
-		enabled = source.enabled;
+		visible = source.visible;
 		layout = new ModuleLayout();
 		layout.copyFrom(source.layout);
 		maxVisibleItems = source.maxVisibleItems;
@@ -316,11 +318,11 @@ public final class ItemPickupHudConfig implements HudModuleConfig<ItemPickupHudC
 		this.removalMode = removalMode == null ? ItemPickupRemovalMode.INSTANT : removalMode;
 	}
 
-	private static double finiteOrDefault(double value, double fallback) {
+	private double finiteOrDefault(double value, double fallback) {
 		return Double.isFinite(value) ? value : fallback;
 	}
 
-	private static boolean directionMatchesPresentation(ItemPickupGrowthDirection direction,
+	private boolean directionMatchesPresentation(ItemPickupGrowthDirection direction,
 											  ItemPickupPresentation presentation) {
 		return direction == ItemPickupGrowthDirection.AUTO
 			|| presentation == ItemPickupPresentation.LIST

@@ -22,13 +22,15 @@ public final class HudKeyMappings {
 	public static void register() {
 		KeyMappingHelper.registerKeyMapping(OPEN_LAYOUT_EDITOR);
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			if (client.player == null || client.gui.screen() != null || !OPEN_LAYOUT_EDITOR.consumeClick()) {
-				return;
-			}
+			while (OPEN_LAYOUT_EDITOR.consumeClick()) {
+				if (client.player == null || client.gui.screen() != null) {
+					continue;
+				}
 
-			HudEditSession session = HudEditSession.beginEdit(AnotherHUDModClient.getHudConfigManager(), true);
-			client.gui.setScreen(new HudLayoutEditorScreen(null, session,
-				AnotherHUDModClient.getHudModuleRegistry(), AnotherHUDModClient.getHudRenderDispatcher()));
+				HudEditSession session = HudEditSession.beginEdit(AnotherHUDModClient.getHudConfigManager(), true);
+				client.gui.setScreen(new HudLayoutEditorScreen(null, session,
+					AnotherHUDModClient.getHudModuleRegistry(), AnotherHUDModClient.getHudRenderDispatcher()));
+			}
 		});
 	}
 }

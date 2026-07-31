@@ -1,5 +1,6 @@
 package net.davethemlgpro.client.module.armor;
 
+import com.google.gson.annotations.SerializedName;
 import net.davethemlgpro.client.hud.layout.HudAnchor;
 import net.davethemlgpro.client.hud.layout.ModuleLayout;
 import net.davethemlgpro.client.module.HudModuleConfig;
@@ -27,7 +28,8 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 	public static final int DEFAULT_TEXT_CRITICAL_COLOR = 0xFFFF0000;
 	public static final int DEFAULT_LOW_DURABILITY_WARNING_COLOR = 0xFFFF3333;
 
-	private boolean enabled = true;
+	@SerializedName("enabled")
+	private boolean visible = true;
 	private ModuleLayout layout = new ModuleLayout(HudAnchor.CENTER_RIGHT, -8, 0);
 	private ArmorHudLayoutMode layoutMode = ArmorHudLayoutMode.GROUPED;
 	private ModuleLayout[] individualLayouts = createDefaultIndividualLayouts();
@@ -66,13 +68,13 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 	}
 
 	@Override
-	public boolean enabled() {
-		return enabled;
+	public boolean visible() {
+		return visible;
 	}
 
 	@Override
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
+	public void setVisible(boolean visible) {
+		this.visible = visible;
 	}
 
 	@Override
@@ -89,7 +91,7 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 
 	@Override
 	public void copyFrom(ArmorHudConfig source) {
-		enabled = source.enabled;
+		visible = source.visible;
 		layout = new ModuleLayout();
 		layout.copyFrom(source.layout);
 		layoutMode = source.layoutMode;

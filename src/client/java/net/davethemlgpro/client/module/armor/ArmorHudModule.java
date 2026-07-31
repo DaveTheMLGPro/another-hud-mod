@@ -93,7 +93,7 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 			if (elementIndex != 0) {
 				throw new IndexOutOfBoundsException("Grouped Armor HUD has no element " + elementIndex);
 			}
-			return config.enabled();
+			return config.visible();
 		}
 		return config.isIndividualSlotVisible(elementIndex);
 	}
@@ -104,7 +104,7 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 			if (elementIndex != 0) {
 				throw new IndexOutOfBoundsException("Grouped Armor HUD has no element " + elementIndex);
 			}
-			config.setEnabled(visible);
+			config.setVisible(visible);
 			return;
 		}
 		config.setIndividualSlotVisible(elementIndex, visible);

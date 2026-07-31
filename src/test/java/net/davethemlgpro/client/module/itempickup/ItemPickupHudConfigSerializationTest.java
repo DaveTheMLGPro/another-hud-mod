@@ -15,7 +15,7 @@ class ItemPickupHudConfigSerializationTest {
 	@Test
 	void roundTripsSettingsAndLayout() {
 		ItemPickupHudConfig original = new ItemPickupHudConfig();
-		original.setEnabled(false);
+		original.setVisible(false);
 		original.getLayout().setAnchor(HudAnchor.BOTTOM_RIGHT);
 		original.getLayout().setOffset(-14, -28);
 		original.setMaxVisibleItems(7);
@@ -39,10 +39,13 @@ class ItemPickupHudConfigSerializationTest {
 		original.setTextColor(0xFF12AB34);
 		original.setRemovalMode(ItemPickupRemovalMode.FADE_OUT);
 
-		ItemPickupHudConfig restored = gson.fromJson(gson.toJson(original), ItemPickupHudConfig.class);
+		String serialized = gson.toJson(original);
+		ItemPickupHudConfig restored = gson.fromJson(serialized, ItemPickupHudConfig.class);
 		restored.validate();
 
-		assertFalse(restored.enabled());
+		assertTrue(serialized.contains("\"enabled\""));
+		assertFalse(serialized.contains("\"visible\""));
+		assertFalse(restored.visible());
 		assertEquals(HudAnchor.BOTTOM_RIGHT, restored.getLayout().getAnchor());
 		assertEquals(-14, restored.getLayout().getOffsetX());
 		assertEquals(-28, restored.getLayout().getOffsetY());
