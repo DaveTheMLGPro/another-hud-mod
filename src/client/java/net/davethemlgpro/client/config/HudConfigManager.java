@@ -50,10 +50,17 @@ public class HudConfigManager {
 	public void applySnapshot(HudConfigSnapshot snapshot) {
 		EditorConfig replacementConfig = snapshot.getEditor();
 		replacementConfig.validate();
+		Map<HudModuleEntry<?>, HudModuleConfig<?>> replacementModules = new LinkedHashMap<>();
+		Map<HudModuleEntry<?>, Boolean> replacementEnabled = new LinkedHashMap<>();
 		for (HudModuleEntry<?> entry : registry.getEntries()) {
-			HudModuleConfig<?> config = snapshot.getConfig(entry.getModule().id());
-			entry.applyUntyped(config);
-			entry.setEnabled(snapshot.isModuleEnabled(entry.getModule().id()));
+			HudModuleConfig<?> config = entry.prepareConfigUntyped(
+				snapshot.getConfig(entry.getModule().id()));
+			replacementModules.put(entry, config);
+			replacementEnabled.put(entry, snapshot.isModuleEnabled(entry.getModule().id()));
+		}
+		for (HudModuleEntry<?> entry : registry.getEntries()) {
+			entry.replacePreparedConfigUntyped(replacementModules.get(entry));
+			entry.setEnabled(replacementEnabled.get(entry));
 		}
 		editor = replacementConfig;
 	}
@@ -113,9 +120,21 @@ public class HudConfigManager {
 
 	private int getSchemaVersion(JsonObject root) {
 		JsonElement element = root.get("schemaVersion");
-		boolean isNumber = element != null && element.isJsonPrimitive() && element.getAsJsonPrimitive().isNumber();
-
-		return isNumber ? element.getAsInt() : 1;
+		if (element == null) {
+			return 1;
+		}
+		if (!element.isJsonPrimitive() || !element.getAsJsonPrimitive().isNumber()) {
+			throw new JsonParseException("Config schema version must be a positive integer.");
+		}
+		try {
+			int schemaVersion = element.getAsBigDecimal().intValueExact();
+			if (schemaVersion < 1) {
+				throw new JsonParseException("Config schema version must be a positive integer.");
+			}
+			return schemaVersion;
+		} catch (ArithmeticException | NumberFormatException e) {
+			throw new JsonParseException("Config schema version must be a positive integer.", e);
+		}
 	}
 
 	private JsonObject getSerializedModules(JsonObject root) {

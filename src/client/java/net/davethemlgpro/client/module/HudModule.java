@@ -26,12 +26,12 @@ public interface HudModule<C extends HudModuleConfig<C>> {
 
 	default boolean elementVisible(C config, int elementIndex) {
 		requireDefaultElement(elementIndex);
-		return config.enabled();
+		return config.visible();
 	}
 
 	default void setElementVisible(C config, int elementIndex, boolean visible) {
 		requireDefaultElement(elementIndex);
-		config.setEnabled(visible);
+		config.setVisible(visible);
 	}
 
 	default HudSize measureElement(Minecraft minecraft, C config, int elementIndex, boolean editorPreview) {

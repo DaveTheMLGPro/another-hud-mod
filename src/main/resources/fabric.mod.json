@@ -8,12 +8,12 @@
 		"DaveTheMLGPro"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://github.com/DaveTheMLGPro/another-hud-mod",
+		"sources": "https://github.com/DaveTheMLGPro/another-hud-mod"
 	},
-	"license": "CC0-1.0",
+	"license": "GPL-3.0-only",
 	"icon": "assets/another-hud-mod/icon.png",
-	"environment": "*",
+	"environment": "client",
 	"entrypoints": {
 		"main": [
 			"net.davethemlgpro.AnotherHUDMod"

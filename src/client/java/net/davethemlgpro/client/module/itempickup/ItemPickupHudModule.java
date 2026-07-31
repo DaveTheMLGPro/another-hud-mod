@@ -24,6 +24,7 @@ public final class ItemPickupHudModule implements HudModule<ItemPickupHudConfig>
 	private static final int MERGE_PULSE_MILLIS = 350;
 	private final ItemPickupToastQueue<ItemStack> toasts =
 		new ItemPickupToastQueue<>(ItemPickupHudConfig.MAX_VISIBLE_ITEMS);
+	private List<ItemPickupToastQueue.Entry<ItemStack>> cachedEditorToasts;
 	private ClientLevel currentLevel;
 
 	@Override
@@ -358,12 +359,15 @@ public final class ItemPickupHudModule implements HudModule<ItemPickupHudConfig>
 		return Component.literal(minecraft.font.plainSubstrByWidth(text.getString(), available) + ellipsis);
 	}
 
-	private static List<ItemPickupToastQueue.Entry<ItemStack>> editorToasts() {
-		return List.of(
-			new ItemPickupToastQueue.Entry<>(new ItemStack(Items.COBBLESTONE), 12, Long.MAX_VALUE, false),
-			new ItemPickupToastQueue.Entry<>(new ItemStack(Items.IRON_ORE), 3, Long.MAX_VALUE, false),
-			new ItemPickupToastQueue.Entry<>(new ItemStack(Items.DIAMOND), 1, Long.MAX_VALUE, false)
-		);
+	private List<ItemPickupToastQueue.Entry<ItemStack>> editorToasts() {
+		if (cachedEditorToasts == null) {
+			cachedEditorToasts = List.of(
+				new ItemPickupToastQueue.Entry<>(new ItemStack(Items.COBBLESTONE), 12, Long.MAX_VALUE, false),
+				new ItemPickupToastQueue.Entry<>(new ItemStack(Items.IRON_ORE), 3, Long.MAX_VALUE, false),
+				new ItemPickupToastQueue.Entry<>(new ItemStack(Items.DIAMOND), 1, Long.MAX_VALUE, false)
+			);
+		}
+		return cachedEditorToasts;
 	}
 
 	private static long secondsToNanos(double seconds) {
