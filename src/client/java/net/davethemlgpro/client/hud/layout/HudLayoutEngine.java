@@ -68,6 +68,13 @@ public class HudLayoutEngine {
 		return resolved;
 	}
 
+	public HudBounds applyNudge(ModuleLayout layout, HudBounds currentBounds, int deltaX, int deltaY,
+								int screenWidth, int screenHeight, HudBounds protectedRegion) {
+		return applyConstrainedDragOffset(layout, currentBounds.width(), currentBounds.height(),
+			currentBounds.x() + deltaX, currentBounds.y() + deltaY,
+			screenWidth, screenHeight, protectedRegion, 1);
+	}
+
 	private HudBounds applyDragOffset(ModuleLayout layout, int contentWidth, int contentHeight,
 									  int desiredX, int desiredY, int screenWidth, int screenHeight,
 									  int gridSpacing) {

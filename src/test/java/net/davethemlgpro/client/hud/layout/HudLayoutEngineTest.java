@@ -1,6 +1,7 @@
 package net.davethemlgpro.client.hud.layout;
 
 import net.davethemlgpro.client.hud.HudBounds;
+import net.davethemlgpro.client.hud.HudSize;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -57,6 +58,50 @@ class HudLayoutEngineTest {
 		assertEquals(new HudBounds(407, 210, 20, 30), bounds);
 		assertEquals(0, layout.getOffsetX());
 		assertEquals(0, layout.getOffsetY());
+	}
+
+	@Test
+	void nudgesByExactPixelDeltaAndUpdatesAnchorRelativeOffset() {
+		ModuleLayout layout = new ModuleLayout(HudAnchor.CENTER, 0, 0);
+		HudBounds current = HudLayoutEngine.resolve(layout, new HudSize(20, 10), 200, 100);
+		HudBounds protectedRegion = new HudBounds(0, 90, 200, 10);
+
+		HudBounds onePixel = engine.applyNudge(layout, current, 1, -1,
+			200, 100, protectedRegion);
+		HudBounds fivePixels = engine.applyNudge(layout, onePixel, 5, 0,
+			200, 100, protectedRegion);
+
+		assertEquals(new HudBounds(96, 44, 20, 10), fivePixels);
+		assertEquals(6, layout.getOffsetX());
+		assertEquals(-1, layout.getOffsetY());
+	}
+
+	@Test
+	void nudgeClampsAtScreenBounds() {
+		ModuleLayout layout = new ModuleLayout(HudAnchor.TOP_LEFT, 0, 0);
+		HudBounds current = new HudBounds(0, 0, 20, 10);
+		HudBounds protectedRegion = new HudBounds(40, 40, 20, 10);
+
+		HudBounds resolved = engine.applyNudge(layout, current, -5, -5,
+			100, 60, protectedRegion);
+
+		assertEquals(current, resolved);
+		assertEquals(0, layout.getOffsetX());
+		assertEquals(0, layout.getOffsetY());
+	}
+
+	@Test
+	void nudgeDoesNotEnterProtectedRegion() {
+		ModuleLayout layout = new ModuleLayout(HudAnchor.TOP_LEFT, 20, 20);
+		HudBounds current = new HudBounds(20, 20, 10, 10);
+		HudBounds protectedRegion = new HudBounds(30, 20, 20, 20);
+
+		HudBounds resolved = engine.applyNudge(layout, current, 1, 0,
+			100, 60, protectedRegion);
+
+		assertEquals(current, resolved);
+		assertEquals(20, layout.getOffsetX());
+		assertEquals(20, layout.getOffsetY());
 	}
 
 }

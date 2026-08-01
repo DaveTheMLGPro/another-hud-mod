@@ -102,6 +102,10 @@ public final class HudModulePopover implements HudPopoverContext {
 		return open;
 	}
 
+	public boolean isColorPickerOpen() {
+		return colorPicker.isOpen();
+	}
+
 	public void render(GuiGraphicsExtractor graphics, Font font, HudBounds moduleBounds, EditorConfig colors,
 					   int mouseX, int mouseY, int screenWidth, int editorTop, int editorBottom) {
 		if (!open) {

@@ -34,10 +34,10 @@ public final class ItemPickupHudConfig implements HudModuleConfig<ItemPickupHudC
 	private boolean visible = true;
 	private ModuleLayout layout = new ModuleLayout(HudAnchor.BOTTOM_RIGHT, -8, -8);
 	private int maxVisibleItems = 3;
-	private double displayTimeSeconds = 3.0D;
+	private double displayTimeSeconds = 1.5D;
 	private double removeDelaySeconds = 0.5D;
-	private double fadeDurationSeconds = 0.5D;
-	private double mergeWindowSeconds = 1.0D;
+	private double fadeDurationSeconds = 0.2D;
+	private double mergeWindowSeconds = 1.5D;
 	private double entryAnimationSeconds = 0.25D;
 	private ItemPickupPresentation presentation = ItemPickupPresentation.LIST;
 	private ItemPickupGrowthDirection growthDirection = ItemPickupGrowthDirection.AUTO;

@@ -245,6 +245,9 @@ public final class HudLayoutEditorScreen extends Screen {
 		if (popover.keyPressed(event)) {
 			return true;
 		}
+		if (nudgeSelectedElement(event)) {
+			return true;
+		}
 		return super.keyPressed(event);
 	}
 
@@ -394,6 +397,37 @@ public final class HudLayoutEditorScreen extends Screen {
 	private HudRenderedElement selectedRenderedElement() {
 		return selectedModule < 0 ? null
 			: renderDispatcher.getLastElement(selectedModule, selectedElement);
+	}
+
+	private boolean nudgeSelectedElement(KeyEvent event) {
+		int step = event.hasShiftDown() ? 5 : 1;
+		int deltaX = 0;
+		int deltaY = 0;
+		switch (event.key()) {
+			case InputConstants.KEY_LEFT -> deltaX = -step;
+			case InputConstants.KEY_RIGHT -> deltaX = step;
+			case InputConstants.KEY_UP -> deltaY = -step;
+			case InputConstants.KEY_DOWN -> deltaY = step;
+			default -> {
+				return false;
+			}
+		}
+
+		HudRenderedElement selected = selectedRenderedElement();
+		HudModuleConfig<?> config = selectedConfig();
+		HudModuleEntry<?> entry = selectedEntry();
+		if (dragging || globalSettingsOpen || popover.isColorPickerOpen()
+			|| selected == null || config == null || entry == null) {
+			return false;
+		}
+
+		var layout = entry.elementLayoutUntyped(config, selectedElement);
+		HudBounds current = HudLayoutEngine.resolve(layout, selected.bounds().size(), width, height);
+		HudBounds resolved = layoutEngine.applyNudge(layout, current, deltaX, deltaY,
+			width, height, protectedRegion());
+		popover.moveBy(resolved.x() - current.x(), resolved.y() - current.y());
+		saveFailed = false;
+		return true;
 	}
 
 	private void normalizeSelection() {
