@@ -1,6 +1,7 @@
 {
   "key.another-hud-mod.open_layout_editor": "HUD-Layout-Editor öffnen",
   "key.category.another-hud-mod.general": "Another HUD Mod",
+  "module.another-hud-mod.armor.description": "Zeigt die ausgerüstete Rüstung und deren Haltbarkeit an.",
   "module.another-hud-mod.armor.name": "Rüstungs-HUD",
   "module.another-hud-mod.armor.settings.center_visible": "Sichtbare Slots zentrieren",
   "module.another-hud-mod.armor.settings.center_visible.description": "Zentriert ausgerüstete Rüstungsslots, wenn leere Slots ausgeblendet sind.",
@@ -64,6 +65,7 @@
   "module.another-hud-mod.armor.settings.tab.bar": "Leiste",
   "module.another-hud-mod.armor.settings.tab.layout": "Layout",
   "module.another-hud-mod.armor.settings.tab.text": "Text",
+  "module.another-hud-mod.item_pickup.description": "Zeigt kürzlich eingesammelte Gegenstände und deren Anzahl an.",
   "module.another-hud-mod.item_pickup.name": "Gegenstandsaufnahme HUD",
   "module.another-hud-mod.item_pickup.settings.background_color": "Hintergrundfarbe",
   "module.another-hud-mod.item_pickup.settings.background_color.description": "Legt Farbe und Transparenz des Benachrichtigungshintergrunds fest.",
@@ -186,5 +188,13 @@
   "screen.another-hud-mod.editor.settings.tab.modules": "Module",
   "screen.another-hud-mod.editor.settings.title": "Globale Einstellungen",
   "screen.another-hud-mod.editor.title": "HUD-Layout-Editor",
-  "screen.another-hud-mod.editor.vanilla_hud_area": "Vanilla-HUD-Bereich"
+  "screen.another-hud-mod.editor.vanilla_hud_area": "Vanilla-HUD-Bereich",
+  "screen.another-hud-mod.modules.count": "Module  %s/%s",
+  "screen.another-hud-mod.modules.disabled": "Deaktiviert",
+  "screen.another-hud-mod.modules.edit_settings": "Einstellungen bearbeiten",
+  "screen.another-hud-mod.modules.enabled": "Aktiviert",
+  "screen.another-hud-mod.modules.open": "Module",
+  "screen.another-hud-mod.modules.reset": "Modul zurücksetzen",
+  "screen.another-hud-mod.modules.settings": "Einstellungen",
+  "screen.another-hud-mod.modules.title": "HUD-Module"
 }

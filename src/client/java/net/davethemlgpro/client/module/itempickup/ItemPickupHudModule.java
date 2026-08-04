@@ -39,6 +39,11 @@ public final class ItemPickupHudModule implements HudModule<ItemPickupHudConfig>
 	}
 
 	@Override
+	public Component description() {
+		return TranslationKey.MODULE_ITEM_PICKUP_DESCRIPTION.component();
+	}
+
+	@Override
 	public synchronized HudSize measure(Minecraft minecraft, ItemPickupHudConfig config) {
 		List<ItemPickupToastQueue.Entry<ItemStack>> active =
 			activeToasts(minecraft, config, System.nanoTime());

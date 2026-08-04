@@ -11,9 +11,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class HudModuleStateTest {
 	@TempDir
@@ -82,6 +80,26 @@ class HudModuleStateTest {
 		assertTrue(draft.isModuleEnabled(ArmorHudModule.ID));
 		assertTrue(draft.isModuleEnabled(ItemPickupHudModule.ID));
 		assertEquals(2, ((ArmorHudConfig) draft.getRawConfig(ArmorHudModule.ID)).getSpacing());
+		assertEquals(3, ((ItemPickupHudConfig) draft.getRawConfig(ItemPickupHudModule.ID)).getMaxVisibleItems());
+		assertEquals(0xFF123456, draft.getRawEditor().getAccentColor());
+	}
+
+	@Test
+	void nestedModuleManagerCancelRestoresItsOpeningDraftWithoutDiscardingEarlierEditorChanges() {
+		HudConfigManager manager = new HudConfigManager(registry(), temporaryDirectory.resolve("hud.json"));
+		HudEditSession session = HudEditSession.beginEdit(manager, true);
+		HudConfigSnapshot draft = session.getDraft();
+		draft.getRawEditor().setAccentColor(0xFF123456);
+		((ArmorHudConfig) draft.getRawConfig(ArmorHudModule.ID)).setSpacing(5);
+		HudConfigSnapshot managerOpeningState = draft.copy();
+
+		draft.setModuleEnabled(ArmorHudModule.ID, false);
+		((ArmorHudConfig) draft.getRawConfig(ArmorHudModule.ID)).setSpacing(9);
+		((ItemPickupHudConfig) draft.getRawConfig(ItemPickupHudModule.ID)).setMaxVisibleItems(8);
+		draft.copyFrom(managerOpeningState);
+
+		assertTrue(draft.isModuleEnabled(ArmorHudModule.ID));
+		assertEquals(5, ((ArmorHudConfig) draft.getRawConfig(ArmorHudModule.ID)).getSpacing());
 		assertEquals(3, ((ItemPickupHudConfig) draft.getRawConfig(ItemPickupHudModule.ID)).getMaxVisibleItems());
 		assertEquals(0xFF123456, draft.getRawEditor().getAccentColor());
 	}

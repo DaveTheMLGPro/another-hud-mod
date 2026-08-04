@@ -30,6 +30,8 @@ final class HudColorPicker {
 	private static final int ALPHA_Y = 108;
 	private static final int INPUT_Y = 126;
 	private static final int CHECKER_SIZE = 3;
+	private static final int CLOSE_BUTTON_WIDTH = 20;
+	private static final Component CLOSE_LABEL = Component.literal("X");
 
 	private Component title = Component.empty();
 	private IntSupplier getter;
@@ -50,6 +52,15 @@ final class HudColorPicker {
 	private boolean open;
 	private boolean positioned;
 	private boolean updatingInput;
+	private boolean docked;
+
+	public static int width() {
+		return WIDTH;
+	}
+
+	public static int height() {
+		return HEIGHT;
+	}
 
 	public void open(Component title, IntSupplier getter, IntConsumer setter) {
 		this.title = title;
@@ -61,6 +72,7 @@ final class HudColorPicker {
 		inputMode = InputMode.HEX;
 		dragTarget = DragTarget.NONE;
 		positioned = false;
+		docked = false;
 		open = true;
 	}
 
@@ -71,6 +83,7 @@ final class HudColorPicker {
 		input = null;
 		dragTarget = DragTarget.NONE;
 		open = false;
+		docked = false;
 	}
 
 	public void cancel() {
@@ -119,6 +132,44 @@ final class HudColorPicker {
 		input.extractRenderState(graphics, mouseX, mouseY, 0.0F);
 	}
 
+	public void renderDocked(GuiGraphicsExtractor graphics, Font font, int mouseX, int mouseY,
+							 int x, int y) {
+		if (!open) {
+			return;
+		}
+		this.x = x;
+		this.y = y;
+		this.screenWidth = x + WIDTH;
+		this.screenHeight = y + HEIGHT;
+		positioned = true;
+		docked = true;
+		ensureInput(font);
+		positionInput();
+
+		graphics.fill(x, y, x + WIDTH, y + HEIGHT, 0xF02A2A2A);
+		graphics.outline(x, y, WIDTH, HEIGHT, 0xFF888888);
+		graphics.fill(x + 1, y + HEADER_HEIGHT - 1, x + WIDTH - 1, y + HEADER_HEIGHT, 0xFF555555);
+		graphics.enableScissor(x + GAP, y, x + WIDTH - CLOSE_BUTTON_WIDTH, y + HEADER_HEIGHT);
+		graphics.text(font, title, x + GAP, y + 7, 0xFFFFFFFF);
+		graphics.disableScissor();
+		boolean closeHovered = contains(mouseX, mouseY, x + WIDTH - CLOSE_BUTTON_WIDTH, y,
+			CLOSE_BUTTON_WIDTH, HEADER_HEIGHT);
+		if (closeHovered) {
+			graphics.fill(x + WIDTH - CLOSE_BUTTON_WIDTH, y + 1, x + WIDTH - 1,
+				y + HEADER_HEIGHT - 1, 0xFFB33A3A);
+		}
+		graphics.centeredText(font, CLOSE_LABEL, x + WIDTH - CLOSE_BUTTON_WIDTH / 2, y + 7,
+			closeHovered ? 0xFFFFFFFF : 0xFFCCCCCC);
+
+		renderSaturationValue(graphics);
+		renderHue(graphics);
+		renderPreview(graphics);
+		renderButton(graphics, font, inputMode.label, sideX(), y + 57, SIDE_WIDTH, 16,
+			contains(mouseX, mouseY, sideX(), y + 57, SIDE_WIDTH, 16), 0xFF3A3A3A);
+		renderAlpha(graphics, font);
+		input.extractRenderState(graphics, mouseX, mouseY, 0.0F);
+	}
+
 	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
 		if (!open || !contains(event.x(), event.y())) {
 			return false;
@@ -133,7 +184,15 @@ final class HudColorPicker {
 		if (event.button() != 0) {
 			return true;
 		}
+		if (docked && contains(event.x(), event.y(), x + WIDTH - CLOSE_BUTTON_WIDTH, y,
+			CLOSE_BUTTON_WIDTH, HEADER_HEIGHT)) {
+			finish();
+			return true;
+		}
 		if (contains(event.x(), event.y(), x, y, WIDTH, HEADER_HEIGHT)) {
+			if (docked) {
+				return true;
+			}
 			dragTarget = DragTarget.PANEL;
 			dragOffsetX = (int) event.x() - x;
 			dragOffsetY = (int) event.y() - y;
@@ -159,11 +218,11 @@ final class HudColorPicker {
 			syncInput();
 			return true;
 		}
-		if (contains(event.x(), event.y(), sideX(), y + 78, SIDE_WIDTH, 18)) {
+		if (!docked && contains(event.x(), event.y(), sideX(), y + 78, SIDE_WIDTH, 18)) {
 			finish();
 			return true;
 		}
-		if (contains(event.x(), event.y(), sideX(), y + 100, SIDE_WIDTH, 18)) {
+		if (!docked && contains(event.x(), event.y(), sideX(), y + 100, SIDE_WIDTH, 18)) {
 			cancel();
 			return true;
 		}
@@ -204,7 +263,11 @@ final class HudColorPicker {
 			return false;
 		}
 		if (event.key() == 256) {
-			cancel();
+			if (docked) {
+				finish();
+			} else {
+				cancel();
+			}
 			return true;
 		}
 		if (event.key() == 257 || event.key() == 335) {

@@ -23,7 +23,6 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
 
 public final class HudLayoutEditorScreen extends Screen {
 	private static final int FOOTER_HEIGHT = 36;
@@ -32,7 +31,6 @@ public final class HudLayoutEditorScreen extends Screen {
 	private static final int SETTINGS_BUTTON_Y = 6;
 	private static final int SETTINGS_BUTTON_SIZE = 20;
 	private static final int SETTINGS_ICON_SIZE = 16;
-	private static final int GLOBAL_MODULES_TAB = 2;
 	private static final Component INSTRUCTIONS = TranslationKey.EDITOR_INSTRUCTIONS.component();
 	private static final Component SAVE_FAILED = TranslationKey.EDITOR_SAVE_FAILED.component();
 
@@ -54,6 +52,7 @@ public final class HudLayoutEditorScreen extends Screen {
 	private int lastDragY;
 	private boolean saveFailed;
 	private boolean globalSettingsOpen;
+	private boolean transferringScreen;
 
 	public HudLayoutEditorScreen(Screen parent, HudEditSession session, HudModuleRegistry registry,
 								 HudRenderDispatcher renderDispatcher) {
@@ -72,6 +71,8 @@ public final class HudLayoutEditorScreen extends Screen {
 			AnotherHUDMod.id("textures/settings_icon.png"), SETTINGS_ICON_SIZE);
 		settingsButton.setTooltip(Tooltip.create(TranslationKey.EDITOR_SETTINGS_OPEN.component()));
 		addRenderableWidget(settingsButton);
+		addRenderableWidget(Button.builder(TranslationKey.MODULE_MANAGER_OPEN.component(),
+			button -> openModuleManager()).bounds(30, SETTINGS_BUTTON_Y, 76, BUTTON_HEIGHT).build());
 		int footerY = height - 28;
 		addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> saveAndClose())
 			.bounds(width / 2 - 154, footerY, 100, BUTTON_HEIGHT).build());
@@ -267,6 +268,10 @@ public final class HudLayoutEditorScreen extends Screen {
 
 	@Override
 	public void removed() {
+		if (transferringScreen) {
+			transferringScreen = false;
+			return;
+		}
 		if (HudEditSession.getActive() == session) {
 			session.cancelEdit();
 		}
@@ -361,28 +366,16 @@ public final class HudLayoutEditorScreen extends Screen {
 		globalSettingsOpen = true;
 		EditorConfig config = session.getDraft().getRawEditor();
 		popover.openBelow(TranslationKey.EDITOR_SETTINGS_TITLE.component(),
-			EditorGlobalSettingsPopover.create(config, session.getDraft(), registry,
-				this::resetModuleToDefaults, this::resetAllModulesToDefaults), selectedTab);
+			EditorGlobalSettingsPopover.create(config), selectedTab);
 		saveFailed = false;
 	}
 
-	private void resetModuleToDefaults(Identifier moduleId) {
-		session.resetModuleToDefaults(moduleId);
-		normalizeSelectionAfterModuleReset(moduleId);
-		openGlobalSettings(GLOBAL_MODULES_TAB);
-	}
-
-	private void resetAllModulesToDefaults() {
-		session.resetModulesToDefaults();
-		selectedElement = selectedModule >= 0 ? 0 : -1;
-		openGlobalSettings(GLOBAL_MODULES_TAB);
-	}
-
-	private void normalizeSelectionAfterModuleReset(Identifier moduleId) {
-		if (selectedModule >= 0
-			&& registry.getEntries().get(selectedModule).getModule().id().equals(moduleId)) {
-			selectedElement = 0;
-		}
+	private void openModuleManager() {
+		dragging = false;
+		popover.close();
+		globalSettingsOpen = false;
+		transferringScreen = true;
+		minecraft.gui.setScreen(new HudModuleManagerScreen(this, session, registry));
 	}
 
 	private HudBounds popoverAnchor() {

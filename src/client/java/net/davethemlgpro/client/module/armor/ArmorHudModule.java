@@ -61,6 +61,11 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 	}
 
 	@Override
+	public Component description() {
+		return TranslationKey.MODULE_ARMOR_DESCRIPTION.component();
+	}
+
+	@Override
 	public HudSize measure(Minecraft minecraft, ArmorHudConfig config) {
 		return measure(minecraft, config, false);
 	}

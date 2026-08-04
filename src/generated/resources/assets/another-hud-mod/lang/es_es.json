@@ -1,6 +1,7 @@
 {
   "key.another-hud-mod.open_layout_editor": "Abrir el editor de diseños del HUD",
   "key.category.another-hud-mod.general": "Another HUD Mod",
+  "module.another-hud-mod.armor.description": "Muestra la armadura equipada y su durabilidad.",
   "module.another-hud-mod.armor.name": "HUD de armadura",
   "module.another-hud-mod.armor.settings.center_visible": "Centrar ranuras visibles",
   "module.another-hud-mod.armor.settings.center_visible.description": "Centra las ranuras equipadas cuando las ranuras vacías están ocultas.",
@@ -64,6 +65,7 @@
   "module.another-hud-mod.armor.settings.tab.bar": "Barra",
   "module.another-hud-mod.armor.settings.tab.layout": "Diseño",
   "module.another-hud-mod.armor.settings.tab.text": "Texto",
+  "module.another-hud-mod.item_pickup.description": "Muestra los objetos recogidos recientemente y sus cantidades.",
   "module.another-hud-mod.item_pickup.name": "HUD de recogida de objetos",
   "module.another-hud-mod.item_pickup.settings.background_color": "Color de fondo",
   "module.another-hud-mod.item_pickup.settings.background_color.description": "Establece el color y la transparencia del fondo de las notificaciones.",
@@ -186,5 +188,13 @@
   "screen.another-hud-mod.editor.settings.tab.modules": "Módulos",
   "screen.another-hud-mod.editor.settings.title": "Ajustes globales",
   "screen.another-hud-mod.editor.title": "Editor de diseño de HUD",
-  "screen.another-hud-mod.editor.vanilla_hud_area": "Área del HUD original"
+  "screen.another-hud-mod.editor.vanilla_hud_area": "Área del HUD original",
+  "screen.another-hud-mod.modules.count": "Módulos  %s/%s",
+  "screen.another-hud-mod.modules.disabled": "Desactivado",
+  "screen.another-hud-mod.modules.edit_settings": "Editar ajustes",
+  "screen.another-hud-mod.modules.enabled": "Activado",
+  "screen.another-hud-mod.modules.open": "Módulos",
+  "screen.another-hud-mod.modules.reset": "Restablecer módulo",
+  "screen.another-hud-mod.modules.settings": "Ajustes",
+  "screen.another-hud-mod.modules.title": "Módulos del HUD"
 }

@@ -1,6 +1,7 @@
 {
   "key.another-hud-mod.open_layout_editor": "Ouvrir l'éditeur de disposition HUD",
   "key.category.another-hud-mod.general": "Another HUD Mod",
+  "module.another-hud-mod.armor.description": "Affiche l'armure équipée et sa durabilité.",
   "module.another-hud-mod.armor.name": "Interface d'affichage de l'armure",
   "module.another-hud-mod.armor.settings.center_visible": "Centrer les emplacements visibles",
   "module.another-hud-mod.armor.settings.center_visible.description": "Centre les emplacements équipés lorsque les emplacements vides sont masqués.",
@@ -64,6 +65,7 @@
   "module.another-hud-mod.armor.settings.tab.bar": "Barre",
   "module.another-hud-mod.armor.settings.tab.layout": "Disposition",
   "module.another-hud-mod.armor.settings.tab.text": "Texte",
+  "module.another-hud-mod.item_pickup.description": "Affiche les objets récemment ramassés et leur quantité.",
   "module.another-hud-mod.item_pickup.name": "HUD pour la détection d'objets",
   "module.another-hud-mod.item_pickup.settings.background_color": "Couleur d'arrière-plan",
   "module.another-hud-mod.item_pickup.settings.background_color.description": "Définit la couleur et la transparence de l'arrière-plan des notifications.",
@@ -186,5 +188,13 @@
   "screen.another-hud-mod.editor.settings.tab.modules": "Modules",
   "screen.another-hud-mod.editor.settings.title": "Paramètres globaux",
   "screen.another-hud-mod.editor.title": "Éditeur de mise en page HUD",
-  "screen.another-hud-mod.editor.vanilla_hud_area": "Zone de l'interface classique"
+  "screen.another-hud-mod.editor.vanilla_hud_area": "Zone de l'interface classique",
+  "screen.another-hud-mod.modules.count": "Modules  %s/%s",
+  "screen.another-hud-mod.modules.disabled": "Désactivé",
+  "screen.another-hud-mod.modules.edit_settings": "Modifier les paramètres",
+  "screen.another-hud-mod.modules.enabled": "Activé",
+  "screen.another-hud-mod.modules.open": "Modules",
+  "screen.another-hud-mod.modules.reset": "Réinitialiser le module",
+  "screen.another-hud-mod.modules.settings": "Paramètres",
+  "screen.another-hud-mod.modules.title": "Modules du HUD"
 }

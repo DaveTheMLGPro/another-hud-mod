@@ -12,6 +12,11 @@ import net.minecraft.resources.Identifier;
 public interface HudModule<C extends HudModuleConfig<C>> {
 	Identifier id();
 	Component displayName();
+
+	default Component description() {
+		return Component.empty();
+	}
+
 	HudSize measure(Minecraft minecraft, C config);
 	void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, Minecraft minecraft, C config, HudBounds bounds);
 
