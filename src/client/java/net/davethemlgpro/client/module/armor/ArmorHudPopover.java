@@ -1,13 +1,6 @@
 package net.davethemlgpro.client.module.armor;
 
-import net.davethemlgpro.client.screen.popover.HudConditionalControl;
-import net.davethemlgpro.client.screen.popover.HudColorControl;
-import net.davethemlgpro.client.screen.popover.HudCycleControl;
-import net.davethemlgpro.client.screen.popover.HudPopoverControl;
-import net.davethemlgpro.client.screen.popover.HudPopoverTab;
-import net.davethemlgpro.client.screen.popover.HudSectionControl;
-import net.davethemlgpro.client.screen.popover.HudSliderControl;
-import net.davethemlgpro.client.screen.popover.HudToggleControl;
+import net.davethemlgpro.client.screen.popover.*;
 import net.davethemlgpro.client.translation.TranslationKey;
 import net.minecraft.network.chat.Component;
 
@@ -112,7 +105,11 @@ public final class ArmorHudPopover {
 				config::isLowDurabilityWarningEnabled, config::setLowDurabilityWarningEnabled),
 			lowDurabilityThreshold(config),
 			lowDurabilityWarningStyle(config),
-			lowDurabilityWarningColor(config)
+			lowDurabilityWarningColor(config),
+			new HudToggleControl(TranslationKey.SETTINGS_ARMOR_DURABILITY_WARNING_SOUND.component(),
+				TranslationKey.SETTINGS_ARMOR_DURABILITY_WARNING_SOUND_DESCRIPTION.component(),
+				config::isDurabilityWarningSoundEnabled, config::setDurabilityWarningSoundEnabled),
+			durabilityWarningSoundThreshold(config)
 		);
 	}
 
@@ -278,6 +275,18 @@ public final class ArmorHudPopover {
 			config::getLowDurabilityWarningColor, config::setLowDurabilityWarningColor,
 			ArmorHudConfig.DEFAULT_LOW_DURABILITY_WARNING_COLOR);
 		return new HudConditionalControl(control, config::isLowDurabilityWarningEnabled);
+	}
+
+	private static HudPopoverControl durabilityWarningSoundThreshold(ArmorHudConfig config) {
+		HudSliderControl control = new HudSliderControl(
+			TranslationKey.SETTINGS_ARMOR_DURABILITY_WARNING_SOUND_THRESHOLD.component(),
+			TranslationKey.SETTINGS_ARMOR_DURABILITY_WARNING_SOUND_THRESHOLD_DESCRIPTION.component(),
+			ArmorHudConfig.MIN_LOW_DURABILITY_THRESHOLD_PERCENT,
+			ArmorHudConfig.MAX_LOW_DURABILITY_THRESHOLD_PERCENT, 1.0,
+			config::getDurabilityWarningSoundThresholdPercent,
+			value -> config.setDurabilityWarningSoundThresholdPercent((int) Math.round(value)),
+			value -> Component.literal(Math.round(value) + "%"));
+		return new HudConditionalControl(control, config::isDurabilityWarningSoundEnabled);
 	}
 
 	private static Component decimalValue(double value) {

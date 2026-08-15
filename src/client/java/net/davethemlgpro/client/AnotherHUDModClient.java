@@ -12,6 +12,7 @@ import net.davethemlgpro.client.module.itempickup.ItemPickupHudConfig;
 import net.davethemlgpro.client.module.itempickup.ItemPickupHudModule;
 import net.davethemlgpro.client.module.itempickup.ItemPickupHudPopover;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 
@@ -20,10 +21,12 @@ public class AnotherHUDModClient implements ClientModInitializer {
 	private static HudConfigManager configManager;
 	private static HudRenderDispatcher renderDispatcher;
 	private static ItemPickupHudModule itemPickupHudModule;
+	private static ArmorHudModule armorHudModule;
 
 	@Override
 	public void onInitializeClient() {
-		MODULES.register(new ArmorHudModule(), ArmorHudConfig.class, ArmorHudConfig::new,
+		armorHudModule = new ArmorHudModule();
+		MODULES.register(armorHudModule, ArmorHudConfig.class, ArmorHudConfig::new,
 			ArmorHudPopover::create);
 		itemPickupHudModule = new ItemPickupHudModule();
 		MODULES.register(itemPickupHudModule, ItemPickupHudConfig.class, ItemPickupHudConfig::new,
@@ -39,6 +42,8 @@ public class AnotherHUDModClient implements ClientModInitializer {
 		HudElementRegistry.attachElementBefore(VanillaHudElements.CHAT,
 			AnotherHUDMod.id("modules"), renderDispatcher);
 		HudKeyMappings.register();
+		ClientTickEvents.END_CLIENT_TICK.register(client -> armorHudModule.tickSoundWarning(client,
+			getArmorHudConfig(), MODULES.isModuleEnabled(ArmorHudModule.ID)));
 	}
 
 	public static HudModuleRegistry getHudModuleRegistry() {
@@ -59,5 +64,9 @@ public class AnotherHUDModClient implements ClientModInitializer {
 
 	public static ItemPickupHudConfig getItemPickupHudConfig() {
 		return (ItemPickupHudConfig) MODULES.getModule(ItemPickupHudModule.ID).getConfig();
+	}
+
+	public static ArmorHudConfig getArmorHudConfig() {
+		return (ArmorHudConfig) MODULES.getModule(ArmorHudModule.ID).getConfig();
 	}
 }

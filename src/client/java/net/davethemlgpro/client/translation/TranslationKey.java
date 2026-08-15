@@ -152,6 +152,14 @@ public enum TranslationKey {
 		"module.another-hud-mod.armor.settings.low_durability_warning.color"),
 	SETTINGS_ARMOR_LOW_DURABILITY_WARNING_COLOR_DESCRIPTION(
 		"module.another-hud-mod.armor.settings.low_durability_warning.color.description"),
+	SETTINGS_ARMOR_DURABILITY_WARNING_SOUND(
+		"module.another-hud-mod.armor.settings.low_durability_warning.sound"),
+	SETTINGS_ARMOR_DURABILITY_WARNING_SOUND_DESCRIPTION(
+		"module.another-hud-mod.armor.settings.low_durability_warning.sound.description"),
+	SETTINGS_ARMOR_DURABILITY_WARNING_SOUND_THRESHOLD(
+		"module.another-hud-mod.armor.settings.low_durability_warning.sound_threshold"),
+	SETTINGS_ARMOR_DURABILITY_WARNING_SOUND_THRESHOLD_DESCRIPTION(
+		"module.another-hud-mod.armor.settings.low_durability_warning.sound_threshold.description"),
 	SETTINGS_ITEM_PICKUP_TAB_GENERAL("module.another-hud-mod.item_pickup.settings.tab.general"),
 	SETTINGS_ITEM_PICKUP_TAB_APPEARANCE("module.another-hud-mod.item_pickup.settings.tab.appearance"),
 	SETTINGS_ITEM_PICKUP_TAB_BEHAVIOR("module.another-hud-mod.item_pickup.settings.tab.behavior"),

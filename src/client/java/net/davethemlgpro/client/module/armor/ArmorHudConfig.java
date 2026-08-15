@@ -18,6 +18,7 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 	public static final float MAX_DURABILITY_TEXT_SCALE = 0.75F;
 	public static final int MIN_LOW_DURABILITY_THRESHOLD_PERCENT = 1;
 	public static final int MAX_LOW_DURABILITY_THRESHOLD_PERCENT = 100;
+	public static final int DEFAULT_DURABILITY_WARNING_SOUND_THRESHOLD_PERCENT = 10;
 	public static final int DEFAULT_DURABILITY_BACKGROUND_COLOR = 0xFF000000;
 	public static final int DEFAULT_DURABILITY_HEALTHY_COLOR = 0xFF00FF00;
 	public static final int DEFAULT_DURABILITY_WARNING_COLOR = 0xFFFFFF00;
@@ -63,6 +64,8 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 	private int lowDurabilityThresholdPercent = 20;
 	private ArmorHudWarningStyle warningStyle = ArmorHudWarningStyle.PULSE;
 	private int lowDurabilityWarningColor = DEFAULT_LOW_DURABILITY_WARNING_COLOR;
+	private boolean durabilityWarningSoundEnabled;
+	private int durabilityWarningSoundThresholdPercent = DEFAULT_DURABILITY_WARNING_SOUND_THRESHOLD_PERCENT;
 
 	public ArmorHudConfig() {
 	}
@@ -123,6 +126,8 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 		lowDurabilityThresholdPercent = source.lowDurabilityThresholdPercent;
 		warningStyle = source.warningStyle;
 		lowDurabilityWarningColor = source.lowDurabilityWarningColor;
+		durabilityWarningSoundEnabled = source.durabilityWarningSoundEnabled;
+		durabilityWarningSoundThresholdPercent = source.durabilityWarningSoundThresholdPercent;
 		validate();
 	}
 
@@ -160,6 +165,8 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 		durabilityTextScale = Float.isFinite(durabilityTextScale)
 			? Math.clamp(durabilityTextScale, MIN_DURABILITY_TEXT_SCALE, MAX_DURABILITY_TEXT_SCALE) : 0.5F;
 		lowDurabilityThresholdPercent = Math.clamp(lowDurabilityThresholdPercent,
+			MIN_LOW_DURABILITY_THRESHOLD_PERCENT, MAX_LOW_DURABILITY_THRESHOLD_PERCENT);
+		durabilityWarningSoundThresholdPercent = Math.clamp(durabilityWarningSoundThresholdPercent,
 			MIN_LOW_DURABILITY_THRESHOLD_PERCENT, MAX_LOW_DURABILITY_THRESHOLD_PERCENT);
 	}
 
@@ -395,6 +402,23 @@ public final class ArmorHudConfig implements HudModuleConfig<ArmorHudConfig> {
 
 	public void setLowDurabilityWarningColor(int lowDurabilityWarningColor) {
 		this.lowDurabilityWarningColor = lowDurabilityWarningColor;
+	}
+
+	public boolean isDurabilityWarningSoundEnabled() {
+		return durabilityWarningSoundEnabled;
+	}
+
+	public void setDurabilityWarningSoundEnabled(boolean durabilityWarningSoundEnabled) {
+		this.durabilityWarningSoundEnabled = durabilityWarningSoundEnabled;
+	}
+
+	public int getDurabilityWarningSoundThresholdPercent() {
+		return durabilityWarningSoundThresholdPercent;
+	}
+
+	public void setDurabilityWarningSoundThresholdPercent(int thresholdPercent) {
+		durabilityWarningSoundThresholdPercent = Math.clamp(thresholdPercent,
+			MIN_LOW_DURABILITY_THRESHOLD_PERCENT, MAX_LOW_DURABILITY_THRESHOLD_PERCENT);
 	}
 
 	private static ModuleLayout[] createDefaultIndividualLayouts() {

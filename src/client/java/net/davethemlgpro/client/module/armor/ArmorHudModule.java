@@ -9,9 +9,12 @@ import net.davethemlgpro.client.translation.TranslationKey;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix3x2fStack;
 
@@ -31,6 +34,9 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 	private static final int HOTBAR_SLOT_TEXTURE_SIZE = 22;
 
 	private final ArmorHudLayout layout = new ArmorHudLayout();
+	private final ArmorDurabilitySoundTracker soundTracker =
+		new ArmorDurabilitySoundTracker(ArmorHudLayout.getSlotCount());
+	private final boolean[] soundThresholdStates = new boolean[ArmorHudLayout.getSlotCount()];
 	private final boolean[] cachedEmptySlots = new boolean[ArmorHudLayout.getSlotCount()];
 	private final boolean[] cachedUnbreakableSlots = new boolean[ArmorHudLayout.getSlotCount()];
 	private final int[] cachedMaxDamage = new int[ArmorHudLayout.getSlotCount()];
@@ -49,6 +55,36 @@ public final class ArmorHudModule implements HudModule<ArmorHudConfig> {
 	private boolean cachedLowDurabilityWarningEnabled;
 	private ArmorHudSlotStyle cachedSlotStyle;
 	private boolean cachedEditorPreview;
+	private LocalPlayer soundPlayer;
+
+	public void tickSoundWarning(Minecraft minecraft, ArmorHudConfig config, boolean moduleEnabled) {
+		if (!moduleEnabled || !config.isDurabilityWarningSoundEnabled() || minecraft.player == null) {
+			resetSoundWarning(minecraft.player);
+			return;
+		}
+		if (soundPlayer != minecraft.player) {
+			resetSoundWarning(minecraft.player);
+		}
+
+		for (int slot = 0; slot < soundThresholdStates.length; slot++) {
+			ItemStack stack = minecraft.player.getItemBySlot(ArmorHudLayout.getEquipmentSlot(slot));
+			soundThresholdStates[slot] = isAtSoundWarningThreshold(stack, config);
+		}
+		if (soundTracker.update(soundThresholdStates)) {
+			minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.ITEM_BREAK.value(), 2.0F, 2.0f));
+		}
+	}
+
+	private void resetSoundWarning(LocalPlayer player) {
+		soundPlayer = player;
+		soundTracker.reset();
+	}
+
+	private boolean isAtSoundWarningThreshold(ItemStack stack, ArmorHudConfig config) {
+		return stack.isDamageableItem() && !ArmorHudLayout.isUnbreakableItem(stack)
+			&& ArmorHudLayout.durabilityPercent(stack) * 100.0F
+				<= config.getDurabilityWarningSoundThresholdPercent();
+	}
 
 	@Override
 	public Identifier id() {

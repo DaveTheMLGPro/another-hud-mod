@@ -5,10 +5,7 @@ import net.davethemlgpro.client.hud.layout.HudAnchor;
 import net.davethemlgpro.client.hud.layout.ModuleLayout;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ArmorHudConfigSerializationTest {
 	private final Gson gson = new Gson();
@@ -24,6 +21,9 @@ class ArmorHudConfigSerializationTest {
 		original.getIndividualLayout(3).setOffset(-9, 41);
 		original.setIndividualSlotVisible(1, false);
 		original.setIndividualSlotVisible(3, false);
+		original.setLowDurabilityThresholdPercent(37);
+		original.setDurabilityWarningSoundEnabled(true);
+		original.setDurabilityWarningSoundThresholdPercent(13);
 
 		ArmorHudConfig restored = gson.fromJson(gson.toJson(original), ArmorHudConfig.class);
 		restored.validate();
@@ -34,6 +34,24 @@ class ArmorHudConfigSerializationTest {
 		assertLayout(restored.getIndividualLayout(3), HudAnchor.TOP_CENTER, -9, 41);
 		assertFalse(restored.isIndividualSlotVisible(1));
 		assertFalse(restored.isIndividualSlotVisible(3));
+		assertEquals(37, restored.getLowDurabilityThresholdPercent());
+		assertTrue(restored.isDurabilityWarningSoundEnabled());
+		assertEquals(13, restored.getDurabilityWarningSoundThresholdPercent());
+	}
+
+	@Test
+	void soundThresholdIsValidatedIndependently() {
+		ArmorHudConfig restored = gson.fromJson("""
+			{
+			  "lowDurabilityThresholdPercent": 64,
+			  "durabilityWarningSoundThresholdPercent": 0
+			}
+			""", ArmorHudConfig.class);
+		restored.validate();
+
+		assertEquals(64, restored.getLowDurabilityThresholdPercent());
+		assertEquals(ArmorHudConfig.MIN_LOW_DURABILITY_THRESHOLD_PERCENT,
+			restored.getDurabilityWarningSoundThresholdPercent());
 	}
 
 	@Test
@@ -49,6 +67,8 @@ class ArmorHudConfigSerializationTest {
 		for (int slot = 0; slot < ArmorHudConfig.ARMOR_SLOT_COUNT; slot++) {
 			assertTrue(restored.isIndividualSlotVisible(slot));
 		}
+		assertFalse(restored.isDurabilityWarningSoundEnabled());
+		assertEquals(10, restored.getDurabilityWarningSoundThresholdPercent());
 	}
 
 	@Test
