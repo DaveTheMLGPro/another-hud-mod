@@ -40,6 +40,7 @@ public final class ItemPickupHudConfig implements HudModuleConfig<ItemPickupHudC
 	private double mergeWindowSeconds = 1.5D;
 	private double entryAnimationSeconds = 0.25D;
 	private ItemPickupPresentation presentation = ItemPickupPresentation.LIST;
+	private ItemPickupAlignment alignment = ItemPickupAlignment.LEFT;
 	private ItemPickupGrowthDirection growthDirection = ItemPickupGrowthDirection.AUTO;
 	private ItemPickupEntryAnimation entryAnimation = ItemPickupEntryAnimation.SLIDE;
 	private ItemPickupMergeFeedback mergeFeedback = ItemPickupMergeFeedback.PULSE;
@@ -90,6 +91,7 @@ public final class ItemPickupHudConfig implements HudModuleConfig<ItemPickupHudC
 		mergeWindowSeconds = source.mergeWindowSeconds;
 		entryAnimationSeconds = source.entryAnimationSeconds;
 		presentation = source.presentation;
+		alignment = source.alignment;
 		growthDirection = source.growthDirection;
 		entryAnimation = source.entryAnimation;
 		mergeFeedback = source.mergeFeedback;
@@ -129,6 +131,9 @@ public final class ItemPickupHudConfig implements HudModuleConfig<ItemPickupHudC
 			MIN_ENTRY_ANIMATION_SECONDS, MAX_ENTRY_ANIMATION_SECONDS);
 		if (presentation == null) {
 			presentation = ItemPickupPresentation.LIST;
+		}
+		if (alignment == null) {
+			alignment = ItemPickupAlignment.LEFT;
 		}
 		if (growthDirection == null) {
 			growthDirection = ItemPickupGrowthDirection.AUTO;
@@ -233,6 +238,14 @@ public final class ItemPickupHudConfig implements HudModuleConfig<ItemPickupHudC
 		if (!directionMatchesPresentation(growthDirection, this.presentation)) {
 			growthDirection = ItemPickupGrowthDirection.AUTO;
 		}
+	}
+
+	public ItemPickupAlignment getAlignment() {
+		return alignment;
+	}
+
+	public void setAlignment(ItemPickupAlignment alignment) {
+		this.alignment = alignment == null ? ItemPickupAlignment.LEFT : alignment;
 	}
 
 	public ItemPickupGrowthDirection getGrowthDirection() {

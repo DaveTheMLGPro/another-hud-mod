@@ -46,12 +46,20 @@ class ItemPickupToastLayoutTest {
 	}
 
 	@Test
+	void positionsRightAlignedContentBeforeTheIcon() {
+		assertEquals(76, ItemPickupToastLayout.rightAlignedIconX(96));
+		assertEquals(42, ItemPickupToastLayout.rightAlignedTextX(96, 30, true));
+		assertEquals(58, ItemPickupToastLayout.rightAlignedTextX(96, 30, false));
+	}
+
+	@Test
 	void rejectsInvalidInputs() {
 		assertThrows(IllegalArgumentException.class, () -> ItemPickupToastLayout.measure(-1, 0));
 		assertThrows(IllegalArgumentException.class, () -> ItemPickupToastLayout.measure(1, -1));
 		assertThrows(IllegalArgumentException.class,
 			() -> ItemPickupToastLayout.measure(1, 1, -1));
 		assertThrows(IllegalArgumentException.class, () -> ItemPickupToastLayout.rowY(-1));
+		assertThrows(IllegalArgumentException.class, () -> ItemPickupToastLayout.rightAlignedIconX(10));
 		assertThrows(IllegalArgumentException.class,
 			() -> ItemPickupToastLayout.bottomAlignedFirstRowY(-1, 1));
 	}

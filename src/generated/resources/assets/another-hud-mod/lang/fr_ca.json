@@ -67,6 +67,8 @@
   "module.another-hud-mod.armor.settings.tab.text": "Texte",
   "module.another-hud-mod.item_pickup.description": "Affiche les objets récemment ramassés et leur quantité.",
   "module.another-hud-mod.item_pickup.name": "HUD pour la détection d'objets",
+  "module.another-hud-mod.item_pickup.settings.alignment": "Alignement",
+  "module.another-hud-mod.item_pickup.settings.alignment.description": "Place l'icône à gauche ou à droite et inverse l'ordre du texte en conséquence.",
   "module.another-hud-mod.item_pickup.settings.background_color": "Couleur d'arrière-plan",
   "module.another-hud-mod.item_pickup.settings.background_color.description": "Définit la couleur et la transparence de l'arrière-plan des notifications.",
   "module.another-hud-mod.item_pickup.settings.background_style": "Style d'arrière-plan",

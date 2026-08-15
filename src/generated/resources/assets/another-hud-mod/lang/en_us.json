@@ -67,6 +67,8 @@
   "module.another-hud-mod.armor.settings.tab.text": "Text",
   "module.another-hud-mod.item_pickup.description": "Shows recently collected items and their amounts.",
   "module.another-hud-mod.item_pickup.name": "Item Pickup HUD",
+  "module.another-hud-mod.item_pickup.settings.alignment": "Alignment",
+  "module.another-hud-mod.item_pickup.settings.alignment.description": "Places the icon on the left or right and reverses the item text order to match.",
   "module.another-hud-mod.item_pickup.settings.background_color": "Background Color",
   "module.another-hud-mod.item_pickup.settings.background_color.description": "Sets the color and transparency of the notification background.",
   "module.another-hud-mod.item_pickup.settings.background_style": "Background Style",

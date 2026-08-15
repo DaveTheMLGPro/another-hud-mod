@@ -168,6 +168,9 @@ public enum TranslationKey {
 		"module.another-hud-mod.item_pickup.settings.presentation.description"),
 	SETTINGS_ITEM_PICKUP_STYLE("module.another-hud-mod.item_pickup.settings.style"),
 	SETTINGS_ITEM_PICKUP_STYLE_DESCRIPTION("module.another-hud-mod.item_pickup.settings.style.description"),
+	SETTINGS_ITEM_PICKUP_ALIGNMENT("module.another-hud-mod.item_pickup.settings.alignment"),
+	SETTINGS_ITEM_PICKUP_ALIGNMENT_DESCRIPTION(
+		"module.another-hud-mod.item_pickup.settings.alignment.description"),
 	SETTINGS_ITEM_PICKUP_STABLE_WIDTH("module.another-hud-mod.item_pickup.settings.stable_width"),
 	SETTINGS_ITEM_PICKUP_STABLE_WIDTH_DESCRIPTION(
 		"module.another-hud-mod.item_pickup.settings.stable_width.description"),

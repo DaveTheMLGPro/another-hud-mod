@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import net.davethemlgpro.client.hud.layout.HudAnchor;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ItemPickupHudConfigSerializationTest {
 	private final Gson gson = new Gson();
@@ -25,6 +22,7 @@ class ItemPickupHudConfigSerializationTest {
 		original.setMergeWindowSeconds(2.4D);
 		original.setEntryAnimationSeconds(0.65D);
 		original.setPresentation(ItemPickupPresentation.CARDS);
+		original.setAlignment(ItemPickupAlignment.RIGHT);
 		original.setGrowthDirection(ItemPickupGrowthDirection.LEFT);
 		original.setEntryAnimation(ItemPickupEntryAnimation.INSTANT);
 		original.setMergeFeedback(ItemPickupMergeFeedback.NONE);
@@ -59,6 +57,7 @@ class ItemPickupHudConfigSerializationTest {
 		assertEquals(2.4D, restored.getMergeWindowSeconds());
 		assertEquals(0.65D, restored.getEntryAnimationSeconds());
 		assertEquals(ItemPickupPresentation.CARDS, restored.getPresentation());
+		assertEquals(ItemPickupAlignment.RIGHT, restored.getAlignment());
 		assertEquals(ItemPickupGrowthDirection.LEFT, restored.getGrowthDirection());
 		assertEquals(ItemPickupEntryAnimation.INSTANT, restored.getEntryAnimation());
 		assertEquals(ItemPickupMergeFeedback.NONE, restored.getMergeFeedback());
@@ -89,6 +88,7 @@ class ItemPickupHudConfigSerializationTest {
 			  "mergeWindowSeconds": -3,
 			  "entryAnimationSeconds": 99,
 			  "presentation": null,
+			  "alignment": null,
 			  "growthDirection": null,
 			  "entryAnimation": null,
 			  "mergeFeedback": null,
@@ -114,6 +114,7 @@ class ItemPickupHudConfigSerializationTest {
 		assertEquals(ItemPickupHudConfig.MIN_MERGE_WINDOW_SECONDS, restored.getMergeWindowSeconds());
 		assertEquals(ItemPickupHudConfig.MAX_ENTRY_ANIMATION_SECONDS, restored.getEntryAnimationSeconds());
 		assertEquals(ItemPickupPresentation.LIST, restored.getPresentation());
+		assertEquals(ItemPickupAlignment.LEFT, restored.getAlignment());
 		assertEquals(ItemPickupGrowthDirection.AUTO, restored.getGrowthDirection());
 		assertEquals(ItemPickupEntryAnimation.SLIDE, restored.getEntryAnimation());
 		assertEquals(ItemPickupMergeFeedback.PULSE, restored.getMergeFeedback());

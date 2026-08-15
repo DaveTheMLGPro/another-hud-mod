@@ -188,15 +188,22 @@ public final class ItemPickupHudModule implements HudModule<ItemPickupHudConfig>
 				drawRoundedBackground(graphics, bounds.x(), y, width, ItemPickupToastLayout.ROW_HEIGHT,
 					withOpacity(config.getBackgroundColor(), opacity));
 			}
-			if (showsListIcon(config)) {
-				drawItem(graphics, entry.value(), bounds.x() + ItemPickupToastLayout.ICON_LEFT,
+			boolean showIcon = showsListIcon(config);
+			boolean rightAligned = config.getAlignment() == ItemPickupAlignment.RIGHT;
+			if (showIcon) {
+				int iconX = rightAligned ? ItemPickupToastLayout.rightAlignedIconX(width)
+					: ItemPickupToastLayout.ICON_LEFT;
+				drawItem(graphics, entry.value(), bounds.x() + iconX,
 					y + ItemPickupToastLayout.ICON_TOP, opacity);
 			}
 			int textLeft = listTextLeft(config);
-			Component fittedLabel = fitText(minecraft, label(entry, config),
+			Component fittedLabel = fitListLabel(minecraft, entry, config,
 				width - textLeft - ItemPickupToastLayout.RIGHT_PADDING);
+			int textX = rightAligned
+				? ItemPickupToastLayout.rightAlignedTextX(width, minecraft.font.width(fittedLabel), showIcon)
+				: textLeft;
 			drawText(graphics, minecraft, fittedLabel,
-				bounds.x() + textLeft, y + ItemPickupToastLayout.TEXT_TOP,
+				bounds.x() + textX, y + ItemPickupToastLayout.TEXT_TOP,
 				config.getTextColor(), opacity, mergeScale(entry, config, nowNanos, editorPreview), false);
 		}
 	}
@@ -370,6 +377,20 @@ public final class ItemPickupHudModule implements HudModule<ItemPickupHudConfig>
 		return Component.literal(minecraft.font.plainSubstrByWidth(text.getString(), available) + ellipsis);
 	}
 
+	private static Component fitListLabel(Minecraft minecraft,
+									  ItemPickupToastQueue.Entry<ItemStack> entry,
+									  ItemPickupHudConfig config, int maximumWidth) {
+		if (config.getStyle() != ItemPickupHudStyle.NORMAL
+			|| config.getAlignment() != ItemPickupAlignment.RIGHT) {
+			return fitText(minecraft, label(entry, config), maximumWidth);
+		}
+		Component count = countLabel(entry, config);
+		int countAndSpaceWidth = minecraft.font.width(count) + minecraft.font.width(" ");
+		Component name = fitText(minecraft, entry.value().getHoverName(),
+			Math.max(1, maximumWidth - countAndSpaceWidth));
+		return name.copy().append(" ").append(count);
+	}
+
 	private List<ItemPickupToastQueue.Entry<ItemStack>> editorToasts() {
 		if (cachedEditorToasts == null) {
 			cachedEditorToasts = List.of(
@@ -387,8 +408,12 @@ public final class ItemPickupHudModule implements HudModule<ItemPickupHudConfig>
 
 	private static Component label(ItemPickupToastQueue.Entry<ItemStack> entry, ItemPickupHudConfig config) {
 		Component count = countLabel(entry, config);
-		return config.getStyle() == ItemPickupHudStyle.COMPACT
-			? count : count.copy().append(" ").append(entry.value().getHoverName());
+		if (config.getStyle() == ItemPickupHudStyle.COMPACT) {
+			return count;
+		}
+		return config.getAlignment() == ItemPickupAlignment.RIGHT
+			? entry.value().getHoverName().copy().append(" ").append(count)
+			: count.copy().append(" ").append(entry.value().getHoverName());
 	}
 
 	private static Component countLabel(ItemPickupToastQueue.Entry<ItemStack> entry, ItemPickupHudConfig config) {

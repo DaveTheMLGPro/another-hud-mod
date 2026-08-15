@@ -11,6 +11,7 @@ public final class ItemPickupToastLayout {
 	public static final int TEXT_LEFT = 24;
 	public static final int TEXT_TOP = 7;
 	public static final int RIGHT_PADDING = 8;
+	public static final int ICON_RIGHT = 4;
 	public static final int NORMAL_MIN_WIDTH = 96;
 	public static final int COMPACT_MIN_WIDTH = 44;
 
@@ -53,6 +54,21 @@ public final class ItemPickupToastLayout {
 			throw new IllegalArgumentException("Toast index cannot be negative.");
 		}
 		return index * (ROW_HEIGHT + rowGap);
+	}
+
+	public static int rightAlignedIconX(int rowWidth) {
+		if (rowWidth < ITEM_SIZE + ICON_RIGHT) {
+			throw new IllegalArgumentException("Toast row is too narrow for its item icon.");
+		}
+		return rowWidth - ICON_RIGHT - ITEM_SIZE;
+	}
+
+	public static int rightAlignedTextX(int rowWidth, int textWidth, boolean showIcon) {
+		if (rowWidth < 0 || textWidth < 0) {
+			throw new IllegalArgumentException("Toast layout inputs cannot be negative.");
+		}
+		int rightEdge = showIcon ? rightAlignedIconX(rowWidth) - ICON_LEFT : rowWidth - RIGHT_PADDING;
+		return rightEdge - textWidth;
 	}
 
 	private static int stackHeight(int rowCount) {

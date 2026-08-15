@@ -1,13 +1,6 @@
 package net.davethemlgpro.client.module.itempickup;
 
-import net.davethemlgpro.client.screen.popover.HudColorControl;
-import net.davethemlgpro.client.screen.popover.HudConditionalControl;
-import net.davethemlgpro.client.screen.popover.HudCycleControl;
-import net.davethemlgpro.client.screen.popover.HudPopoverControl;
-import net.davethemlgpro.client.screen.popover.HudPopoverTab;
-import net.davethemlgpro.client.screen.popover.HudSectionControl;
-import net.davethemlgpro.client.screen.popover.HudSliderControl;
-import net.davethemlgpro.client.screen.popover.HudToggleControl;
+import net.davethemlgpro.client.screen.popover.*;
 import net.davethemlgpro.client.translation.TranslationKey;
 import net.minecraft.network.chat.Component;
 
@@ -48,6 +41,12 @@ public final class ItemPickupHudPopover {
 				TranslationKey.SETTINGS_ITEM_PICKUP_STYLE_DESCRIPTION.component(),
 				List.of(ItemPickupHudStyle.values()), config::getStyle, config::setStyle,
 				ItemPickupHudPopover::styleName),
+				() -> config.getPresentation() == ItemPickupPresentation.LIST),
+			new HudConditionalControl(new HudCycleControl<>(
+				TranslationKey.SETTINGS_ITEM_PICKUP_ALIGNMENT.component(),
+				TranslationKey.SETTINGS_ITEM_PICKUP_ALIGNMENT_DESCRIPTION.component(),
+				List.of(ItemPickupAlignment.values()), config::getAlignment, config::setAlignment,
+				ItemPickupHudPopover::alignmentName),
 				() -> config.getPresentation() == ItemPickupPresentation.LIST),
 			new HudConditionalControl(new HudToggleControl(
 				TranslationKey.SETTINGS_ITEM_PICKUP_SHOW_ITEM_ICON.component(),
@@ -173,6 +172,13 @@ public final class ItemPickupHudPopover {
 			case AUTO -> TranslationKey.SETTINGS_VALUE_AUTO.component();
 			case UP -> TranslationKey.SETTINGS_VALUE_TOP.component();
 			case DOWN -> TranslationKey.SETTINGS_VALUE_BOTTOM.component();
+			case LEFT -> TranslationKey.SETTINGS_VALUE_LEFT.component();
+			case RIGHT -> TranslationKey.SETTINGS_VALUE_RIGHT.component();
+		};
+	}
+
+	private static Component alignmentName(ItemPickupAlignment alignment) {
+		return switch (alignment) {
 			case LEFT -> TranslationKey.SETTINGS_VALUE_LEFT.component();
 			case RIGHT -> TranslationKey.SETTINGS_VALUE_RIGHT.component();
 		};

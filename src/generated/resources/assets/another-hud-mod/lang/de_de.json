@@ -67,6 +67,8 @@
   "module.another-hud-mod.armor.settings.tab.text": "Text",
   "module.another-hud-mod.item_pickup.description": "Zeigt kürzlich eingesammelte Gegenstände und deren Anzahl an.",
   "module.another-hud-mod.item_pickup.name": "Gegenstandsaufnahme HUD",
+  "module.another-hud-mod.item_pickup.settings.alignment": "Ausrichtung",
+  "module.another-hud-mod.item_pickup.settings.alignment.description": "Platziert das Symbol links oder rechts und kehrt die Textreihenfolge entsprechend um.",
   "module.another-hud-mod.item_pickup.settings.background_color": "Hintergrundfarbe",
   "module.another-hud-mod.item_pickup.settings.background_color.description": "Legt Farbe und Transparenz des Benachrichtigungshintergrunds fest.",
   "module.another-hud-mod.item_pickup.settings.background_style": "Hintergrundstil",
