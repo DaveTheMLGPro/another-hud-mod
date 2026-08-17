@@ -2,6 +2,7 @@ package net.davethemlgpro.client.mixin;
 
 import net.davethemlgpro.client.AnotherHUDModClient;
 import net.davethemlgpro.client.module.itempickup.ItemPickupHudModule;
+import net.davethemlgpro.client.module.miningsession.MiningSessionHudModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket;
@@ -23,6 +24,12 @@ public abstract class ClientPacketListenerMixin {
 		}
 		Entity entity = minecraft.level.getEntity(packet.getItemId());
 		if (entity instanceof ItemEntity itemEntity) {
+			MiningSessionHudModule miningModule = AnotherHUDModClient.getMiningSessionHudModule();
+			if (miningModule != null && AnotherHUDModClient.getHudModuleRegistry()
+				.isModuleEnabled(MiningSessionHudModule.ID)) {
+				miningModule.recordPickup(itemEntity.getItem(), packet.getAmount(),
+					AnotherHUDModClient.getMiningSessionHudConfig());
+			}
 			ItemPickupHudModule module = AnotherHUDModClient.getItemPickupHudModule();
 			if (module != null && AnotherHUDModClient.getHudModuleRegistry()
 				.isModuleEnabled(ItemPickupHudModule.ID)) {

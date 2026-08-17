@@ -5,6 +5,8 @@ import net.minecraft.network.chat.Component;
 public enum TranslationKey {
 	KEY_CATEGORY_GENERAL("key.category.another-hud-mod.general"),
 	KEY_OPEN_LAYOUT_EDITOR("key.another-hud-mod.open_layout_editor"),
+	KEY_TOGGLE_MINING_SESSION("key.another-hud-mod.toggle_mining_session"),
+	KEY_RESET_MINING_SESSION("key.another-hud-mod.reset_mining_session"),
 	MODULE_ARMOR("module.another-hud-mod.armor.name"),
 	MODULE_ARMOR_DESCRIPTION("module.another-hud-mod.armor.description"),
 	MODULE_ITEM_PICKUP("module.another-hud-mod.item_pickup.name"),
@@ -17,6 +19,14 @@ public enum TranslationKey {
 	MODULE_MANAGER_EDIT_SETTINGS("screen.another-hud-mod.modules.edit_settings"),
 	MODULE_MANAGER_SETTINGS("screen.another-hud-mod.modules.settings"),
 	MODULE_MANAGER_RESET("screen.another-hud-mod.modules.reset"),
+	MODULE_MINING_SESSION("module.another-hud-mod.mining_session.name"),
+	MODULE_MINING_SESSION_DESCRIPTION("module.another-hud-mod.mining_session.description"),
+	MINING_SESSION_TITLE("module.another-hud-mod.mining_session.title"),
+	MINING_SESSION_INVENTORY("module.another-hud-mod.mining_session.inventory"),
+	MINING_SESSION_GOAL("module.another-hud-mod.mining_session.goal"),
+	MINING_SESSION_STAT_BLOCKS("module.another-hud-mod.mining_session.stat.blocks"),
+	MINING_SESSION_STAT_ITEMS("module.another-hud-mod.mining_session.stat.items"),
+	MINING_SESSION_STAT_VALUE("module.another-hud-mod.mining_session.stat.value"),
 	EDITOR_TITLE("screen.another-hud-mod.editor.title"),
 	EDITOR_INSTRUCTIONS("screen.another-hud-mod.editor.instructions"),
 	EDITOR_RESET("screen.another-hud-mod.editor.reset"),
@@ -244,6 +254,87 @@ public enum TranslationKey {
 	SETTINGS_ITEM_PICKUP_FILTER_ADD("module.another-hud-mod.item_pickup.settings.filter_add"),
 	SETTINGS_ITEM_PICKUP_FILTER_ADD_HELD("module.another-hud-mod.item_pickup.settings.filter_add_held"),
 	SETTINGS_ITEM_PICKUP_FILTER_EMPTY("module.another-hud-mod.item_pickup.settings.filter_empty"),
+	SETTINGS_MINING_SESSION_TAB_SESSION("module.another-hud-mod.mining_session.settings.tab.session"),
+	SETTINGS_MINING_SESSION_TAB_APPEARANCE("module.another-hud-mod.mining_session.settings.tab.appearance"),
+	SETTINGS_MINING_SESSION_TAB_INVENTORY("module.another-hud-mod.mining_session.settings.tab.inventory"),
+	SETTINGS_MINING_SESSION_TOGGLE("module.another-hud-mod.mining_session.settings.toggle"),
+	SETTINGS_MINING_SESSION_TOGGLE_DESCRIPTION(
+		"module.another-hud-mod.mining_session.settings.toggle.description"),
+	SETTINGS_MINING_SESSION_RESET("module.another-hud-mod.mining_session.settings.reset"),
+	SETTINGS_MINING_SESSION_RESET_DESCRIPTION(
+		"module.another-hud-mod.mining_session.settings.reset.description"),
+	SETTINGS_MINING_SESSION_AUTO_START("module.another-hud-mod.mining_session.settings.auto_start"),
+	SETTINGS_MINING_SESSION_AUTO_START_DESCRIPTION(
+		"module.another-hud-mod.mining_session.settings.auto_start.description"),
+	SETTINGS_MINING_SESSION_ORES_ONLY("module.another-hud-mod.mining_session.settings.ores_only"),
+	SETTINGS_MINING_SESSION_ORES_ONLY_DESCRIPTION(
+		"module.another-hud-mod.mining_session.settings.ores_only.description"),
+	SETTINGS_MINING_SESSION_ROW_STYLE("module.another-hud-mod.mining_session.settings.row_style"),
+	SETTINGS_MINING_SESSION_ROW_STYLE_DESCRIPTION(
+		"module.another-hud-mod.mining_session.settings.row_style.description"),
+	SETTINGS_MINING_SESSION_MAX_BLOCKS("module.another-hud-mod.mining_session.settings.max_blocks"),
+	SETTINGS_MINING_SESSION_MAX_BLOCKS_DESCRIPTION(
+		"module.another-hud-mod.mining_session.settings.max_blocks.description"),
+	SETTINGS_MINING_SESSION_UI_SCALE("module.another-hud-mod.mining_session.settings.ui_scale"),
+	SETTINGS_MINING_SESSION_UI_SCALE_DESCRIPTION(
+		"module.another-hud-mod.mining_session.settings.ui_scale.description"),
+	SETTINGS_MINING_SESSION_ROW_SPACING("module.another-hud-mod.mining_session.settings.row_spacing"),
+	SETTINGS_MINING_SESSION_ROW_SPACING_DESCRIPTION(
+		"module.another-hud-mod.mining_session.settings.row_spacing.description"),
+	SETTINGS_MINING_SESSION_SECTION_GOAL("module.another-hud-mod.mining_session.settings.section.goal"),
+	SETTINGS_MINING_SESSION_GOAL_MODE("module.another-hud-mod.mining_session.settings.goal_mode"),
+	SETTINGS_MINING_SESSION_GOAL_MODE_DESCRIPTION(
+		"module.another-hud-mod.mining_session.settings.goal_mode.description"),
+	SETTINGS_MINING_SESSION_MAX_VISIBLE_GOALS(
+		"module.another-hud-mod.mining_session.settings.max_visible_goals"),
+	SETTINGS_MINING_SESSION_MAX_VISIBLE_GOALS_DESCRIPTION(
+		"module.another-hud-mod.mining_session.settings.max_visible_goals.description"),
+	SETTINGS_MINING_SESSION_ITEM_GOALS("module.another-hud-mod.mining_session.settings.item_goals"),
+	SETTINGS_MINING_SESSION_ITEM_GOALS_DESCRIPTION(
+		"module.another-hud-mod.mining_session.settings.item_goals.description"),
+	SETTINGS_MINING_SESSION_GOAL_AMOUNT("module.another-hud-mod.mining_session.settings.goal_amount"),
+	SETTINGS_MINING_SESSION_GOALS_EMPTY("module.another-hud-mod.mining_session.settings.goals_empty"),
+	SETTINGS_MINING_SESSION_GOAL_LIMIT_REACHED(
+		"module.another-hud-mod.mining_session.settings.goal_limit_reached"),
+	SETTINGS_MINING_SESSION_VALUE_GOAL("module.another-hud-mod.mining_session.settings.value_goal"),
+	SETTINGS_MINING_SESSION_VALUE_GOAL_DESCRIPTION(
+		"module.another-hud-mod.mining_session.settings.value_goal.description"),
+	SETTINGS_MINING_SESSION_SECTION_STATISTICS(
+		"module.another-hud-mod.mining_session.settings.section.statistics"),
+	SETTINGS_MINING_SESSION_SHOW_STATISTICS("module.another-hud-mod.mining_session.settings.show_statistics"),
+	SETTINGS_MINING_SESSION_SHOW_STATISTICS_DESCRIPTION(
+		"module.another-hud-mod.mining_session.settings.show_statistics.description"),
+	SETTINGS_MINING_SESSION_SHOW_BLOCK_TOTAL("module.another-hud-mod.mining_session.settings.show_block_total"),
+	SETTINGS_MINING_SESSION_SHOW_BLOCK_TOTAL_DESCRIPTION(
+		"module.another-hud-mod.mining_session.settings.show_block_total.description"),
+	SETTINGS_MINING_SESSION_SHOW_ITEM_TOTAL("module.another-hud-mod.mining_session.settings.show_item_total"),
+	SETTINGS_MINING_SESSION_SHOW_ITEM_TOTAL_DESCRIPTION(
+		"module.another-hud-mod.mining_session.settings.show_item_total.description"),
+	SETTINGS_MINING_SESSION_SHOW_VALUE_TOTAL("module.another-hud-mod.mining_session.settings.show_value_total"),
+	SETTINGS_MINING_SESSION_SHOW_VALUE_TOTAL_DESCRIPTION(
+		"module.another-hud-mod.mining_session.settings.show_value_total.description"),
+	SETTINGS_MINING_SESSION_SECTION_COLORS("module.another-hud-mod.mining_session.settings.section.colors"),
+	SETTINGS_MINING_SESSION_BACKGROUND_COLOR(
+		"module.another-hud-mod.mining_session.settings.background_color"),
+	SETTINGS_MINING_SESSION_BACKGROUND_COLOR_DESCRIPTION(
+		"module.another-hud-mod.mining_session.settings.background_color.description"),
+	SETTINGS_MINING_SESSION_TEXT_COLOR("module.another-hud-mod.mining_session.settings.text_color"),
+	SETTINGS_MINING_SESSION_TEXT_COLOR_DESCRIPTION(
+		"module.another-hud-mod.mining_session.settings.text_color.description"),
+	SETTINGS_MINING_SESSION_ACCENT_COLOR("module.another-hud-mod.mining_session.settings.accent_color"),
+	SETTINGS_MINING_SESSION_ACCENT_COLOR_DESCRIPTION(
+		"module.another-hud-mod.mining_session.settings.accent_color.description"),
+	SETTINGS_MINING_SESSION_TRACKED_ITEMS("module.another-hud-mod.mining_session.settings.tracked_items"),
+	SETTINGS_MINING_SESSION_TRACKED_ITEMS_DESCRIPTION(
+		"module.another-hud-mod.mining_session.settings.tracked_items.description"),
+	SETTINGS_MINING_SESSION_INVENTORY_ORDER("module.another-hud-mod.mining_session.settings.inventory_order"),
+	SETTINGS_MINING_SESSION_INVENTORY_ORDER_DESCRIPTION(
+		"module.another-hud-mod.mining_session.settings.inventory_order.description"),
+	SETTINGS_MINING_SESSION_ITEM_INPUT("module.another-hud-mod.mining_session.settings.item_input"),
+	SETTINGS_MINING_SESSION_ITEM_VALUE("module.another-hud-mod.mining_session.settings.item_value"),
+	SETTINGS_MINING_SESSION_ITEM_ADD("module.another-hud-mod.mining_session.settings.item_add"),
+	SETTINGS_MINING_SESSION_ITEM_ADD_HELD("module.another-hud-mod.mining_session.settings.item_add_held"),
+	SETTINGS_MINING_SESSION_ITEMS_EMPTY("module.another-hud-mod.mining_session.settings.items_empty"),
 	COLOR_PICKER_ALPHA("popover.another-hud-mod.color_picker.alpha"),
 	COLOR_PICKER_INPUT("popover.another-hud-mod.color_picker.input"),
 	SETTINGS_VALUE_HORIZONTAL("option.another-hud-mod.horizontal"),
@@ -252,6 +343,7 @@ public enum TranslationKey {
 	SETTINGS_VALUE_INDIVIDUAL("option.another-hud-mod.individual"),
 	SETTINGS_VALUE_CLEAR("option.another-hud-mod.clear"),
 	SETTINGS_VALUE_INVENTORY("option.another-hud-mod.inventory"),
+	SETTINGS_VALUE_ITEMS("option.another-hud-mod.items"),
 	SETTINGS_VALUE_HOTBAR("option.another-hud-mod.hotbar"),
 	SETTINGS_VALUE_NONE("option.another-hud-mod.none"),
 	SETTINGS_VALUE_VALUE("option.another-hud-mod.value"),
@@ -279,7 +371,14 @@ public enum TranslationKey {
 	SETTINGS_VALUE_SLIDE("option.another-hud-mod.slide"),
 	SETTINGS_VALUE_SHOW_ALL("option.another-hud-mod.show_all"),
 	SETTINGS_VALUE_HIDE_LISTED("option.another-hud-mod.hide_listed"),
-	SETTINGS_VALUE_ONLY_LISTED("option.another-hud-mod.only_listed");
+	SETTINGS_VALUE_ONLY_LISTED("option.another-hud-mod.only_listed"),
+	SETTINGS_VALUE_CUSTOM("option.another-hud-mod.custom"),
+	SETTINGS_VALUE_AMOUNT("option.another-hud-mod.amount"),
+	SETTINGS_VALUE_CUSTOM_VALUE("option.another-hud-mod.custom_value"),
+	SETTINGS_VALUE_TOTAL_VALUE("option.another-hud-mod.total_value"),
+	SETTINGS_VALUE_ALPHABETICAL("option.another-hud-mod.alphabetical"),
+	SETTINGS_VALUE_ICON_AMOUNT("option.another-hud-mod.icon_amount"),
+	SETTINGS_VALUE_ICON_NAME_AMOUNT("option.another-hud-mod.icon_name_amount");
 
 	private final String key;
 

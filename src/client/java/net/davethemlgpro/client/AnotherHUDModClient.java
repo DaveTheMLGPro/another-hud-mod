@@ -11,8 +11,12 @@ import net.davethemlgpro.client.module.armor.ArmorHudPopover;
 import net.davethemlgpro.client.module.itempickup.ItemPickupHudConfig;
 import net.davethemlgpro.client.module.itempickup.ItemPickupHudModule;
 import net.davethemlgpro.client.module.itempickup.ItemPickupHudPopover;
+import net.davethemlgpro.client.module.miningsession.MiningSessionHudConfig;
+import net.davethemlgpro.client.module.miningsession.MiningSessionHudModule;
+import net.davethemlgpro.client.module.miningsession.MiningSessionHudPopover;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.event.client.player.ClientPlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 
@@ -21,6 +25,7 @@ public class AnotherHUDModClient implements ClientModInitializer {
 	private static HudConfigManager configManager;
 	private static HudRenderDispatcher renderDispatcher;
 	private static ItemPickupHudModule itemPickupHudModule;
+	private static MiningSessionHudModule miningSessionHudModule;
 	private static ArmorHudModule armorHudModule;
 
 	@Override
@@ -31,6 +36,9 @@ public class AnotherHUDModClient implements ClientModInitializer {
 		itemPickupHudModule = new ItemPickupHudModule();
 		MODULES.register(itemPickupHudModule, ItemPickupHudConfig.class, ItemPickupHudConfig::new,
 			ItemPickupHudPopover::create);
+		miningSessionHudModule = new MiningSessionHudModule();
+		MODULES.register(miningSessionHudModule, MiningSessionHudConfig.class, MiningSessionHudConfig::new,
+			MiningSessionHudPopover::create);
 
 		configManager = HudConfigManager.createDefault(MODULES);
 		if (!configManager.load())
@@ -44,6 +52,11 @@ public class AnotherHUDModClient implements ClientModInitializer {
 		HudKeyMappings.register();
 		ClientTickEvents.END_CLIENT_TICK.register(client -> armorHudModule.tickSoundWarning(client,
 			getArmorHudConfig(), MODULES.isModuleEnabled(ArmorHudModule.ID)));
+		ClientPlayerBlockBreakEvents.AFTER.register((level, player, pos, state) -> {
+			if (MODULES.isModuleEnabled(MiningSessionHudModule.ID)) {
+				miningSessionHudModule.recordBlock(state, getMiningSessionHudConfig());
+			}
+		});
 	}
 
 	public static HudModuleRegistry getHudModuleRegistry() {
@@ -68,5 +81,13 @@ public class AnotherHUDModClient implements ClientModInitializer {
 
 	public static ArmorHudConfig getArmorHudConfig() {
 		return (ArmorHudConfig) MODULES.getModule(ArmorHudModule.ID).getConfig();
+	}
+
+	public static MiningSessionHudModule getMiningSessionHudModule() {
+		return miningSessionHudModule;
+	}
+
+	public static MiningSessionHudConfig getMiningSessionHudConfig() {
+		return (MiningSessionHudConfig) MODULES.getModule(MiningSessionHudModule.ID).getConfig();
 	}
 }

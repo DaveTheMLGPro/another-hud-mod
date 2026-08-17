@@ -52,6 +52,11 @@ public final class HudConditionalControl implements HudPopoverControl {
 	}
 
 	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollY, int x, int y, int width) {
+		return control.mouseScrolled(mouseX, mouseY, scrollY, x, y, width);
+	}
+
+	@Override
 	public void mouseReleased() {
 		control.mouseReleased();
 	}

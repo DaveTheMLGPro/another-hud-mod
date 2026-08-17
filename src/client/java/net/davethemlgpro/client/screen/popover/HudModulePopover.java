@@ -294,7 +294,23 @@ public final class HudModulePopover implements HudPopoverContext {
 	}
 
 	public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
-		if (!open || maxScroll <= 0 || !contains(mouseX, mouseY, x, y, width, height)) {
+		if (!open || !contains(mouseX, mouseY, x, y, width, height)) {
+			return false;
+		}
+		List<HudPopoverControl> controls = controls();
+		int contentTop = y + HEADER_HEIGHT + tabBarHeight();
+		int controlWidth = width - PADDING * 2 - (maxScroll > 0 ? SCROLLBAR_WIDTH + 2 : 0);
+		int controlY = contentTop + PADDING - scrollOffset;
+		for (HudPopoverControl control : controls) {
+			if (!control.visible()) {
+				continue;
+			}
+			if (control.mouseScrolled(mouseX, mouseY, scrollY, x + PADDING, controlY, controlWidth)) {
+				return true;
+			}
+			controlY += control.height();
+		}
+		if (maxScroll <= 0) {
 			return false;
 		}
 		scrollOffset = Math.clamp(scrollOffset - (int) Math.round(scrollY * HudPopoverControl.DEFAULT_HEIGHT),

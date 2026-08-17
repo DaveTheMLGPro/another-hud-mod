@@ -30,6 +30,10 @@ public interface HudPopoverControl {
 		return false;
 	}
 
+	default boolean mouseScrolled(double mouseX, double mouseY, double scrollY, int x, int y, int width) {
+		return false;
+	}
+
 	default void mouseReleased() {
 	}
 
