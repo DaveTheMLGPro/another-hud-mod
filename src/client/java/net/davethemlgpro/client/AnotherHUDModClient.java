@@ -8,6 +8,10 @@ import net.davethemlgpro.client.module.HudModuleRegistry;
 import net.davethemlgpro.client.module.armor.ArmorHudConfig;
 import net.davethemlgpro.client.module.armor.ArmorHudModule;
 import net.davethemlgpro.client.module.armor.ArmorHudPopover;
+import net.davethemlgpro.client.module.containersearch.ContainerSearchHudConfig;
+import net.davethemlgpro.client.module.containersearch.ContainerSearchHudModule;
+import net.davethemlgpro.client.module.containersearch.ContainerSearchHudPopover;
+import net.davethemlgpro.client.module.containersearch.ContainerSearchOverlay;
 import net.davethemlgpro.client.module.itempickup.ItemPickupHudConfig;
 import net.davethemlgpro.client.module.itempickup.ItemPickupHudModule;
 import net.davethemlgpro.client.module.itempickup.ItemPickupHudPopover;
@@ -16,9 +20,9 @@ import net.davethemlgpro.client.module.miningsession.MiningSessionHudModule;
 import net.davethemlgpro.client.module.miningsession.MiningSessionHudPopover;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.event.client.player.ClientPlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
+import net.fabricmc.fabric.api.event.client.player.ClientPlayerBlockBreakEvents;
 
 public class AnotherHUDModClient implements ClientModInitializer {
 	private static final HudModuleRegistry MODULES = new HudModuleRegistry();
@@ -27,6 +31,7 @@ public class AnotherHUDModClient implements ClientModInitializer {
 	private static ItemPickupHudModule itemPickupHudModule;
 	private static MiningSessionHudModule miningSessionHudModule;
 	private static ArmorHudModule armorHudModule;
+	private static ContainerSearchHudModule containerSearchHudModule;
 
 	@Override
 	public void onInitializeClient() {
@@ -39,6 +44,9 @@ public class AnotherHUDModClient implements ClientModInitializer {
 		miningSessionHudModule = new MiningSessionHudModule();
 		MODULES.register(miningSessionHudModule, MiningSessionHudConfig.class, MiningSessionHudConfig::new,
 			MiningSessionHudPopover::create);
+		containerSearchHudModule = new ContainerSearchHudModule();
+		MODULES.register(containerSearchHudModule, ContainerSearchHudConfig.class,
+			ContainerSearchHudConfig::new, ContainerSearchHudPopover::create);
 
 		configManager = HudConfigManager.createDefault(MODULES);
 		if (!configManager.load())
@@ -57,6 +65,7 @@ public class AnotherHUDModClient implements ClientModInitializer {
 				miningSessionHudModule.recordBlock(state, getMiningSessionHudConfig());
 			}
 		});
+		ContainerSearchOverlay.register();
 	}
 
 	public static HudModuleRegistry getHudModuleRegistry() {
@@ -89,5 +98,13 @@ public class AnotherHUDModClient implements ClientModInitializer {
 
 	public static MiningSessionHudConfig getMiningSessionHudConfig() {
 		return (MiningSessionHudConfig) MODULES.getModule(MiningSessionHudModule.ID).getConfig();
+	}
+
+	public static ContainerSearchHudModule getContainerSearchHudModule() {
+		return containerSearchHudModule;
+	}
+
+	public static ContainerSearchHudConfig getContainerSearchHudConfig() {
+		return (ContainerSearchHudConfig) MODULES.getModule(ContainerSearchHudModule.ID).getConfig();
 	}
 }

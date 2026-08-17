@@ -3,6 +3,8 @@
 	"package": "net.davethemlgpro.client.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
+		"AbstractContainerScreenAccessor",
+		"AbstractContainerScreenOverlayMixin",
 		"ClientPacketListenerMixin"
 	],
 	"injectors": {

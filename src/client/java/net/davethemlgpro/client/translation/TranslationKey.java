@@ -11,6 +11,17 @@ public enum TranslationKey {
 	MODULE_ARMOR_DESCRIPTION("module.another-hud-mod.armor.description"),
 	MODULE_ITEM_PICKUP("module.another-hud-mod.item_pickup.name"),
 	MODULE_ITEM_PICKUP_DESCRIPTION("module.another-hud-mod.item_pickup.description"),
+	MODULE_CONTAINER_SEARCH("module.another-hud-mod.container_search.name"),
+	MODULE_CONTAINER_SEARCH_DESCRIPTION("module.another-hud-mod.container_search.description"),
+	CONTAINER_SEARCH_TITLE("module.another-hud-mod.container_search.title"),
+	CONTAINER_SEARCH_INPUT("module.another-hud-mod.container_search.input"),
+	CONTAINER_SEARCH_INPUT_HINT("module.another-hud-mod.container_search.input.hint"),
+	CONTAINER_SEARCH_PREVIEW_QUERY("module.another-hud-mod.container_search.preview_query"),
+	CONTAINER_SEARCH_DIM_SLOTS("module.another-hud-mod.container_search.dim_slots"),
+	CONTAINER_SEARCH_EXACT_MATCH("module.another-hud-mod.container_search.exact_match"),
+	CONTAINER_SEARCH_STATUS_SINGLE_ITEM("module.another-hud-mod.container_search.status.single_item"),
+	CONTAINER_SEARCH_STATUS_ONE("module.another-hud-mod.container_search.status.one"),
+	CONTAINER_SEARCH_STATUS_MANY("module.another-hud-mod.container_search.status.many"),
 	MODULE_MANAGER_TITLE("screen.another-hud-mod.modules.title"),
 	MODULE_MANAGER_OPEN("screen.another-hud-mod.modules.open"),
 	MODULE_MANAGER_COUNT("screen.another-hud-mod.modules.count"),
@@ -254,6 +265,38 @@ public enum TranslationKey {
 	SETTINGS_ITEM_PICKUP_FILTER_ADD("module.another-hud-mod.item_pickup.settings.filter_add"),
 	SETTINGS_ITEM_PICKUP_FILTER_ADD_HELD("module.another-hud-mod.item_pickup.settings.filter_add_held"),
 	SETTINGS_ITEM_PICKUP_FILTER_EMPTY("module.another-hud-mod.item_pickup.settings.filter_empty"),
+	SETTINGS_CONTAINER_SEARCH_TAB_GENERAL("module.another-hud-mod.container_search.settings.tab.general"),
+	SETTINGS_CONTAINER_SEARCH_TAB_APPEARANCE(
+		"module.another-hud-mod.container_search.settings.tab.appearance"),
+	SETTINGS_CONTAINER_SEARCH_UI_SCALE("module.another-hud-mod.container_search.settings.ui_scale"),
+	SETTINGS_CONTAINER_SEARCH_UI_SCALE_DESCRIPTION(
+		"module.another-hud-mod.container_search.settings.ui_scale.description"),
+	SETTINGS_CONTAINER_SEARCH_DIM_NON_MATCHES(
+		"module.another-hud-mod.container_search.settings.dim_non_matches"),
+	SETTINGS_CONTAINER_SEARCH_DIM_NON_MATCHES_DESCRIPTION(
+		"module.another-hud-mod.container_search.settings.dim_non_matches.description"),
+	SETTINGS_CONTAINER_SEARCH_CLEAR_ON_CLOSE(
+		"module.another-hud-mod.container_search.settings.clear_on_close"),
+	SETTINGS_CONTAINER_SEARCH_CLEAR_ON_CLOSE_DESCRIPTION(
+		"module.another-hud-mod.container_search.settings.clear_on_close.description"),
+	SETTINGS_CONTAINER_SEARCH_HIGHLIGHT_STYLE(
+		"module.another-hud-mod.container_search.settings.highlight_style"),
+	SETTINGS_CONTAINER_SEARCH_HIGHLIGHT_STYLE_DESCRIPTION(
+		"module.another-hud-mod.container_search.settings.highlight_style.description"),
+	SETTINGS_CONTAINER_SEARCH_BACKGROUND_COLOR(
+		"module.another-hud-mod.container_search.settings.background_color"),
+	SETTINGS_CONTAINER_SEARCH_BACKGROUND_COLOR_DESCRIPTION(
+		"module.another-hud-mod.container_search.settings.background_color.description"),
+	SETTINGS_CONTAINER_SEARCH_TEXT_COLOR("module.another-hud-mod.container_search.settings.text_color"),
+	SETTINGS_CONTAINER_SEARCH_TEXT_COLOR_DESCRIPTION(
+		"module.another-hud-mod.container_search.settings.text_color.description"),
+	SETTINGS_CONTAINER_SEARCH_HIGHLIGHT_COLOR(
+		"module.another-hud-mod.container_search.settings.highlight_color"),
+	SETTINGS_CONTAINER_SEARCH_HIGHLIGHT_COLOR_DESCRIPTION(
+		"module.another-hud-mod.container_search.settings.highlight_color.description"),
+	SETTINGS_CONTAINER_SEARCH_DIM_COLOR("module.another-hud-mod.container_search.settings.dim_color"),
+	SETTINGS_CONTAINER_SEARCH_DIM_COLOR_DESCRIPTION(
+		"module.another-hud-mod.container_search.settings.dim_color.description"),
 	SETTINGS_MINING_SESSION_TAB_SESSION("module.another-hud-mod.mining_session.settings.tab.session"),
 	SETTINGS_MINING_SESSION_TAB_APPEARANCE("module.another-hud-mod.mining_session.settings.tab.appearance"),
 	SETTINGS_MINING_SESSION_TAB_INVENTORY("module.another-hud-mod.mining_session.settings.tab.inventory"),
@@ -354,7 +397,10 @@ public enum TranslationKey {
 	SETTINGS_VALUE_RIGHT("option.another-hud-mod.right"),
 	SETTINGS_VALUE_CENTER("option.another-hud-mod.center"),
 	SETTINGS_VALUE_COLOR("option.another-hud-mod.color"),
+	SETTINGS_VALUE_OUTLINE("option.another-hud-mod.outline"),
+	SETTINGS_VALUE_FILLED("option.another-hud-mod.filled"),
 	SETTINGS_VALUE_PULSE("option.another-hud-mod.pulse"),
+	SETTINGS_VALUE_CORNERS("option.another-hud-mod.corners"),
 	SETTINGS_VALUE_FLASH("option.another-hud-mod.flash"),
 	SETTINGS_VALUE_NORMAL("option.another-hud-mod.normal"),
 	SETTINGS_VALUE_COMPACT("option.another-hud-mod.compact"),
